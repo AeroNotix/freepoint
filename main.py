@@ -5,32 +5,30 @@ intention is to make a generic GUI for interacting with a mysql database
 import sys
 import argparse
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 
 import MySQLdb
 import _mysql_exceptions
 
-import database_viewer.ui.mainwindow_UI
 from database_viewer.ui.mainwindow_UI import Ui_MainWindow
 from database_viewer.ui.dlg_sql_connection import SQLDisplaySetup
 
-from database_viewer.table_tools.table_wrapper import populate_wrapper
-from database_viewer.table_tools.tools import *
-from database_viewer.table_tools.argument import *
+from database_viewer.table_tools.tools import get_headings, itersql
+from database_viewer.table_tools.argument import Argument
 
 ## Argument creation
-parser = argparse.ArgumentParser()
-args = [
+PARSER = argparse.ArgumentParser()
+ARGS = [
     Argument('db', help='Database you wish to connect to'),
     Argument('password', help='password for the database'),
     Argument('user', help='user for the database'),
     Argument('table', help='which table to connect to')
 ]
 
-for arg in args:
-    parser.add_argument(arg.name, **arg.data)
+for arg in ARGS:
+    PARSER.add_argument(arg.name, **arg.data)
     
-results = parser.parse_args()
+RESULTS = PARSER.parse_args()
 
 
 class MainGui(QtGui.QMainWindow):
@@ -40,17 +38,22 @@ class MainGui(QtGui.QMainWindow):
     """
 
     def __init__(self, parent=None):
+
+        '''
+        Creation and main check
+        '''
+        
         QtGui.QMainWindow.__init__(self, parent)
         self.gui = Ui_MainWindow()
         self.gui.setupUi(self)
         self.toolbar = self.addToolBar("Toolbar")
 
-        if results.db:
+        if RESULTS.db:
             # if we got command line arguments, open that
-            self.populate_table(user=results.user,
-                                password=results.password,
-                                db=results.db,
-                                table=results.table)
+            self.populate_table(user=RESULTS.user,
+                                password=RESULTS.password,
+                                using_db=RESULTS.db,
+                                table=RESULTS.table)
         else:
             # else allow the user to enter the details via
             # the gui
@@ -61,31 +64,31 @@ class MainGui(QtGui.QMainWindow):
         
     def populate_table(self, db_host='localhost',
                        user=None, password=None,
-                       db=None, table=None, query=None):
+                       using_db=None, table=None, query=None):
         """
         Opens and displays a MySQL table
 
         Mutates the table's headings and the data in the table with
         the data returned from the select on the passed in database.
         """
+
+        # defaulted to this, not in arg list because reasons
         if not query:
-            query='''SELECT * FROM tbl_Queries'''
+            query = '''SELECT * FROM %s''' % table
 
         # connect to mysql database
         try:
-            db = MySQLdb.connect(host=db_host, user=user,
-                                 passwd=password, db=db)
+            database = MySQLdb.connect(host=db_host, user=user,
+                                 passwd=password, db=using_db)
             
-        except _mysql_exceptions.OperationalError, e:
+        except _mysql_exceptions.OperationalError, error:
 
             # on any error report to the user and return
-            QtGui.QMessageBox.warning(self, "Error", str(e))
+            QtGui.QMessageBox.warning(self, "Error", str(error))
             return
         
-        cursor = db.cursor()
-
-        # get the headings so we can set up the table
-        headings = get_headings(db, query)
+         # get the headings so we can set up the table
+        headings = get_headings(database, query)
 
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(headings))
@@ -94,7 +97,7 @@ class MainGui(QtGui.QMainWindow):
 
         # iterate through the query set and get the data into the table
         for idx, data in enumerate(
-                 itersql(db, query)):
+                 itersql(database, query)):
 
             if not data:
                 break
@@ -105,7 +108,7 @@ class MainGui(QtGui.QMainWindow):
                             QtGui.QTableWidgetItem(str(info)))
                 
         # data is in-memory, close the connection. 
-        db.close()
+        database.close()
             
 if __name__ == '__main__':
     
