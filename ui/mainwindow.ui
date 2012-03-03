@@ -6,20 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>815</width>
-    <height>612</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Daily Reporting Tasks Tracker</string>
-  </property>
-  <property name="windowIcon">
-   <iconset>
-    <normaloff>../../../../pytracker/resources/main.ico</normaloff>../../../../pytracker/resources/main.ico</iconset>
+   <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0" colspan="3">
+    <item row="0" column="0">
      <widget class="QTableWidget" name="tableWidget">
       <property name="columnCount">
        <number>3</number>
@@ -29,39 +25,33 @@
       <column/>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAdd_New_Report">
-   <property name="text">
-    <string>Add New Report</string>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>19</height>
+    </rect>
    </property>
-  </action>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit..</string>
-   </property>
-  </action>
-  <action name="actionView_all">
-   <property name="text">
-    <string>View all</string>
+    <string>Quit.</string>
    </property>
   </action>
  </widget>
  <resources/>
  <connections/>
- <slots>
-  <slot>populate_table()</slot>
-  <slot>newreportdlg()</slot>
-  <slot>showall_dlg()</slot>
-  <slot>application_quit()</slot>
-  <slot>edit_reports()</slot>
- </slots>
 </ui>

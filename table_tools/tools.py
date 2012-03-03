@@ -26,8 +26,34 @@ def get_headings(db, table):
 
 @contextlib.contextmanager
 def sql_query(db, query):
+
+    '''
+    Ability to use a set of sql results
+    within a with statement.
+    '''
+    
     cursor = db.cursor()
     cursor.execute(query)
     yield cursor.fetchall()
+
+def itersql(db, query):
+
+    '''
+    Yields a row of data from the query
+
+    Used to iterate over query rather than querying
+    then assigning, then looping over that data.
+    '''
+    
+    cursor = db.cursor()
+    cursor.execute(query)
+    
+    while 1:
+        try:
+            yield cursor.fetchone()
+        except:
+            break
+        
+    
     
     
