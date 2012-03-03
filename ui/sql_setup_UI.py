@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'sql_setup.ui'
 #
-# Created: Sat Mar  3 15:18:31 2012
+# Created: Sat Mar  3 16:39:19 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -57,6 +57,8 @@ class Ui_frm_sql_data_entry(object):
         self.label_4.setBuddy(self.txt_table)
 
         self.retranslateUi(frm_sql_data_entry)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), frm_sql_data_entry.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), frm_sql_data_entry.reject)
         QtCore.QMetaObject.connectSlotsByName(frm_sql_data_entry)
 
     def retranslateUi(self, frm_sql_data_entry):

@@ -18,6 +18,7 @@ from database_viewer.table_tools.table_wrapper import populate_wrapper
 from database_viewer.table_tools.tools import *
 from database_viewer.table_tools.argument import *
 
+## Argument creation
 parser = argparse.ArgumentParser()
 args = [
     Argument('db', help='Database you wish to connect to'),
@@ -45,11 +46,14 @@ class MainGui(QtGui.QMainWindow):
         self.toolbar = self.addToolBar("Toolbar")
 
         if results.db:
+            # if we got command line arguments, open that
             self.populate_table(user=results.user,
                                 password=results.password,
                                 db=results.db,
                                 table=results.table)
         else:
+            # else allow the user to enter the details via
+            # the gui
             setup_dlg = SQLDisplaySetup(self)
             setup_dlg.show()
 
@@ -57,41 +61,40 @@ class MainGui(QtGui.QMainWindow):
         
     def populate_table(self, db_host='localhost',
                        user=None, password=None,
-                       db=None, table=None):
+                       db=None, table=None, query=None):
         """
         Opens and displays a MySQL table
 
         Mutates the table's headings and the data in the table with
         the data returned from the select on the passed in database.
         """
-        
+        if not query:
+            query='''SELECT * FROM tbl_Queries'''
+
         # connect to mysql database
         try:
             db = MySQLdb.connect(host=db_host, user=user,
                                  passwd=password, db=db)
             
         except _mysql_exceptions.OperationalError, e:
-            print 'Connection details most likely incorrect'
-            print 'MySQL Error:', e
-            sys.exit(-1)
-            
-        # except GUIModeException:
-        #     return
-            
-            
+
+            # on any error report to the user and return
+            QtGui.QMessageBox.warning(self, "Error", str(e))
+            return
+        
         cursor = db.cursor()
 
         # get the headings so we can set up the table
-        headings = get_headings(db, table)
+        headings = get_headings(db, query)
 
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(headings))
         # set the labels to the column names
         self.gui.tableWidget.setHorizontalHeaderLabels(headings)
 
-        # Do a big select on the table and iterate through the it
+        # iterate through the query set and get the data into the table
         for idx, data in enumerate(
-                 itersql(db, '''SELECT * FROM tbl_Queries''')):
+                 itersql(db, query)):
 
             if not data:
                 break

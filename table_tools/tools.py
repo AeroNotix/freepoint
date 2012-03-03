@@ -6,7 +6,7 @@ databases and Qt applications
 import contextlib
 import MySQLdb
 
-def get_headings(db, table):
+def get_headings(db, query):
     '''
     get the headings from a table in the specified database
 
@@ -17,7 +17,8 @@ def get_headings(db, table):
     '''
 
     cursor = db.cursor()
-    cursor.execute('''SHOW COLUMNS FROM {}'''.format(table))
+    cursor.execute('''CREATE TEMPORARY TABLE temp (%s)''' % query)
+    cursor.execute('''SHOW COLUMNS FROM temp''')
     
     headings = cursor.fetchall()
     ioheadings = []
@@ -46,14 +47,21 @@ def itersql(db, query):
     '''
     
     cursor = db.cursor()
-    cursor.execute(query)
+    cursor.execute("%s" % query)
     
     while 1:
         try:
             yield cursor.fetchone()
         except:
             break
+            
         
+def to_unicode(string, encoding='utf-8'):
+    '''
+    Returns a string in the specified encoding,
+    default is utf-8
+    '''
     
-    
+    return unicode(string).encode(encoding)
+
     

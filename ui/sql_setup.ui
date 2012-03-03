@@ -79,5 +79,43 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>frm_sql_data_entry</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>628</x>
+     <y>782</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>frm_sql_data_entry</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>171</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>599</x>
+     <y>710</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>accepted()</signal>
+  <slot>accept()</slot>
+  <slot>reject()</slot>
+ </slots>
 </ui>
