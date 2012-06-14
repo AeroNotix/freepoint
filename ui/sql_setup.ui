@@ -7,30 +7,30 @@
     <x>0</x>
     <y>0</y>
     <width>407</width>
-    <height>179</height>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2" rowspan="5">
+   <item row="0" column="2" rowspan="7">
     <widget class="QTextEdit" name="txt_sql_entry"/>
    </item>
    <item row="0" column="1">
-    <widget class="QLineEdit" name="txt_sql_db"/>
+    <widget class="QLineEdit" name="txt_host"/>
    </item>
    <item row="0" column="0">
     <widget class="QLabel" name="lbl_db_name_field">
      <property name="text">
-      <string>MySQL Database</string>
+      <string>MySQL Host</string>
      </property>
      <property name="buddy">
-      <cstring>txt_sql_db</cstring>
+      <cstring>txt_host</cstring>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="lbl_username_field">
      <property name="text">
       <string>Username</string>
@@ -40,10 +40,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QLineEdit" name="txt_username"/>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="lbl_password_field">
      <property name="text">
       <string>Password</string>
@@ -53,31 +53,61 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QLineEdit" name="txt_password"/>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Table</string>
+      <string>Database</string>
      </property>
      <property name="buddy">
-      <cstring>txt_table</cstring>
+      <cstring>txt_database</cstring>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QLineEdit" name="txt_table"/>
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="txt_database"/>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="6" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
+   <item row="5" column="1">
+    <widget class="QLineEdit" name="txt_table"/>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Table</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="txt_port"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Port</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>txt_host</tabstop>
+  <tabstop>txt_port</tabstop>
+  <tabstop>txt_username</tabstop>
+  <tabstop>txt_password</tabstop>
+  <tabstop>txt_database</tabstop>
+  <tabstop>txt_table</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>txt_sql_entry</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -87,12 +117,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>69</x>
-     <y>156</y>
+     <x>78</x>
+     <y>221</y>
     </hint>
     <hint type="destinationlabel">
-     <x>628</x>
-     <y>782</y>
+     <x>406</x>
+     <y>245</y>
     </hint>
    </hints>
   </connection>
@@ -103,12 +133,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>171</x>
-     <y>155</y>
+     <x>170</x>
+     <y>221</y>
     </hint>
     <hint type="destinationlabel">
-     <x>599</x>
-     <y>710</y>
+     <x>406</x>
+     <y>245</y>
     </hint>
    </hints>
   </connection>
@@ -117,5 +147,6 @@
   <signal>accepted()</signal>
   <slot>accept()</slot>
   <slot>reject()</slot>
+  <slot>awesomefunction()</slot>
  </slots>
 </ui>

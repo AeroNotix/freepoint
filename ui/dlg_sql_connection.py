@@ -34,10 +34,13 @@ class SQLDisplaySetup(QtGui.QDialog):
         connection_details = {
             'user': to_unicode(self.gui.txt_username.text()),
             'password': to_unicode(self.gui.txt_password.text()),
-            'db': to_unicode(self.gui.txt_sql_db.text()),
-            'table': to_unicode(self.gui.txt_table.text()),
-            'query': self.gui.txt_sql_entry.toPlainText()
+            'host': to_unicode(self.gui.txt_host.text()),
+            'using_db': to_unicode(self.gui.txt_database.text()),
+            'query': self.gui.txt_sql_entry.toPlainText(),
+            'table': self.gui.txt_table.text()
             }
     
         self.parent.populate_table(**connection_details)
         
+    def awesomefunction(self):
+        print 'inside awesome function'

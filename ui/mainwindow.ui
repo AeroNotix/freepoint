@@ -33,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -42,6 +42,7 @@
     </property>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
+    <addaction name="actionConnection_details"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -51,7 +52,65 @@
     <string>Quit.</string>
    </property>
   </action>
+  <action name="actionConnection_details">
+   <property name="text">
+    <string>Connection details</string>
+   </property>
+  </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellChanged(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1068</x>
+     <y>622</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionConnection_details</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openConnectionDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeTable()</slot>
+  <slot>openConnectionDialog()</slot>
+ </slots>
 </ui>

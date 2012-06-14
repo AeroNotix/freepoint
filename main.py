@@ -32,7 +32,6 @@ RESULTS = PARSER.parse_args()
 
 
 class MainGui(QtGui.QMainWindow):
-
     """
     Main GUI
     """
@@ -57,12 +56,10 @@ class MainGui(QtGui.QMainWindow):
         else:
             # else allow the user to enter the details via
             # the gui
-            setup_dlg = SQLDisplaySetup(self)
-            setup_dlg.show()
-
+            self.openConnectionDialog()
             
         
-    def populate_table(self, db_host='localhost',
+    def populate_table(self, host='localhost',
                        user=None, password=None,
                        using_db=None, table=None, query=None):
         """
@@ -78,7 +75,7 @@ class MainGui(QtGui.QMainWindow):
 
         # connect to mysql database
         try:
-            database = MySQLdb.connect(host=db_host, user=user,
+            database = MySQLdb.connect(host=host, user=user,
                                  passwd=password, db=using_db)
             
         except _mysql_exceptions.OperationalError, error:
@@ -109,6 +106,13 @@ class MainGui(QtGui.QMainWindow):
                 
         # data is in-memory, close the connection. 
         database.close()
+
+    def changeTable(self, *args):
+        print args
+
+    def openConnectionDialog(self):
+        setup_dlg = SQLDisplaySetup(self)
+        setup_dlg.show()
             
 if __name__ == '__main__':
     
