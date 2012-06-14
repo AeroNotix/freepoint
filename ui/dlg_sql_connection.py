@@ -8,7 +8,7 @@ from database_viewer.table_tools.tools import to_unicode
 class SQLDisplaySetup(QtGui.QDialog):
 
     '''
-    Form for enterting SQL information,
+    Form for entering SQL information,
 
     The GUI method opposed to the command line arguments
     '''
@@ -18,18 +18,27 @@ class SQLDisplaySetup(QtGui.QDialog):
         '''
         Creation of the dlg
         '''
-        
         QtGui.QWidget.__init__(self, parent)
         self.gui = Ui_frm_sql_data_entry()
         self.gui.setupUi(self)
         self.parent = parent
+        if self.parent.populated:
+            self.populate_fields()
 
     def accept(self):
 
         '''
         When the dlg's OK button is pressed
         '''
+       
         self.hide()
+        self.parent.host = self.gui.txt_host.text()
+        self.parent.user = self.gui.txt_username.text()
+        self.parent.password = self.gui.txt_password.text()
+        self.parent.using_db = self.gui.txt_database.text()
+        self.parent.table = self.gui.txt_table.text()
+        self.parent.query = self.gui.txt_sql_entry.toPlainText()
+        self.parent.populated = True
 
         connection_details = {
             'user': to_unicode(self.gui.txt_username.text()),
@@ -41,6 +50,16 @@ class SQLDisplaySetup(QtGui.QDialog):
             }
     
         self.parent.populate_table(**connection_details)
-        
-    def awesomefunction(self):
-        print 'inside awesome function'
+
+    def populate_fields(self):
+        '''
+        Populates the dialog's fields with the info stored on the parent which
+        created this instance if we have already connected to a database.
+        '''
+
+        self.gui.txt_host.setText(self.parent.host)
+        self.gui.txt_username.setText(self.parent.user)
+        self.gui.txt_password.setText(self.parent.password)
+        self.gui.txt_database.setText(self.parent.using_db)
+        self.gui.txt_table.setText(self.parent.table)
+        self.gui.txt_sql_entry.setText(self.parent.query)

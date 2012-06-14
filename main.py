@@ -27,7 +27,7 @@ ARGS = [
 
 for arg in ARGS:
     PARSER.add_argument(arg.name, **arg.data)
-    
+
 RESULTS = PARSER.parse_args()
 
 
@@ -37,15 +37,15 @@ class MainGui(QtGui.QMainWindow):
     """
 
     def __init__(self, parent=None):
-
         '''
         Creation and main check
         '''
-        
+
         QtGui.QMainWindow.__init__(self, parent)
         self.gui = Ui_MainWindow()
         self.gui.setupUi(self)
         self.toolbar = self.addToolBar("Toolbar")
+        self.populated = False
 
         if RESULTS.db:
             # if we got command line arguments, open that
@@ -57,11 +57,12 @@ class MainGui(QtGui.QMainWindow):
             # else allow the user to enter the details via
             # the gui
             self.openConnectionDialog()
-            
-        
+
+
     def populate_table(self, host='localhost',
                        user=None, password=None,
-                       using_db=None, table=None, query=None):
+                       using_db=None, table=None,
+                       query=None):
         """
         Opens and displays a MySQL table
 
@@ -75,16 +76,19 @@ class MainGui(QtGui.QMainWindow):
 
         # connect to mysql database
         try:
-            database = MySQLdb.connect(host=host, user=user,
-                                 passwd=password, db=using_db)
-            
-        except _mysql_exceptions.OperationalError, error:
+            database = MySQLdb.connect(
+                host=host, user=user,
+                passwd=password, db=using_db
+            )
 
+        except _mysql_exceptions.OperationalError, error:
             # on any error report to the user and return
             QtGui.QMessageBox.warning(self, "Error", str(error))
             return
-        
-         # get the headings so we can set up the table
+
+        self.clear_table()
+
+        # get the headings so we can set up the table
         headings = get_headings(database, query)
 
         # set the column size according to the headings
@@ -101,21 +105,43 @@ class MainGui(QtGui.QMainWindow):
 
             self.gui.tableWidget.insertRow(idx)
             for num, info in enumerate(data):
-                self.gui.tableWidget.setItem(idx, num,
-                            QtGui.QTableWidgetItem(str(info)))
-                
-        # data is in-memory, close the connection. 
+                self.gui.tableWidget.setItem(
+                    idx, num, QtGui.QTableWidgetItem(str(info))
+                )
+
+        # data is in-memory, close the connection.
         database.close()
 
-    def changeTable(self, *args):
-        print args
+    def changeTable(self, x, y):
+        '''
+        Stub method for what will become SQL Inserts back into the database when
+        self.gui.tableWidget emits a signal of "entryChanged()"
+        '''
+        pass
 
     def openConnectionDialog(self):
+        '''
+        Creates an instance of the connection dialog and show it.
+        '''
+
         setup_dlg = SQLDisplaySetup(self)
         setup_dlg.show()
-            
+
+    def clear_table(self):
+        '''
+        Method to clear the table.
+
+        We iterate forwards but we delete the opposite side of the table because
+        we can be safe knowing that we aren't iterating over the iterable of rows
+        whilst changing the size of the iterable.
+        '''
+        if self.gui.tableWidget.rowCount():
+            row_count = self.gui.tableWidget.rowCount()
+            for row in range(row_count+1):
+                self.gui.tableWidget.removeRow(row_count - row)
+
 if __name__ == '__main__':
-    
+
     APPLICATION = QtGui.QApplication(sys.argv)
     MAINWINDOW = MainGui()
     MAINWINDOW.show()
