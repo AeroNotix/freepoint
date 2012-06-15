@@ -5,9 +5,8 @@
 Module for making creating arguments cleaner for the argparse module
 A way to create nice **args for the add_argument function
 
-ArgumentParser.add_argument(name or flags...[, action][, nargs][, const][,
-                            default][, type][, choices][, required][, help]
-                            [, metavar][, dest])
+ArgumentParser.add_argument(name or flags...[, action][, nargs][, const][,default]
+                            [, type][, choices][, required][, help][, metavar][, dest])
 """
 
 class Argument(object):
