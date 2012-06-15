@@ -7,7 +7,7 @@ import sys
 import argparse
 import ConfigParser
 
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 import MySQLdb
 import _mysql_exceptions
@@ -67,6 +67,7 @@ class MainGui(QtGui.QMainWindow):
             self.table = RESULTS.table
             self.user = RESULTS.user
             self.using_db = RESULTS.db
+            self.populate_table()
         elif os.path.isfile(fpath):
             print 'os.path'
             # if we didn't get command line arguments check if
@@ -78,6 +79,7 @@ class MainGui(QtGui.QMainWindow):
                 self.table = confs.get("connection-1", "table")
                 self.username = confs.get("connection-1", "user")
                 self.using_db = confs.get("connection-1", "database")
+                self.populate_table()
             except ConfigParser.NoSectionError:
                 # if the file exists but it doesn't have the required section
                 # then something is wrong. So we error.
@@ -88,8 +90,6 @@ class MainGui(QtGui.QMainWindow):
             # else allow the user to enter the details via
             # the gui
             self.openConnectionDialog()
-
-        self.populate_table()
 
     def populate_table(self):
         """
@@ -157,7 +157,9 @@ class MainGui(QtGui.QMainWindow):
         '''
 
         setup_dlg = SQLDisplaySetup(self)
-        return setup_dlg.exec_()
+        self.connect(setup_dlg.gui.buttonBox, QtCore.SIGNAL('accepted()'), self.populate_table)
+        setup_dlg.exec_()
+        return
 
     def clear_table(self):
         '''
