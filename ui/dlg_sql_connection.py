@@ -32,24 +32,13 @@ class SQLDisplaySetup(QtGui.QDialog):
         '''
        
         self.hide()
-        self.parent.host = self.gui.txt_host.text()
-        self.parent.user = self.gui.txt_username.text()
-        self.parent.password = self.gui.txt_password.text()
-        self.parent.using_db = self.gui.txt_database.text()
-        self.parent.table = self.gui.txt_table.text()
-        self.parent.query = self.gui.txt_sql_entry.toPlainText()
+        self.parent.host = to_unicode(self.gui.txt_host.text())
+        self.parent.user = to_unicode(self.gui.txt_username.text())
+        self.parent.password = to_unicode(self.gui.txt_password.text())
+        self.parent.using_db = to_unicode(self.gui.txt_database.text())
+        self.parent.table = to_unicode(self.gui.txt_table.text())
+        self.parent.query = to_unicode(self.gui.txt_sql_entry.toPlainText())
         self.parent.populated = True
-
-        connection_details = {
-            'user': to_unicode(self.gui.txt_username.text()),
-            'password': to_unicode(self.gui.txt_password.text()),
-            'host': to_unicode(self.gui.txt_host.text()),
-            'using_db': to_unicode(self.gui.txt_database.text()),
-            'query': self.gui.txt_sql_entry.toPlainText(),
-            'table': self.gui.txt_table.text()
-            }
-    
-        self.parent.populate_table(**connection_details)
 
     def populate_fields(self):
         '''
