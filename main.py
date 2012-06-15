@@ -24,17 +24,17 @@ fpath = os.path.join(CWD, "conf.cfg")
 
 ## Argument creation
 PARSER = argparse.ArgumentParser()
-ARGS = [
+ARGS = (
     Argument('db', help='Database you wish to connect to'),
     Argument('password', help='Password for the database'),
     Argument('user', help='User you want to connect as'),
     Argument('table', help='Which table to connect to'),
-    Argument('host', help='Which host you want to connect to')
-]
+    Argument('host', help='Which host you want to connect to'),
+    Argument('port', help='The port you want to connect through')
+)
 
 for arg in ARGS:
     PARSER.add_argument(arg.name, **arg.data)
-
 RESULTS = PARSER.parse_args()
 
 
@@ -58,6 +58,8 @@ class MainGui(QtGui.QMainWindow):
         self.gui.setupUi(self)
         self.toolbar = self.addToolBar("Toolbar")
         self.populated = False
+        self.host = ''
+        self.port = ''
 
         if RESULTS.db:
             print 'results'
@@ -67,6 +69,7 @@ class MainGui(QtGui.QMainWindow):
             self.table = RESULTS.table
             self.user = RESULTS.user
             self.using_db = RESULTS.db
+            self.port = RESULTS.port
             self.populate_table()
         elif os.path.isfile(fpath):
             print 'os.path'
@@ -79,6 +82,7 @@ class MainGui(QtGui.QMainWindow):
                 self.table = confs.get("connection-1", "table")
                 self.username = confs.get("connection-1", "user")
                 self.using_db = confs.get("connection-1", "database")
+                self.port = confs.get("connection-1", "database")
                 self.populate_table()
             except ConfigParser.NoSectionError:
                 # if the file exists but it doesn't have the required section
@@ -101,11 +105,18 @@ class MainGui(QtGui.QMainWindow):
 
         self.clear_table()
 
-        # connect to mysql database
+        if not self.host:
+            self.host = 'localhost'
+        if not self.port:
+            self.port = 3306
+        
         try:
+            print self.port
+            # connect to mysql database
             database = MySQLdb.connect(
                 host=self.host, user=self.user,
-                passwd=self.password, db=self.using_db
+                passwd=self.password, db=self.using_db,
+                port=int(self.port)
             )
         except _mysql_exceptions.OperationalError, error:
             # on any error report to the user and return
