@@ -101,10 +101,6 @@ class MainGui(QtGui.QMainWindow):
 
         self.clear_table()
 
-        # defaulted to this, not in arg list because reasons
-        if not self.query:
-            self.query = '''SELECT * FROM %s''' % self.table
-
         # connect to mysql database
         try:
             database = MySQLdb.connect(
@@ -118,7 +114,8 @@ class MainGui(QtGui.QMainWindow):
 
         # get the headings so we can set up the table
         try:
-            headings = get_headings(database, self.query)
+            query = '''SELECT * FROM %s''' % self.table
+            headings = get_headings(database, query)
         except _mysql_exceptions.OperationalError, error:
             QtGui.QMessageBox.warning(self, "Error", str(error))
             return
@@ -130,7 +127,7 @@ class MainGui(QtGui.QMainWindow):
 
         # iterate through the query set and get the data into the table
         for idx, data in enumerate(
-                 itersql(database, self.query)):
+                 itersql(database, query)):
 
             if not data:
                 break
