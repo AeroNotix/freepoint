@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# QtSQL MySQL Viewer documentation build configuration file, created by
-# sphinx-quickstart on Thu Jun 14 17:14:26 2012.
+# QtMySQL documentation build configuration file, created by
+# sphinx-quickstart on Fri Jun 15 12:53:44 2012.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -25,7 +25,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.coverage', 'sphinx.ext.viewcode']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest', 'sphinx.ext.coverage', 'sphinx.ext.pngmath', 'sphinx.ext.mathjax', 'sphinx.ext.ifconfig', 'sphinx.ext.viewcode']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -40,8 +40,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'QtSQL MySQL Viewer'
-copyright = u'2012, Aaron France'
+project = u'QtMySQL'
+copyright = u'2012, Aaron'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'QtSQLMySQLViewerdoc'
+htmlhelp_basename = 'QtMySQLdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -183,8 +183,8 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'QtSQLMySQLViewer.tex', u'QtSQL MySQL Viewer Documentation',
-   u'Aaron France', 'manual'),
+  ('index', 'QtMySQL.tex', u'QtMySQL Documentation',
+   u'Aaron', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -213,8 +213,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'qtsqlmysqlviewer', u'QtSQL MySQL Viewer Documentation',
-     [u'Aaron France'], 1)
+    ('index', 'qtmysql', u'QtMySQL Documentation',
+     [u'Aaron'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -227,8 +227,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'QtSQLMySQLViewer', u'QtSQL MySQL Viewer Documentation',
-   u'Aaron France', 'QtSQLMySQLViewer', 'One line description of project.',
+  ('index', 'QtMySQL', u'QtMySQL Documentation',
+   u'Aaron', 'QtMySQL', 'One line description of project.',
    'Miscellaneous'),
 ]
 

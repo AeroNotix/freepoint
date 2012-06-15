@@ -77,17 +77,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/QtSQLMySQLViewer.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/QtMySQL.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/QtSQLMySQLViewer.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/QtMySQL.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/QtSQLMySQLViewer"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/QtSQLMySQLViewer"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/QtMySQL"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/QtMySQL"
 	@echo "# devhelp"
 
 epub:

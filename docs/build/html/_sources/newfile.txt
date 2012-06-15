@@ -1,0 +1,7 @@
+NewFile
+=======
+
+ere blah
+
+.. automodule:: database_viewer.table_tools.tools
+   :members:
