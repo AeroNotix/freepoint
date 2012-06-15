@@ -2,8 +2,10 @@
 intention is to make a generic GUI for interacting with a mysql database
 '''
 
+import os
 import sys
 import argparse
+import ConfigParser
 
 from PyQt4 import QtGui
 
@@ -16,13 +18,18 @@ from database_viewer.ui.dlg_sql_connection import SQLDisplaySetup
 from database_viewer.table_tools.tools import get_headings, itersql
 from database_viewer.table_tools.argument import Argument
 
+CWD = os.path.dirname(__file__)
+confs = ConfigParser.RawConfigParser()
+fpath = os.path.join(CWD, "conf.cfg")
+
 ## Argument creation
 PARSER = argparse.ArgumentParser()
 ARGS = [
     Argument('db', help='Database you wish to connect to'),
-    Argument('password', help='password for the database'),
-    Argument('user', help='user for the database'),
-    Argument('table', help='which table to connect to')
+    Argument('password', help='Password for the database'),
+    Argument('user', help='User you want to connect as'),
+    Argument('table', help='Which table to connect to'),
+    Argument('host', help='Which host you want to connect to')
 ]
 
 for arg in ARGS:
@@ -33,12 +40,17 @@ RESULTS = PARSER.parse_args()
 
 class MainGui(QtGui.QMainWindow):
     """
-    Main GUI
+    Main GUI class which creates the window, responds to user input and holds
+    the slots assigned to the class' signals.
     """
 
     def __init__(self, parent=None):
         '''
         Creation and main check
+
+        :param parent: A Qt object which is the 'owner' of this object.
+                       This is used if the parent is closed/killed therefore
+                       this object must also be killed.
         '''
 
         QtGui.QMainWindow.__init__(self, parent)
@@ -48,21 +60,38 @@ class MainGui(QtGui.QMainWindow):
         self.populated = False
 
         if RESULTS.db:
+            print 'results'
             # if we got command line arguments, open that
-            self.populate_table(user=RESULTS.user,
-                                password=RESULTS.password,
-                                using_db=RESULTS.db,
-                                table=RESULTS.table)
+            self.host = RESULTS.host
+            self.password = RESULTS.password
+            self.table = RESULTS.table
+            self.user = RESULTS.user
+            self.using_db = RESULTS.db
+        elif os.path.isfile(fpath):
+            print 'os.path'
+            # if we didn't get command line arguments check if
+            # there is a config file.
+            confs.read(fpath)
+            try:
+                self.host = confs.get("connection-1", "host")
+                self.password = confs.get("connection-1", "password")
+                self.table = confs.get("connection-1", "table")
+                self.username = confs.get("connection-1", "user")
+                self.using_db = confs.get("connection-1", "database")
+            except ConfigParser.NoSectionError:
+                # if the file exists but it doesn't have the required section
+                # then something is wrong. So we error.
+                QtGui.QMessageBox.warning(self, "Error", "Config file error",
+                                          QtGui.QMessageBox.Ok)
+                sys.exit(-1)
         else:
             # else allow the user to enter the details via
             # the gui
             self.openConnectionDialog()
 
+        self.populate_table()
 
-    def populate_table(self, host='localhost',
-                       user=None, password=None,
-                       using_db=None, table=None,
-                       query=None):
+    def populate_table(self):
         """
         Opens and displays a MySQL table
 
@@ -70,26 +99,29 @@ class MainGui(QtGui.QMainWindow):
         the data returned from the select on the passed in database.
         """
 
+        self.clear_table()
+
         # defaulted to this, not in arg list because reasons
-        if not query:
-            query = '''SELECT * FROM %s''' % table
+        if not self.query:
+            self.query = '''SELECT * FROM %s''' % self.table
 
         # connect to mysql database
         try:
             database = MySQLdb.connect(
-                host=host, user=user,
-                passwd=password, db=using_db
+                host=self.host, user=self.user,
+                passwd=self.password, db=self.using_db
             )
-
         except _mysql_exceptions.OperationalError, error:
             # on any error report to the user and return
             QtGui.QMessageBox.warning(self, "Error", str(error))
             return
 
-        self.clear_table()
-
         # get the headings so we can set up the table
-        headings = get_headings(database, query)
+        try:
+            headings = get_headings(database, self.query)
+        except _mysql_exceptions.OperationalError, error:
+            QtGui.QMessageBox.warning(self, "Error", str(error))
+            return
 
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(headings))
@@ -98,7 +130,7 @@ class MainGui(QtGui.QMainWindow):
 
         # iterate through the query set and get the data into the table
         for idx, data in enumerate(
-                 itersql(database, query)):
+                 itersql(database, self.query)):
 
             if not data:
                 break
@@ -117,7 +149,7 @@ class MainGui(QtGui.QMainWindow):
         Stub method for what will become SQL Inserts back into the database when
         self.gui.tableWidget emits a signal of "entryChanged()"
         '''
-        pass
+        print x, y
 
     def openConnectionDialog(self):
         '''
@@ -125,7 +157,7 @@ class MainGui(QtGui.QMainWindow):
         '''
 
         setup_dlg = SQLDisplaySetup(self)
-        setup_dlg.show()
+        return setup_dlg.exec_()
 
     def clear_table(self):
         '''
@@ -134,6 +166,8 @@ class MainGui(QtGui.QMainWindow):
         We iterate forwards but we delete the opposite side of the table because
         we can be safe knowing that we aren't iterating over the iterable of rows
         whilst changing the size of the iterable.
+
+        :returns: :class:`None`
         '''
         if self.gui.tableWidget.rowCount():
             row_count = self.gui.tableWidget.rowCount()
