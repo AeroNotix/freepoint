@@ -5,6 +5,7 @@ from PyQt4 import QtCore, QtGui
 from database_viewer.ui.sql_setup_UI import Ui_frm_sql_data_entry
 from database_viewer.table_tools.tools import to_unicode
 
+
 class SQLDisplaySetup(QtGui.QDialog):
 
     '''
@@ -37,7 +38,6 @@ class SQLDisplaySetup(QtGui.QDialog):
         self.parent.password = to_unicode(self.gui.txt_password.text())
         self.parent.using_db = to_unicode(self.gui.txt_database.text())
         self.parent.table = to_unicode(self.gui.txt_table.text())
-        self.parent.query = to_unicode(self.gui.txt_sql_entry.toPlainText())
         self.parent.populated = True
 
     def populate_fields(self):
@@ -51,4 +51,3 @@ class SQLDisplaySetup(QtGui.QDialog):
         self.gui.txt_password.setText(self.parent.password)
         self.gui.txt_database.setText(self.parent.using_db)
         self.gui.txt_table.setText(self.parent.table)
-        self.gui.txt_sql_entry.setText(self.parent.query)
