@@ -6,11 +6,13 @@ import os
 import sys
 import argparse
 import ConfigParser
+import urllib
 
 from PyQt4 import QtGui, QtCore
 
 import MySQLdb
 import _mysql_exceptions
+import simplejson
 
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
@@ -60,6 +62,7 @@ class MainGui(QtGui.QMainWindow):
         self.populated = False
         self.host = ''
         self.port = ''
+        self.cell_data = None
 
         if RESULTS.db:
             # if we got command line arguments, open that
@@ -122,6 +125,11 @@ class MainGui(QtGui.QMainWindow):
 
         # get the headings so we can set up the table
         try:
+            http_get = urllib.urlopen(
+                "http://localhost:12345/hello?db=%s" % self.using_db
+            )
+            json = simplejson.loads(http_get.read())
+            print json['JSON']
             query = '''SELECT * FROM %s''' % self.table
             self.headings = get_headings(self.database, query)
         except _mysql_exceptions.OperationalError, error:
@@ -213,6 +221,18 @@ class MainGui(QtGui.QMainWindow):
             row_count = self.gui.tableWidget.rowCount()
             for row in range(row_count + 1):
                 self.gui.tableWidget.removeRow(row_count - row)
+
+    def storeCell(self, xrow, ycol):
+        '''
+        When a cell is entered we store it in case the validation for the
+        data that the user enters fails.
+
+        :param xrow: :class:`Int` which is passed directly from the signal
+        :param ycol: :class:`Int` which is passed directly from the signal
+        :returns: None
+        '''
+        self.cell = self.gui.tableWidget.item(xrow, ycol).text()
+
 
 if __name__ == '__main__':
 

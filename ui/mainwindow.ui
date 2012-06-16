@@ -33,7 +33,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -108,9 +108,42 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellDoubleClicked(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>storeCell()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>453</x>
+     <y>484</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>911</x>
+     <y>759</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellEntered(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>storeCell()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>398</x>
+     <y>368</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1022</x>
+     <y>749</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeTable()</slot>
   <slot>openConnectionDialog()</slot>
+  <slot>storeCell()</slot>
  </slots>
 </ui>
