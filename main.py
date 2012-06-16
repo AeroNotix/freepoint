@@ -19,8 +19,8 @@ from qtsqlviewer.table_tools.tools import get_headings, itersql
 from qtsqlviewer.table_tools.argument import Argument
 
 CWD = os.path.dirname(__file__)
-confs = ConfigParser.RawConfigParser()
-fpath = os.path.join(CWD, "conf.cfg")
+CONFS = ConfigParser.RawConfigParser()
+FPATH = os.path.join(CWD, "conf.cfg")
 
 ## Argument creation
 PARSER = argparse.ArgumentParser()
@@ -70,17 +70,17 @@ class MainGui(QtGui.QMainWindow):
             self.using_db = RESULTS.db
             self.port = RESULTS.port
             self.populate_table()
-        elif os.path.isfile(fpath):
+        elif os.path.isfile(FPATH):
             # if we didn't get command line arguments check if
             # there is a config file.
-            confs.read(fpath)
+            CONFS.read(FPATH)
             try:
-                self.host = confs.get("connection-1", "host")
-                self.password = confs.get("connection-1", "password")
-                self.table = confs.get("connection-1", "table")
-                self.username = confs.get("connection-1", "user")
-                self.using_db = confs.get("connection-1", "database")
-                self.port = confs.get("connection-1", "database")
+                self.host = CONFS.get("connection-1", "host")
+                self.password = CONFS.get("connection-1", "password")
+                self.table = CONFS.get("connection-1", "table")
+                self.username = CONFS.get("connection-1", "user")
+                self.using_db = CONFS.get("connection-1", "database")
+                self.port = CONFS.get("connection-1", "database")
                 self.populate_table()
             except ConfigParser.NoSectionError:
                 # if the file exists but it doesn't have the required section
@@ -107,7 +107,7 @@ class MainGui(QtGui.QMainWindow):
             self.host = 'localhost'
         if not self.port:
             self.port = 3306
-        
+
         try:
             # connect to mysql database
             self.database = MySQLdb.connect(
@@ -189,7 +189,13 @@ class MainGui(QtGui.QMainWindow):
         '''
 
         setup_dlg = SQLDisplaySetup(self)
-        self.connect(setup_dlg.gui.buttonBox, QtCore.SIGNAL('accepted()'), self.populate_table)
+
+        self.connect(
+            setup_dlg.gui.buttonBox,
+            QtCore.SIGNAL('accepted()'),
+            self.populate_table
+        )
+
         setup_dlg.exec_()
         return
 
@@ -197,15 +203,15 @@ class MainGui(QtGui.QMainWindow):
         '''
         Method to clear the table.
 
-        We iterate forwards but we delete the opposite side of the table because
-        we can be safe knowing that we aren't iterating over the iterable of rows
-        whilst changing the size of the iterable.
+        We iterate forwards but we delete the opposite side of the table
+        because we can be safe knowing that we aren't iterating over the
+        iterable of rows whilst changing the size of the iterable.
 
         :returns: :class:`None`
         '''
         if self.gui.tableWidget.rowCount():
             row_count = self.gui.tableWidget.rowCount()
-            for row in range(row_count+1):
+            for row in range(row_count + 1):
                 self.gui.tableWidget.removeRow(row_count - row)
 
 if __name__ == '__main__':
