@@ -154,8 +154,14 @@ class MainGui(QtGui.QMainWindow):
 
     def changeTable(self, xrow, ycol):
         '''
-        Stub method for what will become SQL Inserts back into the database when
-        self.gui.tableWidget emits a signal of "entryChanged()"
+        When a cell is edited the data is written back into the database.
+
+        This is highly alpha code. There is no error handling, no locking.
+        Nothing. It's a work in progress.
+
+        :param xrow: :class:`Int` which is passed directly from the signal
+        :param ycol: :class:`Int` which is passed directly from the signal
+        :returns: None
         '''
 
         cur = self.database.cursor()
@@ -172,7 +178,6 @@ class MainGui(QtGui.QMainWindow):
                 )
             )
         self.database.commit()
-        print 'here'
 
     def openConnectionDialog(self):
         '''
