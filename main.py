@@ -62,7 +62,6 @@ class MainGui(QtGui.QMainWindow):
         self.port = ''
 
         if RESULTS.db:
-            print 'results'
             # if we got command line arguments, open that
             self.host = RESULTS.host
             self.password = RESULTS.password
@@ -72,7 +71,6 @@ class MainGui(QtGui.QMainWindow):
             self.port = RESULTS.port
             self.populate_table()
         elif os.path.isfile(fpath):
-            print 'os.path'
             # if we didn't get command line arguments check if
             # there is a config file.
             confs.read(fpath)
@@ -111,7 +109,6 @@ class MainGui(QtGui.QMainWindow):
             self.port = 3306
         
         try:
-            print self.port
             # connect to mysql database
             self.database = MySQLdb.connect(
                 host=self.host, user=self.user,
@@ -149,9 +146,6 @@ class MainGui(QtGui.QMainWindow):
                     idx, num, QtGui.QTableWidgetItem(str(info))
                 )
 
-        # data is in-memory, close the connection.
-#        database.close()
-
     def changeTable(self, xrow, ycol):
         '''
         When a cell is edited the data is written back into the database.
@@ -165,18 +159,28 @@ class MainGui(QtGui.QMainWindow):
         '''
 
         cur = self.database.cursor()
+
+        sql = ' '.join(
+            # we create somethings ourselves using string interpolation
+            # this is because the MySQLdb doesn't let you parameterize
+            # things like table names and column titles.
+            [
+                "UPDATE %s" % self.table,
+                "SET %s" % self.headings[ycol] + "=%s",
+                "WHERE id=%s"
+            ]
+        )
+
         cur.execute(
-            """
-            UPDATE %s
-            SET %s='%s'
-            WHERE id=%s
-            """ % (
-                self.table,
-                self.headings[ycol],
+            # we pass our SQL string as the first argument and the second
+            # argument are the strings to parameterize into the first.
+            sql,
+            (
                 self.gui.tableWidget.item(xrow, ycol).text(),
                 self.gui.tableWidget.item(xrow, 0).text()
-                )
             )
+        )
+
         self.database.commit()
 
     def openConnectionDialog(self):
