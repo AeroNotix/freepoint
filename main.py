@@ -12,11 +12,11 @@ from PyQt4 import QtGui, QtCore
 import MySQLdb
 import _mysql_exceptions
 
-from database_viewer.ui.mainwindow_UI import Ui_MainWindow
-from database_viewer.ui.dlg_sql_connection import SQLDisplaySetup
+from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
+from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 
-from database_viewer.table_tools.tools import get_headings, itersql
-from database_viewer.table_tools.argument import Argument
+from qtsqlviewer.table_tools.tools import get_headings, itersql
+from qtsqlviewer.table_tools.argument import Argument
 
 CWD = os.path.dirname(__file__)
 confs = ConfigParser.RawConfigParser()
@@ -113,7 +113,7 @@ class MainGui(QtGui.QMainWindow):
         try:
             print self.port
             # connect to mysql database
-            database = MySQLdb.connect(
+            self.database = MySQLdb.connect(
                 host=self.host, user=self.user,
                 passwd=self.password, db=self.using_db,
                 port=int(self.port)
@@ -126,19 +126,19 @@ class MainGui(QtGui.QMainWindow):
         # get the headings so we can set up the table
         try:
             query = '''SELECT * FROM %s''' % self.table
-            headings = get_headings(database, query)
+            self.headings = get_headings(self.database, query)
         except _mysql_exceptions.OperationalError, error:
             QtGui.QMessageBox.warning(self, "Error", str(error))
             return
 
         # set the column size according to the headings
-        self.gui.tableWidget.setColumnCount(len(headings))
+        self.gui.tableWidget.setColumnCount(len(self.headings))
         # set the labels to the column names
-        self.gui.tableWidget.setHorizontalHeaderLabels(headings)
+        self.gui.tableWidget.setHorizontalHeaderLabels(self.headings)
 
         # iterate through the query set and get the data into the table
         for idx, data in enumerate(
-                 itersql(database, query)):
+                 itersql(self.database, query)):
 
             if not data:
                 break
@@ -150,14 +150,29 @@ class MainGui(QtGui.QMainWindow):
                 )
 
         # data is in-memory, close the connection.
-        database.close()
+#        database.close()
 
-    def changeTable(self, x, y):
+    def changeTable(self, xrow, ycol):
         '''
         Stub method for what will become SQL Inserts back into the database when
         self.gui.tableWidget emits a signal of "entryChanged()"
         '''
-        print x, y
+
+        cur = self.database.cursor()
+        cur.execute(
+            """
+            UPDATE %s
+            SET %s='%s'
+            WHERE id=%s
+            """ % (
+                self.table,
+                self.headings[ycol],
+                self.gui.tableWidget.item(xrow, ycol).text(),
+                self.gui.tableWidget.item(xrow, 0).text()
+                )
+            )
+        self.database.commit()
+        print 'here'
 
     def openConnectionDialog(self):
         '''
