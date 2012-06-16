@@ -1,9 +1,7 @@
-import sys
+from PyQt4 import QtGui
 
-from PyQt4 import QtCore, QtGui
-
-from database_viewer.ui.sql_setup_UI import Ui_frm_sql_data_entry
-from database_viewer.table_tools.tools import to_unicode
+from qtsqlviewer.ui.sql_setup_UI import Ui_frm_sql_data_entry
+from qtsqlviewer.table_tools.tools import to_unicode
 
 
 class SQLDisplaySetup(QtGui.QDialog):
