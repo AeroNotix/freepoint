@@ -1,23 +1,20 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hoisie/web"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 )
 
-func databaseParameters(ctx *web.Context, dbname string) string {
-
-	if dbname == "" {
-		return "Error: No database selected"
-	}
+func init() {
 
 	db := mysql.New(
 		"tcp",
 		"",
 		"127.0.0.1:3306",
 		"aero",
-		"---------",
+		"--------",
 		"db_freepoint",
 	)
 
@@ -26,8 +23,19 @@ func databaseParameters(ctx *web.Context, dbname string) string {
 		panic(err)
 	}
 
+}
+
+func databaseParameters(ctx *web.Context, dbname string) string {
+
+	if dbname == "" {
+		return "Error: No database selected"
+	}
+
 	// need to find the parameterization syntax
-	sqlStr := "SELECT * FROM tbl_metadata WHERE `tablename`=\"" + dbname + "\""
+	sqlStr := fmt.Sprintf(
+		"SELECT * FROM tbl_metadata WHERE `tablename`=\"%s\"", dbname,
+	)
+
 	rows, res, err := db.Query(sqlStr)
 
 	if err != nil {
