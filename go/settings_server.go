@@ -43,18 +43,17 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	*/
 
 	// write some test json to the db
-	io.WriteString(w, "{\"JSON\": 123123}")
+	io.WriteString(w, "{\"user_id\":}")
 }
 
 func Root(w http.ResponseWriter, req *http.Request) {
-	fmt.Println("in root")
-	fmt.Println("Here")
 	io.WriteString(w, "pong")
 }
 
 func main() {
 	http.HandleFunc("/", Root)
-	http.HandleFunc("/hello", databaseParameters)
+	http.HandleFunc("/databaseParameters", databaseParameters)
+
 	err := http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
