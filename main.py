@@ -19,6 +19,7 @@ from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 
 from qtsqlviewer.table_tools.tools import get_headings, itersql, table_wrapper
 from qtsqlviewer.table_tools.argument import Argument
+from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
 
 CWD = os.path.dirname(__file__)
 CONFS = ConfigParser.RawConfigParser()
@@ -178,7 +179,17 @@ class MainGui(QtGui.QMainWindow):
         :returns: None
         '''
 
-        self.reconnect()
+        print self.headings[ycol]
+        
+        try:
+            self.reconnect()
+        except _mysql_exceptions.OperationalError as error:
+            if error[0] == 2003:
+                self.show_message("Cannot connect to database", time=10000)
+                return
+            else:
+                raise
+
         cur = self.database.cursor()
         sql = ' '.join(
             # we create somethings ourselves using string interpolation
@@ -199,8 +210,15 @@ class MainGui(QtGui.QMainWindow):
                 self.gui.tableWidget.item(xrow, 0).text()
             )
         )
-        self.database.commit()
-        self.database.close()
+
+        try:
+            self.database.commit()
+            self.database.close()
+        except _mysql_exceptions.OperationalError as error:
+            self.show_message(mysqlerror(error), time=10000)
+            return
+                
+        self.show_message("Data has been saved to the database")
 
     def openConnectionDialog(self):
         '''
@@ -245,9 +263,16 @@ class MainGui(QtGui.QMainWindow):
         self.cell = self.gui.tableWidget.item(xrow, ycol).text()
 
 
+    def show_message(self, message, time=1000):
+        '''
+        Method which sets the status message for a period of time
+        '''
+        self.gui.statusbar.showMessage(message, time)
+
 if __name__ == '__main__':
 
     APPLICATION = QtGui.QApplication(sys.argv)
     MAINWINDOW = MainGui()
+    MAINWINDOW.setStatusBar(MAINWINDOW.gui.statusbar)
     MAINWINDOW.show()
     sys.exit(APPLICATION.exec_())
