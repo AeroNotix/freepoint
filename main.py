@@ -17,7 +17,7 @@ import simplejson
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 
-from qtsqlviewer.table_tools.tools import get_headings, itersql
+from qtsqlviewer.table_tools.tools import get_headings, itersql, table_wrapper
 from qtsqlviewer.table_tools.argument import Argument
 
 CWD = os.path.dirname(__file__)
@@ -63,6 +63,7 @@ class MainGui(QtGui.QMainWindow):
         self.host = ''
         self.port = ''
         self.cell_data = None
+        self.param_url = "http://localhost:12345/params/%s"
 
         if RESULTS.db:
             # if we got command line arguments, open that
@@ -96,6 +97,15 @@ class MainGui(QtGui.QMainWindow):
             # the gui
             self.openConnectionDialog()
 
+    def reconnect(self):
+        # connect to mysql database
+            self.database = MySQLdb.connect(
+                host=self.host, user=self.user,
+                passwd=self.password, db=self.using_db,
+                port=int(self.port)
+            )
+
+    @table_wrapper
     def populate_table(self):
         """
         Opens and displays a MySQL table
@@ -112,25 +122,26 @@ class MainGui(QtGui.QMainWindow):
             self.port = 3306
 
         try:
-            # connect to mysql database
-            self.database = MySQLdb.connect(
-                host=self.host, user=self.user,
-                passwd=self.password, db=self.using_db,
-                port=int(self.port)
-            )
+            self.reconnect()
         except _mysql_exceptions.OperationalError, error:
             # on any error report to the user and return
             QtGui.QMessageBox.warning(self, "Error", str(error))
             return
 
-        # get the headings so we can set up the table
         try:
             http_get = urllib.urlopen(
-                "http://localhost:12345/hello?db=%s" % self.using_db
+                # string interpolation
+                self.param_url % self.using_db
             )
             json = simplejson.loads(http_get.read())
-            print json['JSON']
+        except IOError as error:
+            print "Error: %s" % error
+
+        # get the headings so we can set up the table
+        try:
             query = '''SELECT * FROM %s''' % self.table
+            cursor = self.database.cursor()
+            queryset = [result for result in itersql(self.database, query)]
             self.headings = get_headings(self.database, query)
         except _mysql_exceptions.OperationalError, error:
             QtGui.QMessageBox.warning(self, "Error", str(error))
@@ -142,9 +153,8 @@ class MainGui(QtGui.QMainWindow):
         self.gui.tableWidget.setHorizontalHeaderLabels(self.headings)
 
         # iterate through the query set and get the data into the table
-        for idx, data in enumerate(
-                 itersql(self.database, query)):
-
+        # for idx, data in enumerate(itersql(self.database, query)):
+        for idx, data in enumerate(queryset):
             if not data:
                 break
 
@@ -153,6 +163,8 @@ class MainGui(QtGui.QMainWindow):
                 self.gui.tableWidget.setItem(
                     idx, num, QtGui.QTableWidgetItem(str(info))
                 )
+        # close the connection
+        self.database.close()
 
     def changeTable(self, xrow, ycol):
         '''
@@ -166,8 +178,8 @@ class MainGui(QtGui.QMainWindow):
         :returns: None
         '''
 
+        self.reconnect()
         cur = self.database.cursor()
-
         sql = ' '.join(
             # we create somethings ourselves using string interpolation
             # this is because the MySQLdb doesn't let you parameterize
@@ -178,7 +190,6 @@ class MainGui(QtGui.QMainWindow):
                 "WHERE id=%s"
             ]
         )
-
         cur.execute(
             # we pass our SQL string as the first argument and the second
             # argument are the strings to parameterize into the first.
@@ -188,8 +199,8 @@ class MainGui(QtGui.QMainWindow):
                 self.gui.tableWidget.item(xrow, 0).text()
             )
         )
-
         self.database.commit()
+        self.database.close()
 
     def openConnectionDialog(self):
         '''

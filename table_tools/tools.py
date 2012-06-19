@@ -4,8 +4,10 @@ databases and Qt applications
 """
 
 import contextlib
-import MySQLdb
+import functools
 
+import MySQLdb
+from PyQt4 import QtCore
 
 def get_headings(db, query):
     '''
@@ -23,10 +25,10 @@ def get_headings(db, query):
     cursor = db.cursor()
     cursor.execute('''CREATE TEMPORARY TABLE temp (%s)''' % query)
     cursor.execute('''SHOW COLUMNS FROM temp''')
-    
     headings = cursor.fetchall()
     ioheadings = []
     [ioheadings.append(item[0]) for item in headings]
+    cursor.execute('''DROP TABLE temp''')
     return ioheadings
 
 
@@ -59,13 +61,9 @@ def itersql(db, query):
     
     cursor = db.cursor()
     cursor.execute("%s" % query)
-    
-    while 1:
-        try:
-            yield cursor.fetchone()
-        except:
-            break
-            
+
+    for row in cursor.fetchall():
+        yield row
         
 def to_unicode(string, encoding='utf-8'):
     '''
@@ -75,7 +73,51 @@ def to_unicode(string, encoding='utf-8'):
     :param string: :class:`string` which needs to be converted
     :param encoding: :class:`string` which is a encoding type.
     '''
-
     return unicode(string).encode(encoding)
 
-    
+def table_wrapper(func):
+    '''
+    Wrapper function to enable or disable signals.
+
+    Disables:
+        cellChanged(int, int)
+        cellDoubleClicked(int, int)
+        cellEntered(int, int)
+
+    During table population we insert rows from the database
+    programmatically. This causes Qt to fire off signals
+    associated with the functions we are calling. This in
+    turn causes the callbacks assigned to those signals to
+    be fired. This causes a problem when those functions
+    have side-effects such as writing to a database.
+    '''
+
+    @functools.wraps(func)
+    def inner(obj, *args, **kwargs):
+
+        # Disable signals
+        obj.disconnect(obj.gui.tableWidget,
+                       QtCore.SIGNAL("cellChanged(int, int)"),
+                       obj.changeTable)
+        obj.disconnect(obj.gui.tableWidget,
+                       QtCore.SIGNAL("cellDoubleClicked(int, int)"),
+                       obj.storeCell)
+        obj.disconnect(obj.gui.tableWidget,
+                       QtCore.SIGNAL("cellEntered(int, int)"),
+                       obj.storeCell)
+
+        # Call the original function
+        func(obj, *args, **kwargs)
+
+        # Enable signals
+        obj.connect(obj.gui.tableWidget,
+                       QtCore.SIGNAL("cellChanged(int, int)"),
+                       obj.changeTable)
+        obj.connect(obj.gui.tableWidget,
+                       QtCore.SIGNAL("cellDoubleClicked(int, int)"),
+                       obj.storeCell)
+        obj.connect(obj.gui.tableWidget,
+                       QtCore.SIGNAL("cellEntered(int, int)"),
+                       obj.storeCell)
+
+    return inner
