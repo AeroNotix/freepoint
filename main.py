@@ -22,8 +22,6 @@ from qtsqlviewer.table_tools.argument import Argument
 from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
 
 CWD = os.path.dirname(__file__)
-CONFS = ConfigParser.RawConfigParser()
-FPATH = os.path.join(CWD, "conf.cfg")
 
 ## Argument creation
 PARSER = argparse.ArgumentParser()
@@ -63,7 +61,9 @@ class MainGui(QtGui.QMainWindow):
         self.populated = False
         self.cell_data = None
         self.param_url = "http://localhost:12345/params/%s"
-
+        self.config = ConfigParser.RawConfigParser()
+        self.number_of_connections = 0
+        self.configpath = os.path.join(CWD, "conf.cfg")
         if RESULTS.db:
             # if we got command line arguments, open that
             self.database = Database(
@@ -75,30 +75,36 @@ class MainGui(QtGui.QMainWindow):
                 RESULTS.port
             )
             self.populate_table()
-        elif os.path.isfile(FPATH):
+        elif os.path.isfile(self.configpath):
             # if we didn't get command line arguments check if
             # there is a config file.
-            CONFS.read(FPATH)
+            self.config.read(self.configpath)
             try:
-                host = CONFS.get("connection-1", "host")
-                port = CONFS.get("connection-1", "database")
+                host = self.config.get("connection-1", "host")
+                port = self.config.get("connection-1", "port")
                 if not host:
                     host = "localhost"
                 if not port:
                     port = 3306
                 self.database = Database(
                     host,
-                    CONFS.get("connection-1", "user"),
-                    CONFS.get("connection-1", "password"),
-                    CONFS.get("connection-1", "database"),
-                    CONFS.get("connection-1", "table"),
+                    self.config.get("connection-1", "username"),
+                    self.config.get("connection-1", "password"),
+                    self.config.get("connection-1", "database"),
+                    self.config.get("connection-1", "table"),
                     port
                     )
+                # find out how many connections are saved
+                # in the config file
+                while 1:
+                    if not self.config.has_section("connection-%s" % self.number_of_connections):
+                        break
+                    self.number_of_connections += 1
                 self.populate_table()
-            except ConfigParser.NoSectionError:
+            except ConfigParser.NoSectionError as error:
                 # if the file exists but it doesn't have the required section
                 # then something is wrong. So we error.
-                QtGui.QMessageBox.warning(self, "Error", "Config file error",
+                QtGui.QMessageBox.warning(self, "Error", "Config file error: %s"  % str(error),
                                           QtGui.QMessageBox.Ok)
                 sys.exit(-1)
         else:
