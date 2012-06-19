@@ -1,21 +1,19 @@
-import ConfigParser
-
 from PyQt4 import QtGui
 
 from qtsqlviewer.ui.sql_setup_UI import Ui_frm_sql_data_entry
 from qtsqlviewer.table_tools.tools import to_unicode, Database
 
 class SQLDisplaySetup(QtGui.QDialog):
-    '''
+    """
     Form for entering SQL information,
 
     The GUI method opposed to the command line arguments
-    '''
+    """
 
     def __init__(self, parent=None):
-        '''
+        """
         Creation of the dlg
-        '''
+        """
         QtGui.QWidget.__init__(self, parent)
         self.gui = Ui_frm_sql_data_entry()
         self.gui.setupUi(self)
@@ -24,9 +22,9 @@ class SQLDisplaySetup(QtGui.QDialog):
             self.populate_fields()
 
     def accept(self):
-        '''
+        """
         When the dlg's OK button is pressed
-        '''
+        """
 
         self.hide()
 
@@ -48,26 +46,29 @@ class SQLDisplaySetup(QtGui.QDialog):
 
         self.parent.populated = True
 
-        for section in range(self.parent.number_of_connections):
-            section = str(section)
-            if not all(
-                host == self.parent.config.get("connection-%s" % section, "host"),
-                database == self.parent.config.get("connection-%s" % section, "database")
-                ):
+        sections = len(self.parent.config.sections())
+        for num in range(sections):
+            num = str(num)
+            if not all([
+                host == self.parent.config.get("connection-%s" % num, "host"),
+                database == self.parent.config.get("connection-%s" % num, "database")
+                ]):
                 continue
             else:
                 return
 
-        new_section = "connection-%s" % str(self.parent.number_of_connections + 1)
-        self.parent.config.add_section(new_section)
-        self.parent.config.set(new_section, "host", host)
-        self.parent.config.set(new_section, "username", username)
-        self.parent.config.set(new_section, "password", password)
-        self.parent.config.set(new_section, "database", database)
-        self.parent.config.set(new_section, "table", table)
-        self.parent.config.set(new_section, "port", port)
-        with open(self.parent.configpath, 'wb') as configout:
-            self.parent.config.write(configout)
+        new_section = "connection-%s" % str(sections)
+
+        if not self.parent.config.has_section(new_section):
+            self.parent.config.add_section(new_section)
+            self.parent.config.set(new_section, "host", host)
+            self.parent.config.set(new_section, "username", username)
+            self.parent.config.set(new_section, "password", password)
+            self.parent.config.set(new_section, "database", database)
+            self.parent.config.set(new_section, "table", table)
+            self.parent.config.set(new_section, "port", port)
+            with open(self.parent.configpath, 'wb') as configout:
+                self.parent.config.write(configout)
 
     def populate_fields(self):
         '''

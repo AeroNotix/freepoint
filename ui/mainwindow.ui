@@ -44,7 +44,20 @@
     <addaction name="actionQuit"/>
     <addaction name="actionConnection_details"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <widget class="QMenu" name="menuSelect_Table">
+     <property name="title">
+      <string>Select Table</string>
+     </property>
+    </widget>
+    <addaction name="menuSelect_Table"/>
+    <addaction name="actionManage_Connections_2"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
@@ -54,7 +67,22 @@
   </action>
   <action name="actionConnection_details">
    <property name="text">
-    <string>Connection details</string>
+    <string>Add Connection</string>
+   </property>
+  </action>
+  <action name="actionManage_Connections">
+   <property name="text">
+    <string>Manage Connections</string>
+   </property>
+  </action>
+  <action name="actionSomething">
+   <property name="text">
+    <string>Something</string>
+   </property>
+  </action>
+  <action name="actionManage_Connections_2">
+   <property name="text">
+    <string>Manage Connections</string>
    </property>
   </action>
  </widget>

@@ -124,7 +124,6 @@ def table_wrapper(func):
 
 
 class Database(object):
-
     '''
     This class encapsulates all the interactions between the client code
     and the database.

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Sat Jun 16 20:31:48 2012
+# Created: Tue Jun 19 22:35:26 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -33,6 +33,10 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuEdit = QtGui.QMenu(self.menubar)
+        self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
+        self.menuSelect_Table = QtGui.QMenu(self.menuEdit)
+        self.menuSelect_Table.setObjectName(_fromUtf8("menuSelect_Table"))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -41,10 +45,18 @@ class Ui_MainWindow(object):
         self.actionQuit.setObjectName(_fromUtf8("actionQuit"))
         self.actionConnection_details = QtGui.QAction(MainWindow)
         self.actionConnection_details.setObjectName(_fromUtf8("actionConnection_details"))
+        self.actionManage_Connections = QtGui.QAction(MainWindow)
+        self.actionManage_Connections.setObjectName(_fromUtf8("actionManage_Connections"))
+        self.actionSomething = QtGui.QAction(MainWindow)
+        self.actionSomething.setObjectName(_fromUtf8("actionSomething"))
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menuFile.addAction(self.actionConnection_details)
+        self.menuSelect_Table.addAction(self.actionSomething)
+        self.menuEdit.addAction(self.menuSelect_Table.menuAction())
+        self.menuEdit.addAction(self.actionManage_Connections)
         self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuEdit.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL(_fromUtf8("cellChanged(int,int)")), MainWindow.changeTable)
@@ -57,6 +69,10 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuEdit.setTitle(QtGui.QApplication.translate("MainWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuSelect_Table.setTitle(QtGui.QApplication.translate("MainWindow", "Select Table", None, QtGui.QApplication.UnicodeUTF8))
         self.actionQuit.setText(QtGui.QApplication.translate("MainWindow", "Quit.", None, QtGui.QApplication.UnicodeUTF8))
         self.actionConnection_details.setText(QtGui.QApplication.translate("MainWindow", "Connection details", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionManage_Connections.setText(QtGui.QApplication.translate("MainWindow", "Manage Connections", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSomething.setText(QtGui.QApplication.translate("MainWindow", "Something", None, QtGui.QApplication.UnicodeUTF8))
 

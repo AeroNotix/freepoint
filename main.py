@@ -1,6 +1,6 @@
-'''
+"""
 intention is to make a generic GUI for interacting with a mysql database
-'''
+"""
 
 import os
 import sys
@@ -10,14 +10,13 @@ import urllib
 
 from PyQt4 import QtGui, QtCore
 
-import MySQLdb
 import _mysql_exceptions
 import simplejson
 
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 
-from qtsqlviewer.table_tools.tools import get_headings, itersql, table_wrapper, Database
+from qtsqlviewer.table_tools.tools import get_headings, table_wrapper, Database
 from qtsqlviewer.table_tools.argument import Argument
 from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
 
@@ -30,8 +29,10 @@ ARGS = (
     Argument('password', help='Password for the database', default=''),
     Argument('user', help='User you want to connect as', default=''),
     Argument('table', help='Which table to connect to'),
-    Argument('host', help='Which host you want to connect to', default="localhost"),
-    Argument('port', help='The port you want to connect through', default=3306)
+    Argument('host', help='Which host you want to connect to',
+             default="localhost"),
+    Argument('port', help='The port you want to connect through',
+             default=3306)
 )
 
 for arg in ARGS:
@@ -46,24 +47,24 @@ class MainGui(QtGui.QMainWindow):
     """
 
     def __init__(self, parent=None):
-        '''
+        """
         Creation and main check
 
         :param parent: A Qt object which is the 'owner' of this object.
                        This is used if the parent is closed/killed therefore
                        this object must also be killed.
-        '''
+        """
 
         QtGui.QMainWindow.__init__(self, parent)
         self.gui = Ui_MainWindow()
         self.gui.setupUi(self)
         self.toolbar = self.addToolBar("Toolbar")
         self.populated = False
-        self.cell_data = None
+        self.cell = ''
         self.param_url = "http://localhost:12345/params/%s"
         self.config = ConfigParser.RawConfigParser()
-        self.number_of_connections = 0
         self.configpath = os.path.join(CWD, "conf.cfg")
+
         if RESULTS.db:
             # if we got command line arguments, open that
             self.database = Database(
@@ -80,47 +81,32 @@ class MainGui(QtGui.QMainWindow):
             # there is a config file.
             self.config.read(self.configpath)
             try:
-                host = self.config.get("connection-1", "host")
-                port = self.config.get("connection-1", "port")
+                host = self.config.get("connection-0", "host")
+                port = self.config.get("connection-0", "port")
                 if not host:
                     host = "localhost"
                 if not port:
                     port = 3306
                 self.database = Database(
                     host,
-                    self.config.get("connection-1", "username"),
-                    self.config.get("connection-1", "password"),
-                    self.config.get("connection-1", "database"),
-                    self.config.get("connection-1", "table"),
+                    self.config.get("connection-0", "username"),
+                    self.config.get("connection-0", "password"),
+                    self.config.get("connection-0", "database"),
+                    self.config.get("connection-0", "table"),
                     port
                     )
-                # find out how many connections are saved
-                # in the config file
-                while 1:
-                    if not self.config.has_section("connection-%s" % self.number_of_connections):
-                        break
-                    self.number_of_connections += 1
                 self.populate_table()
             except ConfigParser.NoSectionError as error:
                 # if the file exists but it doesn't have the required section
                 # then something is wrong. So we error.
-                QtGui.QMessageBox.warning(self, "Error", "Config file error: %s"  % str(error),
+                QtGui.QMessageBox.warning(self,
+                                          "Error",
+                                          "Config file error: %s" % str(error),
                                           QtGui.QMessageBox.Ok)
-                sys.exit(-1)
         else:
             # else allow the user to enter the details via
             # the gui
             self.openConnectionDialog()
-
-    def reconnect(self):
-        # connect to mysql database
-            self.database = MySQLdb.connect(
-                host=self.host, user=self.user,
-                passwd=self.password, db=self.using_db,
-                port=int(self.port),
-                charset="utf8",
-                use_unicode=True
-            )
 
     @table_wrapper
     def populate_table(self):
@@ -151,7 +137,7 @@ class MainGui(QtGui.QMainWindow):
 
         # get the headings so we can set up the table
         try:
-            query = '''SELECT * FROM %s''' % self.database.table
+            query = """SELECT * FROM %s""" % self.database.table
             queryset = self.database.query(query)
             self.headings = get_headings(self.database, query)
         except _mysql_exceptions.OperationalError, error:
@@ -179,7 +165,7 @@ class MainGui(QtGui.QMainWindow):
         self.populated = True
 
     def changeTable(self, xrow, ycol):
-        '''
+        """
         When a cell is edited the data is written back into the database.
 
         This is highly alpha code. There is no error handling, no locking.
@@ -188,8 +174,8 @@ class MainGui(QtGui.QMainWindow):
         :param xrow: :class:`Int` which is passed directly from the signal
         :param ycol: :class:`Int` which is passed directly from the signal
         :returns: None
-        '''
-        
+        """
+
         try:
             self.database.connect()
         except _mysql_exceptions.OperationalError as error:
@@ -230,9 +216,9 @@ class MainGui(QtGui.QMainWindow):
         self.show_message("Data has been saved to the database")
 
     def openConnectionDialog(self):
-        '''
+        """
         Creates an instance of the connection dialog and shows it.
-        '''
+        """
 
         setup_dlg = SQLDisplaySetup(self)
 
@@ -246,7 +232,7 @@ class MainGui(QtGui.QMainWindow):
         return
 
     def clear_table(self):
-        '''
+        """
         Method to clear the table.
 
         We iterate forwards but we delete the opposite side of the table
@@ -254,29 +240,31 @@ class MainGui(QtGui.QMainWindow):
         iterable of rows whilst changing the size of the iterable.
 
         :returns: :class:`None`
-        '''
+        """
         if self.gui.tableWidget.rowCount():
             row_count = self.gui.tableWidget.rowCount()
             for row in range(row_count + 1):
                 self.gui.tableWidget.removeRow(row_count - row)
 
     def storeCell(self, xrow, ycol):
-        '''
+        """
         When a cell is entered we store it in case the validation for the
         data that the user enters fails.
 
         :param xrow: :class:`Int` which is passed directly from the signal
         :param ycol: :class:`Int` which is passed directly from the signal
         :returns: None
-        '''
+        """
         self.cell = self.gui.tableWidget.item(xrow, ycol).text()
 
-
     def show_message(self, message, time=1000):
-        '''
+        """
         Method which sets the status message for a period of time
-        '''
+        """
         self.gui.statusbar.showMessage(message, time)
+
+    def menuActions(self):
+        pass
 
 if __name__ == '__main__':
 
