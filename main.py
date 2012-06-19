@@ -170,6 +170,7 @@ class MainGui(QtGui.QMainWindow):
                 )
         # close the connection
         self.database.close()
+        self.populated = True
 
     def changeTable(self, xrow, ycol):
         '''
