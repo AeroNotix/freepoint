@@ -16,7 +16,7 @@ class Argument(object):
     """
 
     def __init__(self, name, prefix='-', choices=None, required=False,
-                 help='',type=str):
+                 help='',type=str, default=None):
 
         """
         Just creates a dict that we can access for kwarg style
@@ -25,9 +25,19 @@ class Argument(object):
         i.e. (parser.add_argument(Argument.names, **Argument.data)
         
         """
-        
         self.name = prefix+name
-        self.data = dict(type=type,
-                         choices=choices,
-                         required=required,
-                         help=help)
+        if default == '':
+            self.data = dict(
+                type=type,
+                choices=choices,
+                required=required,
+                help=help,
+                default=''
+                )
+        else:
+            self.data = dict(
+                type=type,
+                choices=choices,
+                required=required,
+                help=help,
+            )
