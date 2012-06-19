@@ -17,7 +17,7 @@ import simplejson
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 
-from qtsqlviewer.table_tools.tools import get_headings, itersql, table_wrapper
+from qtsqlviewer.table_tools.tools import get_headings, itersql, table_wrapper, Database
 from qtsqlviewer.table_tools.argument import Argument
 from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
 
@@ -29,11 +29,11 @@ FPATH = os.path.join(CWD, "conf.cfg")
 PARSER = argparse.ArgumentParser()
 ARGS = (
     Argument('db', help='Database you wish to connect to'),
-    Argument('password', help='Password for the database'),
-    Argument('user', help='User you want to connect as'),
+    Argument('password', help='Password for the database', default=''),
+    Argument('user', help='User you want to connect as', default=''),
     Argument('table', help='Which table to connect to'),
-    Argument('host', help='Which host you want to connect to'),
-    Argument('port', help='The port you want to connect through')
+    Argument('host', help='Which host you want to connect to', default="localhost"),
+    Argument('port', help='The port you want to connect through', default=3306)
 )
 
 for arg in ARGS:
@@ -61,31 +61,39 @@ class MainGui(QtGui.QMainWindow):
         self.gui.setupUi(self)
         self.toolbar = self.addToolBar("Toolbar")
         self.populated = False
-        self.host = ''
-        self.port = ''
         self.cell_data = None
         self.param_url = "http://localhost:12345/params/%s"
 
         if RESULTS.db:
             # if we got command line arguments, open that
-            self.host = RESULTS.host
-            self.password = RESULTS.password
-            self.table = RESULTS.table
-            self.user = RESULTS.user
-            self.using_db = RESULTS.db
-            self.port = RESULTS.port
+            self.database = Database(
+                RESULTS.host,
+                RESULTS.user,
+                RESULTS.password,
+                RESULTS.db,
+                RESULTS.table,
+                RESULTS.port
+            )
             self.populate_table()
         elif os.path.isfile(FPATH):
             # if we didn't get command line arguments check if
             # there is a config file.
             CONFS.read(FPATH)
             try:
-                self.host = CONFS.get("connection-1", "host")
-                self.password = CONFS.get("connection-1", "password")
-                self.table = CONFS.get("connection-1", "table")
-                self.username = CONFS.get("connection-1", "user")
-                self.using_db = CONFS.get("connection-1", "database")
-                self.port = CONFS.get("connection-1", "database")
+                host = CONFS.get("connection-1", "host")
+                port = CONFS.get("connection-1", "database")
+                if not host:
+                    host = "localhost"
+                if not port:
+                    port = 3306
+                self.database = Database(
+                    host,
+                    CONFS.get("connection-1", "user"),
+                    CONFS.get("connection-1", "password"),
+                    CONFS.get("connection-1", "database"),
+                    CONFS.get("connection-1", "table"),
+                    port
+                    )
                 self.populate_table()
             except ConfigParser.NoSectionError:
                 # if the file exists but it doesn't have the required section
@@ -103,7 +111,9 @@ class MainGui(QtGui.QMainWindow):
             self.database = MySQLdb.connect(
                 host=self.host, user=self.user,
                 passwd=self.password, db=self.using_db,
-                port=int(self.port)
+                port=int(self.port),
+                charset="utf8",
+                use_unicode=True
             )
 
     @table_wrapper
@@ -117,13 +127,8 @@ class MainGui(QtGui.QMainWindow):
 
         self.clear_table()
 
-        if not self.host:
-            self.host = 'localhost'
-        if not self.port:
-            self.port = 3306
-
         try:
-            self.reconnect()
+            self.database.connect()
         except _mysql_exceptions.OperationalError, error:
             # on any error report to the user and return
             QtGui.QMessageBox.warning(self, "Error", str(error))
@@ -132,7 +137,7 @@ class MainGui(QtGui.QMainWindow):
         try:
             http_get = urllib.urlopen(
                 # string interpolation
-                self.param_url % self.using_db
+                self.param_url % self.database.using_db
             )
             json = simplejson.loads(http_get.read())
         except IOError as error:
@@ -140,9 +145,8 @@ class MainGui(QtGui.QMainWindow):
 
         # get the headings so we can set up the table
         try:
-            query = '''SELECT * FROM %s''' % self.table
-            cursor = self.database.cursor()
-            queryset = [result for result in itersql(self.database, query)]
+            query = '''SELECT * FROM %s''' % self.database.table
+            queryset = self.database.query(query)
             self.headings = get_headings(self.database, query)
         except _mysql_exceptions.OperationalError, error:
             QtGui.QMessageBox.warning(self, "Error", str(error))
@@ -162,7 +166,7 @@ class MainGui(QtGui.QMainWindow):
             self.gui.tableWidget.insertRow(idx)
             for num, info in enumerate(data):
                 self.gui.tableWidget.setItem(
-                    idx, num, QtGui.QTableWidgetItem(str(info))
+                    idx, num, QtGui.QTableWidgetItem(unicode(info))
                 )
         # close the connection
         self.database.close()
@@ -178,11 +182,9 @@ class MainGui(QtGui.QMainWindow):
         :param ycol: :class:`Int` which is passed directly from the signal
         :returns: None
         '''
-
-        print self.headings[ycol]
         
         try:
-            self.reconnect()
+            self.database.connect()
         except _mysql_exceptions.OperationalError as error:
             if error[0] == 2003:
                 self.show_message("Cannot connect to database", time=10000)
@@ -196,7 +198,7 @@ class MainGui(QtGui.QMainWindow):
             # this is because the MySQLdb doesn't let you parameterize
             # things like table names and column titles.
             [
-                "UPDATE %s" % self.table,
+                "UPDATE %s" % self.database.table,
                 "SET %s" % self.headings[ycol] + "=%s",
                 "WHERE id=%s"
             ]
@@ -217,12 +219,12 @@ class MainGui(QtGui.QMainWindow):
         except _mysql_exceptions.OperationalError as error:
             self.show_message(mysqlerror(error), time=10000)
             return
-                
+
         self.show_message("Data has been saved to the database")
 
     def openConnectionDialog(self):
         '''
-        Creates an instance of the connection dialog and show it.
+        Creates an instance of the connection dialog and shows it.
         '''
 
         setup_dlg = SQLDisplaySetup(self)

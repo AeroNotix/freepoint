@@ -62,4 +62,7 @@ MYSQL_ERRORS = {
 }
 
 def mysqlerror(errorstring):
+    '''
+    Returns the Error string associated with the code
+    '''
     return MYSQL_ERRORS[errorstring[0]]

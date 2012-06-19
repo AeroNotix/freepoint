@@ -60,7 +60,7 @@ def itersql(db, query):
     '''
     
     cursor = db.cursor()
-    cursor.execute("%s" % query)
+    cursor.execute(query)
 
     for row in cursor.fetchall():
         yield row
@@ -121,3 +121,77 @@ def table_wrapper(func):
                        obj.storeCell)
 
     return inner
+
+
+class Database(object):
+
+    '''
+    This class encapsulates all the interactions between the client code
+    and the database.
+
+    This allows us to have multiple instances of databases on each client
+    and also bind together commonly used functionality.
+
+    We also place per-instance variables such as connection details and
+    recent queries. This allows a much finer API to emerge because we
+    can keep track of a single database instance rather than having to
+    know what attributes and methods are to do with a database.
+    '''
+
+    def __init__(self,
+                 host='localhost', user=None, passwd=None,
+                 using_db=None, table=None, port=3306):
+        '''
+        Creates an instance of a Database which holds connection details
+        and commonly used methods on a database.
+        '''
+        self.host = host
+        self.user = user
+        self.password = passwd
+        self.using_db = using_db
+        self.table = table
+        self.port = port
+        self._connection = None
+        self.connected = False
+
+    def connect(self):
+        '''
+        Creates the database connection
+        '''
+        self._connection = MySQLdb.connect(
+            host=self.host, user=self.user,
+            passwd=self.password, db=self.using_db,
+            port=int(self.port), charset="utf8",
+            use_unicode=True
+        )
+        self.connected = True
+
+    def close(self):
+        '''
+        Closes the database connection
+        '''
+        try:
+            self._connection.close()
+            self.connected = False
+        except:
+            pass
+
+    def cursor(self):
+        return self._connection.cursor()
+
+    def query(self, query):
+        '''
+        Returns a QuerySet for the passed in query
+
+        :param query: :class:`str` which is the query to be executed
+        '''
+        return [result for result in itersql(self._connection, query)]
+
+    def commit(self):
+        self._connection.commit()
+
+    def __str__(self):
+        return """Database Connection on: %s using %s
+               Connected: %s
+               Current Table: %s
+               """ % (self.host,self.using_db,self.conncted,self.table)
