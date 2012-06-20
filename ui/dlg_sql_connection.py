@@ -69,7 +69,7 @@ class SQLDisplaySetup(QtGui.QDialog):
             ]
             # Coerce the strings into QStrings so that equality tests pass/fail
             # correctly
-            if {host, database, table} == set(map(QString, connection_set)):
+            if set([host, database, table]) == set(map(QString, connection_set)):
                 return
 
         # Now we just add the new section to the config object
