@@ -59,3 +59,30 @@ class ConnectionDialog(QtGui.QDialog):
 
         for row in range(self.gui.listWidget.count()):
             self.gui.listWidget.takeItem(row)
+
+    def editRow(self):
+        """
+        Writes the changes made on the form into the config file
+        """
+
+        host = self.gui.txt_host.text()
+        database = self.gui.txt_database.text()
+        table = self.gui.txt_table.text()
+        username = self.gui.txt_username.text()
+        password = self.gui.txt_password.text()
+        port = self.gui.txt_port.text()
+        idx = self.gui.listWidget.currentRow()
+        connection = self.connection_map[self.gui.listWidget.item(idx).text()]
+        self.parent.config.set(connection, "host", host)
+        self.parent.config.set(connection, "database", database)
+        self.parent.config.set(connection, "table", table)
+        self.parent.config.set(connection, "username", username)
+        self.parent.config.set(connection, "password", password)
+        self.parent.config.set(connection, "port", port)
+
+    def deleteRow(self):
+        """
+        Deletes the row
+        """
+
+        pass
