@@ -258,10 +258,10 @@ class MainGui(QtGui.QMainWindow):
         self.gui.statusbar.showMessage(message, time)
 
     def changeConnection(self, section):
-        '''
+        """
         Changes the connection to the one specified under the `section`
         heading.
-        '''
+        """
 
         if self.current_table == section:
             if len(self.actionList) == 1:
@@ -283,7 +283,7 @@ class MainGui(QtGui.QMainWindow):
         self.current_table = section
 
     def addMenuActions(self):
-        '''
+        """
         The submenu which contains a list of all connection details
         needs to dynamically populated at launch. This is the method
         which does that.
@@ -294,7 +294,7 @@ class MainGui(QtGui.QMainWindow):
         if a new connection was created or not.
 
         :returns: :class:`None`
-        '''
+        """
 
         self.actionGroupConnections = QtGui.QActionGroup(self)
 
@@ -329,17 +329,17 @@ class MainGui(QtGui.QMainWindow):
             self.actionGroupConnections.addAction(action)
 
     def parse_config(self):
-        '''
+        """
         Parses the config file. We can use this method after we edit the config file
         so that the config file is reloaded.
-        '''
+        """
         self.config.read(self.configpath)
         self.addMenuActions()
 
     def openManageDialog(self):
-        '''
+        """"
         Creates an instance of the connection manager and shows it.
-        '''
+        """
 
         manage_dlg = ConnectionDialog(self)
         manage_dlg.exec_()

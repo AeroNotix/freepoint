@@ -1,5 +1,7 @@
  <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
-   <file>ui/mysql.png</file>
+   <file>resources/mysql.png</file>
+   <file>resources/list-add.png</file>
+   <file>resources/list-remove.png</file>
  </qresource>
  </RCC>
