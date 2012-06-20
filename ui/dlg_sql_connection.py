@@ -89,6 +89,7 @@ class SQLDisplaySetup(QtGui.QDialog):
             with open(self.parent.configpath, 'wb') as configout:
                 self.parent.config.write(configout)
             self.parent.parse_config()
+            self.parent.current_section = new_section
 
     def populate_fields(self):
         '''

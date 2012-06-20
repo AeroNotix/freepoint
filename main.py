@@ -64,7 +64,6 @@ class MainGui(QtGui.QMainWindow):
         self.param_url = "http://localhost:12345/params/%s"
         self.config = ConfigParser.RawConfigParser()
         self.configpath = os.path.join(CWD, "conf.cfg")
-        self.current_table = "connection-0"
         self.actionList = []
 
         if RESULTS.db:
@@ -83,19 +82,20 @@ class MainGui(QtGui.QMainWindow):
             # if we didn't get command line arguments check if
             # there is a config file.
             self.config.read(self.configpath)
+            self.current_table = self.config.sections()[0]
             try:
-                host = self.config.get("connection-0", "host")
-                port = self.config.get("connection-0", "port")
+                host = self.config.get(self.current_table, "host")
+                port = self.config.get(self.current_table, "port")
                 if not host:
                     host = "localhost"
                 if not port:
                     port = 3306
                 self.database = Database(
                     host,
-                    self.config.get("connection-0", "username"),
-                    self.config.get("connection-0", "password"),
-                    self.config.get("connection-0", "database"),
-                    self.config.get("connection-0", "table"),
+                    self.config.get(self.current_table, "username"),
+                    self.config.get(self.current_table, "password"),
+                    self.config.get(self.current_table, "database"),
+                    self.config.get(self.current_table, "table"),
                     port
                     )
                 self.populate_table()
@@ -149,6 +149,7 @@ class MainGui(QtGui.QMainWindow):
             return
         except _mysql_exceptions.ProgrammingError as error:
             self.show_message(mysqlerror(error), time=10000)
+            return
 
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(self.headings))
@@ -269,7 +270,10 @@ class MainGui(QtGui.QMainWindow):
         '''
 
         if self.current_table == section:
-            return
+            if len(self.actionList) == 1:
+                pass
+            else:
+                return
 
         self.database.close()
         self.clear_table()
