@@ -1,4 +1,5 @@
 from PyQt4 import QtGui
+from PyQt4.QtCore import QString
 
 from qtsqlviewer.ui.sql_setup_UI import Ui_frm_sql_data_entry
 from qtsqlviewer.table_tools.tools import to_unicode, Database
@@ -35,6 +36,7 @@ class SQLDisplaySetup(QtGui.QDialog):
         table = self.gui.txt_table.text()
         port = self.gui.txt_port.text()
 
+        # create Database object
         self.parent.database = Database(
             to_unicode(host),
             to_unicode(username),
@@ -43,22 +45,34 @@ class SQLDisplaySetup(QtGui.QDialog):
             to_unicode(table),
             to_unicode(port)
             )
+        self.parent.populate_table()
 
-        self.parent.populated = True
-
+        # The last thing that self.parent.populate_table() does is
+        # set self.parent.populated to True. This means that there
+        # is data in the table and more importantly, there were no
+        # connection errors. If there were no connection errors we
+        # can safely store the connection details for future use.
+        if not self.parent.populated:
+            return
         sections = len(self.parent.config.sections())
         for num in range(sections):
+            # for each section, we check if the host.database.table
+            # matches a section we've already stored. If so we don't
+            # bother storing that connection.
             num = str(num)
-            if not all([
-                host == self.parent.config.get("connection-%s" % num, "host"),
-                database == self.parent.config.get("connection-%s" % num, "database")
-                ]):
-                continue
-            else:
+            connection_set = [
+                    self.parent.config.get("connection-%s" % num, "host"),
+                    self.parent.config.get("connection-%s" % num, "database"),
+                    self.parent.config.get("connection-%s" % num, "table")
+                    ]
+            # Coerce the strings into QStrings so that equality tests pass/fail
+            # correctly
+            if {host, database, table} == set(map(QString, connection_set)):
                 return
 
+        # Now we just add the new section to the config
+        # object
         new_section = "connection-%s" % str(sections)
-
         if not self.parent.config.has_section(new_section):
             self.parent.config.add_section(new_section)
             self.parent.config.set(new_section, "host", host)
@@ -69,6 +83,7 @@ class SQLDisplaySetup(QtGui.QDialog):
             self.parent.config.set(new_section, "port", port)
             with open(self.parent.configpath, 'wb') as configout:
                 self.parent.config.write(configout)
+            self.parent.parse_config()
 
     def populate_fields(self):
         '''

@@ -64,6 +64,8 @@ class MainGui(QtGui.QMainWindow):
         self.param_url = "http://localhost:12345/params/%s"
         self.config = ConfigParser.RawConfigParser()
         self.configpath = os.path.join(CWD, "conf.cfg")
+        self.current_table = "connection-0"
+        self.actionList = []
 
         if RESULTS.db:
             # if we got command line arguments, open that
@@ -76,6 +78,7 @@ class MainGui(QtGui.QMainWindow):
                 RESULTS.port
             )
             self.populate_table()
+            self.parse_config()
         elif os.path.isfile(self.configpath):
             # if we didn't get command line arguments check if
             # there is a config file.
@@ -107,6 +110,7 @@ class MainGui(QtGui.QMainWindow):
             # else allow the user to enter the details via
             # the gui
             self.openConnectionDialog()
+        self.addMenuActions()
 
     @table_wrapper
     def populate_table(self):
@@ -219,15 +223,7 @@ class MainGui(QtGui.QMainWindow):
         """
         Creates an instance of the connection dialog and shows it.
         """
-
         setup_dlg = SQLDisplaySetup(self)
-
-        self.connect(
-            setup_dlg.gui.buttonBox,
-            QtCore.SIGNAL('accepted()'),
-            self.populate_table
-        )
-
         setup_dlg.exec_()
         return
 
@@ -245,6 +241,7 @@ class MainGui(QtGui.QMainWindow):
             row_count = self.gui.tableWidget.rowCount()
             for row in range(row_count + 1):
                 self.gui.tableWidget.removeRow(row_count - row)
+        self.populated = False
 
     def storeCell(self, xrow, ycol):
         """
@@ -263,11 +260,83 @@ class MainGui(QtGui.QMainWindow):
         """
         self.gui.statusbar.showMessage(message, time)
 
-    def menuActions(self):
-        pass
+    def changeConnection(self, section):
+        '''
+        Changes the connection to the one specified under the `section`
+        heading.
+        '''
+
+        if self.current_table == section:
+            return
+
+        self.database.close()
+        self.clear_table()
+
+        self.database.host = self.config.get(section, "host")
+        self.database.database = self.config.get(section, "database")
+        self.database.table = self.config.get(section, "table")
+        self.database.user = self.config.get(section, "username")
+        self.database.password = self.config.get(section, "password")
+        self.database.port = self.config.get(section, "port")
+
+        self.populate_table()
+        self.current_table = section
+
+    def addMenuActions(self):
+        '''
+        The submenu which contains a list of all connection details
+        needs to dynamically populated at launch. This is the method
+        which does that.
+
+        First we remove all the current menu items, then we reattach
+        all the menu items. We do this because in-between calling this
+        the amount of actions can change for this menu depening on
+        if a new connection was created or not.
+
+        :returns: :class:`None`
+        '''
+
+        self.actionGroupConnections = QtGui.QActionGroup(self)
+
+        if not self.actionList:
+            pass
+        else:
+            for action in self.actionList:
+                self.gui.menuSelect_Table.removeAction(action)
+            self.actionList = []
+
+        for idx, section in enumerate(self.config.sections()):
+            host = self.config.get(section, "host")
+            database = self.config.get(section, "database")
+            table = self.config.get(section, "table")
+
+            action = QtGui.QAction(self)
+            action.setText(host+"."+database+"."+table)
+            action.setObjectName(section)
+            action.setCheckable(True)
+            if section == "connection-0":
+                action.setChecked(True)
+
+            # Slot as a lambda because we need to pass an argument
+            # to it.
+            self.connect(action, QtCore.SIGNAL("triggered()"),
+                         lambda arg=section: self.changeConnection(arg))
+            # Add the action to the GUI.
+            self.gui.menuSelect_Table.addAction(action)
+            # Keep a reference to it.
+            self.actionList.append(action)
+            # Group it with the others to enable mutual exclusivity.
+            self.actionGroupConnections.addAction(action)
+
+    def parse_config(self):
+        '''
+        Parses the config file. We can use this method after we edit the config file
+        so that the config file is reloaded.
+        '''
+        self.config.read(self.configpath)
+        self.addMenuActions()
 
 if __name__ == '__main__':
-
     APPLICATION = QtGui.QApplication(sys.argv)
     MAINWINDOW = MainGui()
     MAINWINDOW.setStatusBar(MAINWINDOW.gui.statusbar)
