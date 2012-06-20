@@ -20,9 +20,7 @@ class ConnectionDialog(QtGui.QDialog):
         self.gui = Ui_Dialog()
         self.gui.setupUi(self)
         self.parent = parent
-        self.connection_map = dict()
         self.populateList()
-
 
     def populateList(self):
         """
@@ -30,6 +28,7 @@ class ConnectionDialog(QtGui.QDialog):
         """
 
         self.clearTable()
+        self.connection_map = dict()
 
         for connection in self.parent.config.sections():
             host = self.parent.config.get(connection, "host")
@@ -60,6 +59,17 @@ class ConnectionDialog(QtGui.QDialog):
         for row in range(self.gui.listWidget.count()):
             self.gui.listWidget.takeItem(row)
 
+    def clearFields(self):
+        """
+        Clears all the fields
+        """
+        self.gui.txt_host.setText('')
+        self.gui.txt_database.setText('')
+        self.gui.txt_table.setText('')
+        self.gui.txt_username.setText('')
+        self.gui.txt_password.setText('')
+        self.gui.txt_port.setText('')
+
     def editRow(self):
         """
         Writes the changes made on the form into the config file
@@ -71,8 +81,7 @@ class ConnectionDialog(QtGui.QDialog):
         username = self.gui.txt_username.text()
         password = self.gui.txt_password.text()
         port = self.gui.txt_port.text()
-        idx = self.gui.listWidget.currentRow()
-        connection = self.connection_map[self.gui.listWidget.item(idx).text()]
+        connection = self.getCurrentItem()
         self.parent.config.set(connection, "host", host)
         self.parent.config.set(connection, "database", database)
         self.parent.config.set(connection, "table", table)
@@ -84,5 +93,16 @@ class ConnectionDialog(QtGui.QDialog):
         """
         Deletes the row
         """
+        self.parent.config.remove_section(self.getCurrentItem())
+        self.parent.rewriteConfig()
+        self.gui.listWidget.blockSignals(True)
+        self.populateList()
+        self.gui.listWidget.blockSignals(False)
+        self.clearFields()
 
-        pass
+    def getCurrentItem(self):
+        """
+        Get the currently selected item
+        """
+        idx = self.gui.listWidget.currentRow()
+        return self.connection_map[self.gui.listWidget.item(idx).text()]
