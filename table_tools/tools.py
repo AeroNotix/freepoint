@@ -149,6 +149,8 @@ class Database(object):
         self.password = passwd
         self.using_db = using_db
         self.table = table
+        if port == '':
+            port = 3306
         self.port = port
         self._connection = None
         self.connected = False
