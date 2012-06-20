@@ -144,6 +144,7 @@ class MainGui(QtGui.QMainWindow):
                 self.param_url % self.database.using_db
             )
             json = simplejson.loads(http_get.read())
+            print json
         except IOError as error:
             print "Error: %s" % error
 
