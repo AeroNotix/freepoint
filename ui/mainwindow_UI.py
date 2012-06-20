@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Wed Jun 20 11:50:16 2012
+# Created: Wed Jun 20 13:29:23 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,13 +49,13 @@ class Ui_MainWindow(object):
         self.actionManage_Connections.setObjectName(_fromUtf8("actionManage_Connections"))
         self.actionSomething = QtGui.QAction(MainWindow)
         self.actionSomething.setObjectName(_fromUtf8("actionSomething"))
-        self.actionManage_Connections_2 = QtGui.QAction(MainWindow)
-        self.actionManage_Connections_2.setObjectName(_fromUtf8("actionManage_Connections_2"))
+        self.actionManageConnections = QtGui.QAction(MainWindow)
+        self.actionManageConnections.setObjectName(_fromUtf8("actionManageConnections"))
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionQuit)
         self.menuFile.addAction(self.actionConnection_details)
         self.menuEdit.addAction(self.menuSelect_Table.menuAction())
-        self.menuEdit.addAction(self.actionManage_Connections_2)
+        self.menuEdit.addAction(self.actionManageConnections)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
 
@@ -65,6 +65,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionQuit, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.close)
         QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL(_fromUtf8("cellDoubleClicked(int,int)")), MainWindow.storeCell)
         QtCore.QObject.connect(self.tableWidget, QtCore.SIGNAL(_fromUtf8("cellEntered(int,int)")), MainWindow.storeCell)
+        QtCore.QObject.connect(self.actionManageConnections, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.openManageDialog)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -76,5 +77,5 @@ class Ui_MainWindow(object):
         self.actionConnection_details.setText(QtGui.QApplication.translate("MainWindow", "Add Connection", None, QtGui.QApplication.UnicodeUTF8))
         self.actionManage_Connections.setText(QtGui.QApplication.translate("MainWindow", "Manage Connections", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSomething.setText(QtGui.QApplication.translate("MainWindow", "Something", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionManage_Connections_2.setText(QtGui.QApplication.translate("MainWindow", "Manage Connections", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionManageConnections.setText(QtGui.QApplication.translate("MainWindow", "Manage Connections", None, QtGui.QApplication.UnicodeUTF8))
 

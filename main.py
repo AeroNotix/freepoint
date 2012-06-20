@@ -15,6 +15,7 @@ import simplejson
 
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
+from qtsqlviewer.ui.connection_dialog import ConnectionDialog
 
 from qtsqlviewer.table_tools.tools import get_headings, table_wrapper, Database
 from qtsqlviewer.table_tools.argument import Argument
@@ -111,6 +112,7 @@ class MainGui(QtGui.QMainWindow):
             # the gui
             self.openConnectionDialog()
         self.addMenuActions()
+        self.parse_config()
 
     @table_wrapper
     def populate_table(self):
@@ -221,14 +223,6 @@ class MainGui(QtGui.QMainWindow):
             return
 
         self.show_message("Data has been saved to the database")
-
-    def openConnectionDialog(self):
-        """
-        Creates an instance of the connection dialog and shows it.
-        """
-        setup_dlg = SQLDisplaySetup(self)
-        setup_dlg.exec_()
-        return
 
     def clear_table(self):
         """
@@ -341,6 +335,24 @@ class MainGui(QtGui.QMainWindow):
         '''
         self.config.read(self.configpath)
         self.addMenuActions()
+
+    def openManageDialog(self):
+        '''
+        Creates an instance of the connection manager and shows it.
+        '''
+
+        manage_dlg = ConnectionDialog(self)
+        manage_dlg.exec_()
+        return
+
+    def openConnectionDialog(self):
+        """
+        Creates an instance of the new connection dialog and shows it.
+        """
+        setup_dlg = SQLDisplaySetup(self)
+        setup_dlg.exec_()
+        return
+
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)

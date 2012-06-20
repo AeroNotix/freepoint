@@ -54,7 +54,7 @@
      </property>
     </widget>
     <addaction name="menuSelect_Table"/>
-    <addaction name="actionManage_Connections_2"/>
+    <addaction name="actionManageConnections"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -80,7 +80,7 @@
     <string>Something</string>
    </property>
   </action>
-  <action name="actionManage_Connections_2">
+  <action name="actionManageConnections">
    <property name="text">
     <string>Manage Connections</string>
    </property>
@@ -168,10 +168,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionManageConnections</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openManageDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeTable()</slot>
   <slot>openConnectionDialog()</slot>
   <slot>storeCell()</slot>
+  <slot>openManageDialog()</slot>
  </slots>
 </ui>
