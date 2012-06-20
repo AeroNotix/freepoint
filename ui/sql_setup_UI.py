@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'sql_setup.ui'
 #
-# Created: Wed Jun 20 14:31:51 2012
+# Created: Wed Jun 20 16:10:41 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,6 +18,9 @@ class Ui_frm_sql_data_entry(object):
     def setupUi(self, frm_sql_data_entry):
         frm_sql_data_entry.setObjectName(_fromUtf8("frm_sql_data_entry"))
         frm_sql_data_entry.resize(486, 274)
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/view-refresh")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        frm_sql_data_entry.setWindowIcon(icon)
         self.gridLayout = QtGui.QGridLayout(frm_sql_data_entry)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.label_2 = QtGui.QLabel(frm_sql_data_entry)
@@ -82,7 +85,7 @@ class Ui_frm_sql_data_entry(object):
         frm_sql_data_entry.setTabOrder(self.txt_table, self.buttonBox)
 
     def retranslateUi(self, frm_sql_data_entry):
-        frm_sql_data_entry.setWindowTitle(QtGui.QApplication.translate("frm_sql_data_entry", "Form", None, QtGui.QApplication.UnicodeUTF8))
+        frm_sql_data_entry.setWindowTitle(QtGui.QApplication.translate("frm_sql_data_entry", "Add Connection", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("frm_sql_data_entry", "Port", None, QtGui.QApplication.UnicodeUTF8))
         self.lbl_db_name_field.setText(QtGui.QApplication.translate("frm_sql_data_entry", "MySQL Host", None, QtGui.QApplication.UnicodeUTF8))
         self.lbl_username_field.setText(QtGui.QApplication.translate("frm_sql_data_entry", "Username", None, QtGui.QApplication.UnicodeUTF8))

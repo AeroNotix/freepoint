@@ -6,39 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>222</height>
+    <width>569</width>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Edit Connection</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resource.qrc">
+    <normaloff>:/address-book-new</normaloff>:/address-book-new</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Database</string>
-     </property>
-     <property name="buddy">
-      <cstring>txt_database</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Table</string>
-     </property>
-     <property name="buddy">
-      <cstring>txt_table</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2">
-    <widget class="QLineEdit" name="txt_table"/>
-   </item>
-   <item row="5" column="2">
-    <widget class="QLineEdit" name="txt_password"/>
+   <item row="0" column="0" rowspan="6">
+    <widget class="QListWidget" name="listWidget"/>
    </item>
    <item row="0" column="1">
     <widget class="QLabel" name="label">
@@ -50,31 +31,34 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="txt_database"/>
-   </item>
-   <item row="0" column="2">
+   <item row="0" column="3" colspan="2">
     <widget class="QLineEdit" name="txt_host"/>
    </item>
-   <item row="5" column="1">
-    <widget class="QLabel" name="label_6">
+   <item row="1" column="1" colspan="2">
+    <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Password</string>
+      <string>Database</string>
      </property>
      <property name="buddy">
-      <cstring>txt_password</cstring>
+      <cstring>txt_database</cstring>
      </property>
     </widget>
    </item>
-   <item row="6" column="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="1" column="3" colspan="2">
+    <widget class="QLineEdit" name="txt_database"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Table</string>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="buddy">
+      <cstring>txt_table</cstring>
      </property>
     </widget>
+   </item>
+   <item row="2" column="3" colspan="2">
+    <widget class="QLineEdit" name="txt_table"/>
    </item>
    <item row="3" column="1">
     <widget class="QLabel" name="label_4">
@@ -86,7 +70,10 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="3" column="3" colspan="2">
+    <widget class="QLineEdit" name="txt_port"/>
+   </item>
+   <item row="4" column="1" colspan="2">
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>Username</string>
@@ -96,18 +83,51 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
-    <widget class="QLineEdit" name="txt_port"/>
-   </item>
-   <item row="4" column="2">
+   <item row="4" column="3" colspan="2">
     <widget class="QLineEdit" name="txt_username"/>
    </item>
-   <item row="0" column="0" rowspan="6">
-    <widget class="QListWidget" name="listWidget"/>
+   <item row="5" column="1" colspan="2">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Password</string>
+     </property>
+     <property name="buddy">
+      <cstring>txt_password</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="3" colspan="2">
+    <widget class="QLineEdit" name="txt_password"/>
+   </item>
+   <item row="6" column="2" colspan="2">
+    <widget class="QPushButton" name="btn_deleteRow">
+     <property name="text">
+      <string>Delete</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="4">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1">
+    <widget class="QPushButton" name="btn_editRow">
+     <property name="text">
+      <string>Edit</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
@@ -152,13 +172,47 @@
      <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>701</x>
-     <y>557</y>
+     <x>568</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_editRow</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>editRow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>306</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>902</x>
+     <y>419</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_deleteRow</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>deleteRow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>368</x>
+     <y>222</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1009</x>
+     <y>445</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
   <slot>populateFields()</slot>
+  <slot>editRow()</slot>
+  <slot>deleteRow()</slot>
  </slots>
 </ui>

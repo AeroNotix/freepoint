@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Add Connection</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resource.qrc">
+    <normaloff>:/view-refresh</normaloff>:/view-refresh</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -125,8 +129,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>78</x>
-     <y>221</y>
+     <x>87</x>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel">
      <x>406</x>
@@ -141,8 +145,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>170</x>
-     <y>221</y>
+     <x>179</x>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel">
      <x>406</x>
