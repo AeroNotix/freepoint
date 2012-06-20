@@ -73,8 +73,11 @@ class SQLDisplaySetup(QtGui.QDialog):
                 return
 
         # Now we just add the new section to the config object
-        section_num = int(self.parent.config.sections()[-1][11:]) + 1
-        new_section = "connection-%s" % section_num
+        try:
+            section_num = int(self.parent.config.sections()[-1][11:]) + 1
+        except IndexError:
+            section_num = 0
+        new_section = "connection-%s" % str(section_num)
         if not self.parent.config.has_section(new_section):
             self.parent.config.add_section(new_section)
             self.parent.config.set(new_section, "host", host)
