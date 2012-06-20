@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'sql_setup.ui'
 #
-# Created: Fri Jun 15 16:18:16 2012
+# Created: Wed Jun 20 14:31:51 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,7 +62,7 @@ class Ui_frm_sql_data_entry(object):
         self.gridLayout.addWidget(self.txt_host, 0, 1, 1, 1)
         self.label_3 = QtGui.QLabel(frm_sql_data_entry)
         self.label_3.setText(_fromUtf8(""))
-        self.label_3.setPixmap(QtGui.QPixmap(_fromUtf8(":/ui/mysql.png")))
+        self.label_3.setPixmap(QtGui.QPixmap(_fromUtf8(":/mysql")))
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout.addWidget(self.label_3, 0, 2, 7, 1)
         self.lbl_db_name_field.setBuddy(self.txt_host)
@@ -90,4 +90,4 @@ class Ui_frm_sql_data_entry(object):
         self.label_4.setText(QtGui.QApplication.translate("frm_sql_data_entry", "Database", None, QtGui.QApplication.UnicodeUTF8))
         self.lbl_password_field.setText(QtGui.QApplication.translate("frm_sql_data_entry", "Password", None, QtGui.QApplication.UnicodeUTF8))
 
-import resources_rc
+import resource_rc
