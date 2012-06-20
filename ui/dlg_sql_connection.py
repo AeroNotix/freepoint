@@ -60,19 +60,21 @@ class SQLDisplaySetup(QtGui.QDialog):
             # matches a section we've already stored. If so we don't
             # bother storing that connection.
             num = str(num)
+            if not self.parent.config.has_section("connection-%s" % num):
+                continue
             connection_set = [
-                    self.parent.config.get("connection-%s" % num, "host"),
-                    self.parent.config.get("connection-%s" % num, "database"),
-                    self.parent.config.get("connection-%s" % num, "table")
-                    ]
+                self.parent.config.get("connection-%s" % num, "host"),
+                self.parent.config.get("connection-%s" % num, "database"),
+                self.parent.config.get("connection-%s" % num, "table")
+            ]
             # Coerce the strings into QStrings so that equality tests pass/fail
             # correctly
             if {host, database, table} == set(map(QString, connection_set)):
                 return
 
-        # Now we just add the new section to the config
-        # object
-        new_section = "connection-%s" % str(sections)
+        # Now we just add the new section to the config object
+        section_num = int(self.parent.config.sections()[-1][11:]) + 1
+        new_section = "connection-%s" % section_num
         if not self.parent.config.has_section(new_section):
             self.parent.config.add_section(new_section)
             self.parent.config.set(new_section, "host", host)
