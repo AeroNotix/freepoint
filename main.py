@@ -83,8 +83,8 @@ class MainGui(QtGui.QMainWindow):
             # if we didn't get command line arguments check if
             # there is a config file.
             self.config.read(self.configpath)
-            self.current_table = self.config.sections()[0]
             try:
+                self.current_table = self.config.sections()[0]
                 host = self.config.get(self.current_table, "host")
                 port = self.config.get(self.current_table, "port")
                 if not host:
@@ -107,6 +107,12 @@ class MainGui(QtGui.QMainWindow):
                                           "Error",
                                           "Config file error: %s" % str(error),
                                           QtGui.QMessageBox.Ok)
+            except IndexError:
+                QtGui.QMessageBox.warning(self,
+                                          "Error",
+                                          "Missing configuration: Please create.",
+                                          QtGui.QMessageBox.Ok)
+                self.openConnectionDialog()
         else:
             # else allow the user to enter the details via
             # the gui
@@ -335,6 +341,12 @@ class MainGui(QtGui.QMainWindow):
         """
         self.config.read(self.configpath)
         self.addMenuActions()
+
+    def rewriteConfig(self):
+        """
+        Writes a the updated config back to disk
+        """
+        self.config.write(open(self.configpath, 'wb'))
 
     def openManageDialog(self):
         """"
