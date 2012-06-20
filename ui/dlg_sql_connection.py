@@ -86,8 +86,7 @@ class SQLDisplaySetup(QtGui.QDialog):
             self.parent.config.set(new_section, "database", database)
             self.parent.config.set(new_section, "table", table)
             self.parent.config.set(new_section, "port", port)
-            with open(self.parent.configpath, 'wb') as configout:
-                self.parent.config.write(configout)
+            self.parent.rewriteConfig()
             self.parent.parse_config()
             self.parent.current_section = new_section
 
