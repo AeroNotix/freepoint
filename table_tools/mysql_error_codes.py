@@ -1,4 +1,5 @@
 MYSQL_ERRORS = {
+    1146: "Table does not exist",
     2000: "Unknown MySQL error",
     2001: "Can't create UNIX socket",
     2002: "Can't connect to local MySQL server through socket",
