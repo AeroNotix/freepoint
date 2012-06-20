@@ -147,6 +147,8 @@ class MainGui(QtGui.QMainWindow):
         except _mysql_exceptions.OperationalError, error:
             QtGui.QMessageBox.warning(self, "Error", str(error))
             return
+        except _mysql_exceptions.ProgrammingError as error:
+            self.show_message(mysqlerror(error), time=10000)
 
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(self.headings))
