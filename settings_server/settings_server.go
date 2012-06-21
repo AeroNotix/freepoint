@@ -11,7 +11,7 @@ import (
 type variable interface{}
 
 type JSONMessage struct {
-	Rows [][]string
+	Rows     [][]string
 	Metadata map[string]map[string][]string
 }
 
@@ -35,23 +35,21 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	var out io.Writer = w
 	w.Header().Set("Content-type", "application/json")
 	var jsonMap JSONMessage
-	
+
 	for x := 0; x < 500; x++ {
 		newRow := []string{"1", "2", "3"}
 		jsonMap.AddRow(newRow)
 	}
-	jsonMap.Metadata = make( map[string]map[string][]string )
+	jsonMap.Metadata = make(map[string]map[string][]string)
 	jsonMap.AddMetadata("HEADER2", "TYPE", []string{"123123"})
 	jsonMap.AddMetadata("HEADER3", "TYPE", []string{"123123"})
 	jsonMap.AddMetadata("HEADER3", "TYPE2", []string{"123123"})
 	err := json.NewEncoder(out).Encode(jsonMap)
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
-func Root(w http.ResponseWriter, req *http.Request) {
-	io.WriteString(w, "pong")
-}
-	
 func main() {
 	fmt.Println("STARTUP")
 	http.HandleFunc("/params/", databaseParameters)
