@@ -10,23 +10,44 @@ import (
 
 type variable interface{}
 
+type JSONMessage struct {
+	Rows [][]string
+	Metadata map[string][][]string
+}
+
 // Simple server which is used to store and return parameters
 // for particular databases.
 func databaseParameters(w http.ResponseWriter, req *http.Request) {
-	fmt.Println(req.URL)
+	fmt.Println(req.Method, req.URL)
+
 	var out io.Writer = w
 	w.Header().Set("Content-type", "application/json")
-	jsonMap := map[string]map[string]variable{}
-	jsonMap["WASSAAAAA"] = map[string]variable{"str": []variable{1, "B"}}
+	jsonMap := JSONMessage{
+		[][]string{
+			[]string{"SUPDATA"},
+		},
+		map[string][][]string{
+			"FIELDA": [][]string{
+				[]string{"THIS", "IS", "DATA"},
+			},
+		},
+	}
+	
+	for x := 0; x < 500000; x++ {
+		newRow := []string{"1", "2", "3"}
+		jsonMap.Rows = append(jsonMap.Rows, newRow)
+	}
 	err := json.NewEncoder(out).Encode(jsonMap)
 	fmt.Println(err)
+	delete(jsonMap, "data")
 }
 
 func Root(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "pong")
 }
-
+	
 func main() {
+	fmt.Println("STARTUP")
 	//http.HandleFunc("/", Root)
 	http.HandleFunc("/params/", databaseParameters)
 
