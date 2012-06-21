@@ -35,8 +35,12 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	var out io.Writer = w
 	w.Header().Set("Content-type", "application/json")
 	var jsonMap JSONMessage
+	var jsonDecode JSONMessage
 
-	for x := 0; x < 500; x++ {
+	b := []byte(`{"Rows":[["1","2","3"]],"Metadata":{"HEADER2":{"TYPE":["123123"]},"HEADER3":{"TYPE":["123123"],"TYPE2":["123123"]}}}`)
+	err := json.Unmarshal(b, &jsonDecode)
+	fmt.Println(jsonDecode.Metadata)
+	for x := 0; x < 50; x++ {
 		newRow := []string{"1", "2", "3"}
 		jsonMap.AddRow(newRow)
 	}
@@ -44,7 +48,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	jsonMap.AddMetadata("HEADER2", "TYPE", []string{"123123"})
 	jsonMap.AddMetadata("HEADER3", "TYPE", []string{"123123"})
 	jsonMap.AddMetadata("HEADER3", "TYPE2", []string{"123123"})
-	err := json.NewEncoder(out).Encode(jsonMap)
+	err = json.NewEncoder(out).Encode(jsonMap)
 	if err != nil {
 		fmt.Println(err)
 	}
