@@ -18,8 +18,6 @@ type JSONMessage struct {
 // Simple server which is used to store and return parameters
 // for particular databases.
 func databaseParameters(w http.ResponseWriter, req *http.Request) {
-	fmt.Println(req.Method, req.URL)
-
 	var out io.Writer = w
 	w.Header().Set("Content-type", "application/json")
 	jsonMap := JSONMessage{
@@ -33,13 +31,12 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 		},
 	}
 	
-	for x := 0; x < 500000; x++ {
+	for x := 0; x < 500; x++ {
 		newRow := []string{"1", "2", "3"}
 		jsonMap.Rows = append(jsonMap.Rows, newRow)
 	}
 	err := json.NewEncoder(out).Encode(jsonMap)
 	fmt.Println(err)
-	delete(jsonMap, "data")
 }
 
 func Root(w http.ResponseWriter, req *http.Request) {
