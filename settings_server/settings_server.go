@@ -3,12 +3,42 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	//	mysql "github.com/ziutek/mymysql/mysql"
+	//	_ "github.com/ziutek/mymysql/native"
 	"io"
 	"log"
 	"net/http"
+	"strings"
+	"time"
 )
 
-type variable interface{}
+// This type defines what signatures of functions can be used
+// as request handlers.
+type RouterHandler func(w http.ResponseWriter, req *http.Request)
+
+// Basic RoutingEntry
+type routingEntry struct {
+	URL     string
+	Handler RouterHandler
+}
+
+var Routes []routingEntry = []routingEntry{
+	routingEntry{
+		URL:     "params",
+		Handler: databaseParameters,
+	},
+}
+
+type SettingsHandler struct{}
+
+func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	request := strings.Split(req.URL.Path, "/")
+	for _, route := range Routes {
+		if request[1] == route.URL {
+			route.Handler(w, req)
+		}
+	}
+}
 
 type JSONMessage struct {
 	Rows     [][]string
@@ -17,16 +47,16 @@ type JSONMessage struct {
 
 // Helper method to clean up syntax of adding new rows
 // to the map
-func (js *JSONMessage) AddRow(row []string) {
-	js.Rows = append(js.Rows, row)
+func (self *JSONMessage) AddRow(row []string) {
+	self.Rows = append(self.Rows, row)
 }
 
 // Adds metadata to the JSONMessage object
-func (js *JSONMessage) AddMetadata(heading, option string, data []string) {
-	if _, ok := js.Metadata[heading]; !ok {
-		js.Metadata[heading] = make(map[string][]string)
+func (self *JSONMessage) AddMetadata(heading, option string, data []string) {
+	if _, ok := self.Metadata[heading]; !ok {
+		self.Metadata[heading] = make(map[string][]string)
 	}
-	js.Metadata[heading][option] = data
+	self.Metadata[heading][option] = data
 }
 
 // Simple server which is used to store and return parameters
@@ -35,30 +65,27 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	var out io.Writer = w
 	w.Header().Set("Content-type", "application/json")
 	var jsonMap JSONMessage
-	var jsonDecode JSONMessage
 
-	b := []byte(`{"Rows":[["1","2","3"]],"Metadata":{"HEADER2":{"TYPE":["123123"]},"HEADER3":{"TYPE":["123123"],"TYPE2":["123123"]}}}`)
-	err := json.Unmarshal(b, &jsonDecode)
-	fmt.Println(jsonDecode.Metadata)
-	for x := 0; x < 50; x++ {
-		newRow := []string{"1", "2", "3"}
-		jsonMap.AddRow(newRow)
-	}
-	jsonMap.Metadata = make(map[string]map[string][]string)
-	jsonMap.AddMetadata("HEADER2", "TYPE", []string{"123123"})
-	jsonMap.AddMetadata("HEADER3", "TYPE", []string{"123123"})
-	jsonMap.AddMetadata("HEADER3", "TYPE2", []string{"123123"})
-	err = json.NewEncoder(out).Encode(jsonMap)
+	err := json.NewEncoder(out).Encode(jsonMap)
 	if err != nil {
 		fmt.Println(err)
 	}
 }
 
 func main() {
-	fmt.Println("STARTUP")
 	http.HandleFunc("/params/", databaseParameters)
 
-	err := http.ListenAndServe(":12345", nil)
+	s := http.Server{
+		Addr:        ":12345",
+		Handler:     &SettingsHandler{},
+		ReadTimeout: 30 * time.Second,
+	}
+
+	err := s.ListenAndServe()
+	if err != nil {
+		fmt.Println(err)
+	}
+	err = http.ListenAndServe(":12345", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
