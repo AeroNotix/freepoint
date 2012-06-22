@@ -157,7 +157,9 @@ class Database(object):
 
     def connect(self):
         '''
-        Creates the database connection
+        Creates the database connection. This needs to be overloaded when
+        moving to use the client/server model. Currently we're connecting
+        directly to the MySQL database.
         '''
         self._connection = MySQLdb.connect(
             host=self.host, user=self.user,
