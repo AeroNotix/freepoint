@@ -12,24 +12,38 @@ import (
 	"time"
 )
 
+type User struct {
+	User string
+	Password string
+}
+
 // This type defines what signatures of functions can be used
 // as request handlers.
 type RouterHandler func(w http.ResponseWriter, req *http.Request)
 
 // Basic RoutingEntry
-type routingEntry struct {
+type RoutingEntry struct {
 	URL     string
 	Handler RouterHandler
 }
 
-var Routes []routingEntry = []routingEntry{
-	routingEntry{
+type SettingsHandler struct{}
+
+type JSONMessage struct {
+	Rows     [][]string
+	Metadata map[string]map[string][]string
+}
+
+var Routes []RoutingEntry = []RoutingEntry{
+	RoutingEntry{
 		URL:     "params",
 		Handler: databaseParameters,
 	},
+	RoutingEntry{
+		URL: "login",
+		Handler: userLogin,
+	},
 }
-
-type SettingsHandler struct{}
 
 func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	request := strings.Split(req.URL.Path, "/")
@@ -38,11 +52,6 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 			route.Handler(w, req)
 		}
 	}
-}
-
-type JSONMessage struct {
-	Rows     [][]string
-	Metadata map[string]map[string][]string
 }
 
 // Helper method to clean up syntax of adding new rows
@@ -70,6 +79,18 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+// Function for logging in the user
+func userLogin(w http.ResponseWriter, req *http.Request) {
+	if req.Method != "POST" {
+		return
+	}
+	w.Header().Set("Content-type", "application/json")
+	fmt.Println(req.FormValue("User"))
+
+
+	json.NewEncoder(w).Encode(map[string]bool{"success":true})
 }
 
 func main() {
