@@ -13,7 +13,7 @@ import (
 )
 
 type User struct {
-	User string
+	User     string
 	Password string
 }
 
@@ -40,7 +40,7 @@ var Routes []RoutingEntry = []RoutingEntry{
 		Handler: databaseParameters,
 	},
 	RoutingEntry{
-		URL: "login",
+		URL:     "login",
 		Handler: userLogin,
 	},
 }
@@ -96,42 +96,49 @@ func userLogin(w http.ResponseWriter, req *http.Request) {
 		"root",
 		"db_freepoint",
 	)
-	
+
+	w.Header().Set("Content-type", "application/json")
+
 	if err := db.Connect(); err != nil {
-		json.NewEncoder(w).Encode(map[string]bool{"success":false})
+		json.NewEncoder(w).Encode(map[string]bool{"success": false})
 		fmt.Println(err)
 		return
 	}
 
-	w.Header().Set("Content-type", "application/json")
-
-	user := User{
-		User: req.FormValue("User"),
-		Password: req.FormValue("Password"),
+	username := req.FormValue("User")
+	pass := req.FormValue("Password")
+	if len(username) == 0 || len(pass) == 0 {
+		sendJSON(w, "Missing username or password")
+		return
 	}
 
-	stmt, err := db.Prepare("SELECT * FROM tblusers WHERE userid=(?)")
-	resp, err := stmt.Run(user.User)
+	user := User{
+		User:     username,
+		Password: pass,
+	}
 
-	row, err := resp.GetRow()
+	// Prepare the statement and execute
+	stmt, _ := db.Prepare("SELECT * FROM tblusers WHERE userid=(?)")
+	resp, _ := stmt.Run(user.User)
+	row, _ := resp.GetRow()
+	if len(row) == 0 {
+		sendJSON(w, "user not found")
+		return
+	}
+	// Create a User instance from the SQL Results.
 	req_user := User{
 		row.Str(1),
 		row.Str(2),
 	}
 
-	if user == req_user {
-		fmt.Println("Match!")
-	} else {
-		fmt.Println("No match!")
-	}
-	
-	if err != nil {
-		fmt.Println(err)
-		json.NewEncoder(w).Encode(map[string]bool{"success":false})
-		return
-	}
-	
-	json.NewEncoder(w).Encode(map[string]bool{"success":true})
+	var success bool = user == req_user
+	json.NewEncoder(w).Encode(map[string]bool{"success": success})
+	return
+}
+
+func sendJSON(w http.ResponseWriter, message string) {
+	json.NewEncoder(w).Encode(map[string]string{"error": message})
+	return
 }
 
 func main() {
