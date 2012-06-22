@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	//	mysql "github.com/ziutek/mymysql/mysql"
-	//	_ "github.com/ziutek/mymysql/native"
+	mysql "github.com/ziutek/mymysql/mysql"
+	_ "github.com/ziutek/mymysql/native"
 	"io"
 	"log"
 	"net/http"
@@ -83,13 +83,54 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 
 // Function for logging in the user
 func userLogin(w http.ResponseWriter, req *http.Request) {
+
 	if req.Method != "POST" {
 		return
 	}
+
+	db := mysql.New(
+		"tcp",
+		"",
+		"127.0.0.1:3306",
+		"root",
+		"root",
+		"db_freepoint",
+	)
+	
+	if err := db.Connect(); err != nil {
+		json.NewEncoder(w).Encode(map[string]bool{"success":false})
+		fmt.Println(err)
+		return
+	}
+
 	w.Header().Set("Content-type", "application/json")
-	fmt.Println(req.FormValue("User"))
 
+	user := User{
+		User: req.FormValue("User"),
+		Password: req.FormValue("Password"),
+	}
 
+	stmt, err := db.Prepare("SELECT * FROM tblusers WHERE userid=(?)")
+	resp, err := stmt.Run(user.User)
+
+	row, err := resp.GetRow()
+	req_user := User{
+		row.Str(1),
+		row.Str(2),
+	}
+
+	if user == req_user {
+		fmt.Println("Match!")
+	} else {
+		fmt.Println("No match!")
+	}
+	
+	if err != nil {
+		fmt.Println(err)
+		json.NewEncoder(w).Encode(map[string]bool{"success":false})
+		return
+	}
+	
 	json.NewEncoder(w).Encode(map[string]bool{"success":true})
 }
 
