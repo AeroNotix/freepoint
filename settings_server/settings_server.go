@@ -85,21 +85,39 @@ func (self *JSONMessage) AddMetadata(heading, option string, data []string) {
 // Simple server which is used to store and return parameters
 // for particular databases.
 func databaseParameters(w http.ResponseWriter, req *http.Request) {
+	if !Login(w, req) {
+		return
+	}
 	var out io.Writer = w
 	w.Header().Set("Content-type", "application/json")
 	var jsonMap JSONMessage
-
 	err := json.NewEncoder(out).Encode(jsonMap)
 	if err != nil {
 		log.Println(err)
+		return
 	}
 }
 
-// Function for logging in the user
+/* 
+ This is a URL attached to ^login/?$ because then we can
+ programmatically log in the user and also check if the
+ user is login-able. Eventually userLogin will create a
+ session row in the database and send the sessionid key
+ back to the requester.
+*/
 func userLogin(w http.ResponseWriter, req *http.Request) {
+	if !Login(w, req) {
+		return
+	}
+	sendJSON(w, "Logged in!")
+	return
+}
+
+// Function for checking if the user is a valid user
+func Login(w http.ResponseWriter, req *http.Request) bool {
 
 	if req.Method != "POST" {
-		return
+		return false
 	}
 
 	w.Header().Set("Content-type", "application/json")
@@ -108,7 +126,7 @@ func userLogin(w http.ResponseWriter, req *http.Request) {
 	pass := req.FormValue("Password")
 	if len(username) == 0 || len(pass) == 0 {
 		sendJSON(w, "Missing username or password")
-		return
+		return false
 	}
 
 	user := User{
@@ -119,7 +137,7 @@ func userLogin(w http.ResponseWriter, req *http.Request) {
 	row, err := getUser(user.User)
 	if err != nil {
 		sendJSON(w, err)
-		return
+		return false
 	}
 
 	// Create a User instance from the SQL Results.
@@ -129,8 +147,7 @@ func userLogin(w http.ResponseWriter, req *http.Request) {
 	}
 
 	// if we've got here, we either are logged in or not.
-	sendJSON(w, user == req_user)
-	return
+	return user == req_user
 }
 
 // Sends JSON using the message as the payload. Determines the
@@ -139,8 +156,6 @@ func sendJSON(w http.ResponseWriter, message interface{}) {
 
 	// type switch on the message interface
 	switch message.(type) {
-	default:
-		return
 	case error:
 		json.NewEncoder(w).Encode(map[string]string{
 			"Error": message.(error).Error(),
