@@ -340,7 +340,7 @@ class MainGui(QtGui.QMainWindow):
         self.config.write(open(self.configpath, 'wb'))
 
     def openManageDialog(self):
-        """"
+        """
         Creates an instance of the connection manager and shows it.
         """
 
