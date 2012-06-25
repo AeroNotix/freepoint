@@ -7,11 +7,11 @@ import (
 	"flag"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
-	"io"
 	"log"
 	"net/http"
 	"regexp"
 	"time"
+	"settingsserver"
 )
 
 type Variable interface{}
@@ -34,14 +34,19 @@ type RoutingEntry struct {
 
 type SettingsHandler struct{}
 
+type Metadata map[string]map[string][]interface{}
+
 type JSONMessage struct {
 	Rows     [][]string
-	Metadata map[string]map[string][]string
+	Metadata Metadata
 }
 
+// Routes is a slice of RoutingEntries, this allows
+// us to hold a map (and subsequently iterate through
+// it.)
 var Routes []RoutingEntry = []RoutingEntry{
 	RoutingEntry{
-		URL:     regexp.MustCompile("^/params/[A-Za-z_-]*/?$"),
+		URL:     regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
 		Handler: databaseParameters,
 		Name:    "Parameters",
 	},
@@ -61,11 +66,18 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 	for _, route := range Routes {
 		matches := route.URL.FindAllStringSubmatch(request, 1)
 		if len(matches) > 0 {
-			log.Println("Matched:", route.Name)
+			log.Println("Request:", route.Name)
 			route.Handler(w, req)
 			return
 		}
 	}
+}
+
+// Initializes a JSONMessage structure
+func NewJSONMessage(md Metadata) JSONMessage {
+	var message JSONMessage
+	message.Metadata = md
+	return message
 }
 
 // Helper method to clean up syntax of adding new rows
@@ -75,9 +87,9 @@ func (self *JSONMessage) AddRow(row []string) {
 }
 
 // Adds metadata to the JSONMessage object
-func (self *JSONMessage) AddMetadata(heading, option string, data []string) {
+func (self *JSONMessage) AddMetadata(heading, option string, data []interface{}) {
 	if _, ok := self.Metadata[heading]; !ok {
-		self.Metadata[heading] = make(map[string][]string)
+		self.Metadata[heading] = make(map[string][]interface{})
 	}
 	self.Metadata[heading][option] = data
 }
@@ -85,13 +97,42 @@ func (self *JSONMessage) AddMetadata(heading, option string, data []string) {
 // Simple server which is used to store and return parameters
 // for particular databases.
 func databaseParameters(w http.ResponseWriter, req *http.Request) {
-	if !Login(w, req) {
+	db, err := createConnection()
+	if err != nil {
+		log.Println(err)
 		return
 	}
-	var out io.Writer = w
+
+	// multiple return paths so we defer the database close
+	defer db.Close()
+	stmt, err := db.Prepare("SELECT metadata FROM metadata WHERE tablename=(?)")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	resp, err := stmt.Run(req.URL.Path[len("/getdb/"):])
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	row, err := resp.GetRow()
+	if len(row) != 1 {
+		sendJSON(w, "Table not found")
+		return
+	}
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	w.Header().Set("Content-type", "application/json")
-	var jsonMap JSONMessage
-	err := json.NewEncoder(out).Encode(jsonMap)
+	metadata := make(Metadata)
+	err = json.Unmarshal(row[0].([]byte), &metadata)
+	if err != nil {
+		log.Println(err)
+	}
+	jsonMap := NewJSONMessage(metadata)
+	err = json.NewEncoder(w).Encode(jsonMap)
 	if err != nil {
 		log.Println(err)
 		return
@@ -172,7 +213,7 @@ func sendJSON(w http.ResponseWriter, message interface{}) {
 	return
 }
 
-func createConnection() mysql.Conn {
+func createConnection() (mysql.Conn, error) {
 	db := mysql.New(
 		"tcp",
 		"",
@@ -181,17 +222,21 @@ func createConnection() mysql.Conn {
 		connection_details.Password,
 		connection_details.Database,
 	)
-	return db
+	err := db.Connect()
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
 }
 
 func getUser(user string) (mysql.Row, error) {
 
-	db := createConnection()
-	defer db.Close()
-	if err := db.Connect(); err != nil {
+	db, err := createConnection()
+	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
-
+	defer db.Close()
 	// Prepare the statement and execute
 	stmt, err := db.Prepare("SELECT * FROM tblusers WHERE userid=(?)")
 	if err != nil {
@@ -206,7 +251,7 @@ func getUser(user string) (mysql.Row, error) {
 		return nil, err
 	}
 	if len(row) == 0 {
-		return nil, errors.New("No users found with that userid")
+		return nil, errors.New("1: Login Failure")
 	}
 
 	return row, nil
