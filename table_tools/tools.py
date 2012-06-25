@@ -165,6 +165,9 @@ class Database(object):
         Creates the database connection. This needs to be overloaded when
         moving to use the client/server model. Currently we're connecting
         directly to the MySQL database.
+
+        We're experimentally checking in to the login server to check if
+        the user details authenticate.
         '''
 
         try:
@@ -177,7 +180,6 @@ class Database(object):
                 urllib.urlencode(json_payload)
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
-            print json
         except IOError as error:
             print "Error: %s" % error
 
