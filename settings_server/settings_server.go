@@ -1,12 +1,8 @@
 package main
 
 import (
-	"connection_details"
 	"encoding/json"
-	"errors"
 	"flag"
-	mysql "github.com/ziutek/mymysql/mysql"
-	_ "github.com/ziutek/mymysql/native"
 	"log"
 	"net/http"
 	"regexp"
@@ -14,41 +10,23 @@ import (
 	"settingsserver"
 )
 
-type Variable interface{}
-
-type User struct {
-	User     string
-	Password string
-}
-
-// This type defines what signatures of functions can be used
-// as request handlers.
-type RouterHandler func(w http.ResponseWriter, req *http.Request)
-
-// Basic RoutingEntry
-type RoutingEntry struct {
-	URL     *regexp.Regexp
-	Handler RouterHandler
-	Name    string
-}
-
-type SettingsHandler struct{}
-
 // Routes is a slice of RoutingEntries, this allows
 // us to hold a map (and subsequently iterate through
 // it.)
-var Routes []RoutingEntry = []RoutingEntry{
-	RoutingEntry{
+var Routes []settingsserver.RoutingEntry = []settingsserver.RoutingEntry{
+	settingsserver.RoutingEntry{
 		URL:     regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
 		Handler: databaseParameters,
 		Name:    "Parameters",
 	},
-	RoutingEntry{
+	settingsserver.RoutingEntry{
 		URL:     regexp.MustCompile("^/login/$"),
 		Handler: userLogin,
 		Name:    "Login",
 	},
 }
+
+type SettingsHandler struct{}
 
 // This is the main 'event loop' for the web server. All requests are
 // sent to this handler, which checks the incoming request against
@@ -70,7 +48,7 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 // Simple server which is used to store and return parameters
 // for particular databases.
 func databaseParameters(w http.ResponseWriter, req *http.Request) {
-	db, err := createConnection()
+	db, err := settingsserver.CreateConnection()
 	if err != nil {
 		log.Println(err)
 		return
@@ -127,7 +105,12 @@ func userLogin(w http.ResponseWriter, req *http.Request) {
 	return
 }
 
-// Function for checking if the user is a valid user
+// Checks if the user is a valid user.
+// If the user is not, then we will tell the user ourselves
+// and return false. We return the error message ourself
+// because other with we would have a string return type
+// or multiple return types which need to be parsed out
+// or error checks on them and this seems cleaner.
 func Login(w http.ResponseWriter, req *http.Request) bool {
 
 	if req.Method != "POST" {
@@ -143,69 +126,25 @@ func Login(w http.ResponseWriter, req *http.Request) bool {
 		return false
 	}
 
-	user := User{
+	user := settingsserver.User{
 		User:     username,
 		Password: pass,
 	}
 
-	row, err := getUser(user.User)
+	row, err := settingsserver.GetUser(user.User)
 	if err != nil {
 		settingsserver.SendJSON(w, err)
 		return false
 	}
 
 	// Create a User instance from the SQL Results.
-	req_user := User{
+	req_user := settingsserver.User{
 		row.Str(1),
 		row.Str(2),
 	}
 
 	// if we've got here, we either are logged in or not.
 	return user == req_user
-}
-
-func createConnection() (mysql.Conn, error) {
-	db := mysql.New(
-		"tcp",
-		"",
-		connection_details.IP,
-		connection_details.User,
-		connection_details.Password,
-		connection_details.Database,
-	)
-	err := db.Connect()
-	if err != nil {
-		return nil, err
-	}
-	return db, nil
-}
-
-func getUser(user string) (mysql.Row, error) {
-
-	db, err := createConnection()
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	defer db.Close()
-	// Prepare the statement and execute
-	stmt, err := db.Prepare("SELECT * FROM tblusers WHERE userid=(?)")
-	if err != nil {
-		return nil, err
-	}
-	resp, err := stmt.Run(user)
-	if err != nil {
-		return nil, err
-	}
-	row, err := resp.GetRow()
-	if err != nil {
-		return nil, err
-	}
-	if len(row) == 0 {
-		return nil, errors.New("1: Login Failure")
-	}
-
-	return row, nil
 }
 
 func main() {
