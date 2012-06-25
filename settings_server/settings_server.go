@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"time"
 	"settingsserver"
+	"time"
 )
 
 // Routes is a slice of RoutingEntries, this allows
@@ -26,6 +26,8 @@ var Routes []settingsserver.RoutingEntry = []settingsserver.RoutingEntry{
 	},
 }
 
+// Struct so that we may assign ServeHTTP to something to satisfy the
+// server interface
 type SettingsHandler struct{}
 
 // This is the main 'event loop' for the web server. All requests are
@@ -43,7 +45,6 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 		}
 	}
 }
-
 
 // Simple server which is used to store and return parameters
 // for particular databases.
@@ -90,15 +91,14 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-/* 
- This is a URL attached to ^login/?$ because then we can
- programmatically log in the user and also check if the
- user is login-able. Eventually userLogin will create a
- session row in the database and send the sessionid key
- back to the requester.
-*/
+// This is a URL attached to ^login/?$ because then we can
+// programmatically log in the user and also check if the
+// user is login-able. Eventually userLogin will create a
+// session row in the database and send the sessionid key
+// back to the requester.
 func userLogin(w http.ResponseWriter, req *http.Request) {
 	if !Login(w, req) {
+		settingsserver.SendJSON(w, "Error logging in!")
 		return
 	}
 	settingsserver.SendJSON(w, "Logged in!")
