@@ -34,13 +34,6 @@ type RoutingEntry struct {
 
 type SettingsHandler struct{}
 
-type Metadata map[string]map[string][]interface{}
-
-type JSONMessage struct {
-	Rows     [][]string
-	Metadata Metadata
-}
-
 // Routes is a slice of RoutingEntries, this allows
 // us to hold a map (and subsequently iterate through
 // it.)
@@ -73,26 +66,6 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 	}
 }
 
-// Initializes a JSONMessage structure
-func NewJSONMessage(md Metadata) JSONMessage {
-	var message JSONMessage
-	message.Metadata = md
-	return message
-}
-
-// Helper method to clean up syntax of adding new rows
-// to the map
-func (self *JSONMessage) AddRow(row []string) {
-	self.Rows = append(self.Rows, row)
-}
-
-// Adds metadata to the JSONMessage object
-func (self *JSONMessage) AddMetadata(heading, option string, data []interface{}) {
-	if _, ok := self.Metadata[heading]; !ok {
-		self.Metadata[heading] = make(map[string][]interface{})
-	}
-	self.Metadata[heading][option] = data
-}
 
 // Simple server which is used to store and return parameters
 // for particular databases.
@@ -117,7 +90,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	}
 	row, err := resp.GetRow()
 	if len(row) != 1 {
-		sendJSON(w, "Table not found")
+		settingsserver.SendJSON(w, "Table not found")
 		return
 	}
 	if err != nil {
@@ -126,12 +99,12 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.Header().Set("Content-type", "application/json")
-	metadata := make(Metadata)
+	metadata := make(settingsserver.Metadata)
 	err = json.Unmarshal(row[0].([]byte), &metadata)
 	if err != nil {
 		log.Println(err)
 	}
-	jsonMap := NewJSONMessage(metadata)
+	jsonMap := settingsserver.NewJSONMessage(metadata)
 	err = json.NewEncoder(w).Encode(jsonMap)
 	if err != nil {
 		log.Println(err)
@@ -150,7 +123,7 @@ func userLogin(w http.ResponseWriter, req *http.Request) {
 	if !Login(w, req) {
 		return
 	}
-	sendJSON(w, "Logged in!")
+	settingsserver.SendJSON(w, "Logged in!")
 	return
 }
 
@@ -166,7 +139,7 @@ func Login(w http.ResponseWriter, req *http.Request) bool {
 	username := req.FormValue("User")
 	pass := req.FormValue("Password")
 	if len(username) == 0 || len(pass) == 0 {
-		sendJSON(w, "Missing username or password")
+		settingsserver.SendJSON(w, "Missing username or password")
 		return false
 	}
 
@@ -177,7 +150,7 @@ func Login(w http.ResponseWriter, req *http.Request) bool {
 
 	row, err := getUser(user.User)
 	if err != nil {
-		sendJSON(w, err)
+		settingsserver.SendJSON(w, err)
 		return false
 	}
 
@@ -189,28 +162,6 @@ func Login(w http.ResponseWriter, req *http.Request) bool {
 
 	// if we've got here, we either are logged in or not.
 	return user == req_user
-}
-
-// Sends JSON using the message as the payload. Determines the
-// underlying type and uses some specific handling for that type.
-func sendJSON(w http.ResponseWriter, message interface{}) {
-
-	// type switch on the message interface
-	switch message.(type) {
-	case error:
-		json.NewEncoder(w).Encode(map[string]string{
-			"Error": message.(error).Error(),
-		})
-	case string:
-		json.NewEncoder(w).Encode(map[string]string{
-			"Error": message.(string),
-		})
-	case bool:
-		json.NewEncoder(w).Encode(map[string]bool{
-			"Success": message.(bool),
-		})
-	}
-	return
 }
 
 func createConnection() (mysql.Conn, error) {
