@@ -180,6 +180,7 @@ class Database(object):
                 urllib.urlencode(json_payload)
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
+            print json
         except IOError as error:
             print "Error: %s" % error
 
@@ -210,6 +211,20 @@ class Database(object):
 
         :param query: :class:`str` which is the query to be executed
         '''
+        try:
+            json_payload = {
+                'User': self.user,
+                'Password': self.password,
+                "Database": self.using_db,
+            }
+            http_post = urllib2.Request(
+                self.param_url % (self.using_db, self.table),
+                urllib.urlencode(json_payload)
+            )
+            json = simplejson.loads(urllib2.urlopen(http_post).read())
+            print json
+        except IOError as error:
+            print "Error: %s" % error
         return [result for result in itersql(self._connection, query)]
 
     def commit(self):
