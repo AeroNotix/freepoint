@@ -23,13 +23,9 @@ func SendJSON(w http.ResponseWriter, message interface{}) {
 
 	// type switch on the message interface
 	switch message.(type) {
-	case error:
-		json.NewEncoder(w).Encode(map[string]string{
-			"Error": message.(error).Error(),
-		})
 	case string:
 		json.NewEncoder(w).Encode(map[string]string{
-			"Error": message.(string),
+			"Message": message.(string),
 		})
 	case bool:
 		json.NewEncoder(w).Encode(map[string]bool{
@@ -37,6 +33,12 @@ func SendJSON(w http.ResponseWriter, message interface{}) {
 		})
 	}
 	return
+}
+
+func SendJSONError(w http.ResponseWriter, message error) {
+	json.NewEncoder(w).Encode(map[string]string{
+		"Error": message.Error(),
+	})
 }
 
 // Helper method to clean up syntax of adding new rows

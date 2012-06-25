@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"log"
 	"net/http"
@@ -44,6 +45,7 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 			return
 		}
 	}
+	http.NotFound(w, req)
 }
 
 // Simple server which is used to store and return parameters
@@ -57,6 +59,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 
 	// multiple return paths so we defer the database close
 	defer db.Close()
+
 	stmt, err := db.Prepare("SELECT metadata FROM metadata WHERE tablename=(?)")
 	if err != nil {
 		log.Println(err)
@@ -98,7 +101,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 // back to the requester.
 func userLogin(w http.ResponseWriter, req *http.Request) {
 	if !Login(w, req) {
-		settingsserver.SendJSON(w, "Error logging in!")
+		settingsserver.SendJSONError(w, errors.New("Error logging in"))
 		return
 	}
 	settingsserver.SendJSON(w, "Logged in!")
@@ -122,7 +125,9 @@ func Login(w http.ResponseWriter, req *http.Request) bool {
 	username := req.FormValue("User")
 	pass := req.FormValue("Password")
 	if len(username) == 0 || len(pass) == 0 {
-		settingsserver.SendJSON(w, "Missing username or password")
+		settingsserver.SendJSONError(
+			w, errors.New("Missing username or password"),
+		)
 		return false
 	}
 
@@ -133,7 +138,7 @@ func Login(w http.ResponseWriter, req *http.Request) bool {
 
 	row, err := settingsserver.GetUser(user.User)
 	if err != nil {
-		settingsserver.SendJSON(w, err)
+		settingsserver.SendJSONError(w, err)
 		return false
 	}
 
