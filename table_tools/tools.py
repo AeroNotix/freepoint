@@ -5,8 +5,10 @@ databases and Qt applications
 
 import contextlib
 import functools
+import urllib2, urllib
 
 import MySQLdb
+import simplejson
 from PyQt4 import QtCore
 
 def get_headings(db, query):
@@ -41,7 +43,7 @@ def sql_query(db, query):
     :param db: A :class:`MySQLdb.connect`.
     :param query: A :class:`string` which contains the query to be executed
     '''
-    
+
     cursor = db.cursor()
     cursor.execute(query)
     yield cursor.fetchall()
@@ -58,13 +60,13 @@ def itersql(db, query):
     :param query: A :class:`string` which contains the query to be executed
     :returns: Yields a row from the database.
     '''
-    
+
     cursor = db.cursor()
     cursor.execute(query)
 
     for row in cursor.fetchall():
         yield row
-        
+
 def to_unicode(string, encoding='utf-8'):
     '''
     Returns a string in the specified encoding,
@@ -154,6 +156,9 @@ class Database(object):
         self.port = port
         self._connection = None
         self.connected = False
+        self.base_url = "http://localhost:12345/"
+        self.param_url = self.base_url + "getdb/%s.%s"
+        self.login_url = self.base_url + "login/"
 
     def connect(self):
         '''
@@ -161,6 +166,21 @@ class Database(object):
         moving to use the client/server model. Currently we're connecting
         directly to the MySQL database.
         '''
+
+        try:
+            json_payload = {
+                'User': self.user,
+                'Password': self.password,
+            }
+            http_post = urllib2.Request(
+                self.login_url,
+                urllib.urlencode(json_payload)
+            )
+            json = simplejson.loads(urllib2.urlopen(http_post).read())
+            print json
+        except IOError as error:
+            print "Error: %s" % error
+
         self._connection = MySQLdb.connect(
             host=self.host, user=self.user,
             passwd=self.password, db=self.using_db,
