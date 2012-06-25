@@ -62,7 +62,6 @@ class MainGui(QtGui.QMainWindow):
         self.toolbar = self.addToolBar("Toolbar")
         self.populated = False
         self.cell = ''
-        self.param_url = "http://localhost:12345/params/%s"
         self.config = ConfigParser.RawConfigParser()
         self.configpath = os.path.join(CWD, "conf.cfg")
         self.actionList = []
@@ -138,15 +137,6 @@ class MainGui(QtGui.QMainWindow):
             QtGui.QMessageBox.warning(self, "Error", str(error))
             return
 
-        try:
-            http_get = urllib.urlopen(
-                # string interpolation
-                self.param_url % self.database.using_db
-            )
-            json = simplejson.loads(http_get.read())
-            print json
-        except IOError as error:
-            print "Error: %s" % error
 
         # get the headings so we can set up the table
         try:
