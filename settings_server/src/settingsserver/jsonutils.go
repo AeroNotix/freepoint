@@ -5,6 +5,9 @@ import (
 	"net/http"
 )
 
+// This type allows us to easily marshal incoming JSON data into
+// the fields of a struct by statically mapping the values.
+// Our JSON will be a map of maps to interface types.
 type Metadata map[string]map[string][]interface{}
 
 // Initializes a JSONMessage structure
@@ -42,6 +45,12 @@ func (self *JSONMessage) AddRow(row []string) {
 	self.Rows = append(self.Rows, row)
 }
 
+// A JSON message in our case will be a [][]string field
+// which corresponds to the rows in a database call and
+// we also need to get the metadata for that call so
+// we need to have a metadata field in our message. This
+// way we can easily marshal data into the json wire
+// format.
 type JSONMessage struct {
 	Rows     [][]string
 	Metadata Metadata
