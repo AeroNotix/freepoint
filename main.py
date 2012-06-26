@@ -69,6 +69,7 @@ class MainGui(QtGui.QMainWindow):
         if RESULTS.db:
             # if we got command line arguments, open that
             self.database = Database(
+                self,
                 RESULTS.host,
                 RESULTS.user,
                 RESULTS.password,
@@ -91,6 +92,7 @@ class MainGui(QtGui.QMainWindow):
                 if not port:
                     port = 3306
                 self.database = Database(
+                    self,
                     host,
                     self.config.get(self.current_table, "username"),
                     self.config.get(self.current_table, "password"),
@@ -144,7 +146,7 @@ class MainGui(QtGui.QMainWindow):
             queryset = self.database.query(query)
             self.headings = get_headings(self.database, query)
         except _mysql_exceptions.OperationalError, error:
-            QtGui.QMessageBox.warning(self, "Error", str(error))
+            self.show_error(str(error))
             return
         except _mysql_exceptions.ProgrammingError as error:
             self.show_message(mysqlerror(error), time=10000)
@@ -253,6 +255,10 @@ class MainGui(QtGui.QMainWindow):
         Method which sets the status message for a period of time
         """
         self.gui.statusbar.showMessage(message, time)
+
+    def show_error(self, error_message_string):
+        QtGui.QMessageBox.warning(self, "Error", error_message_string)
+        self.show_message(error_message_string, time=10000)
 
     def changeConnection(self, section):
         """

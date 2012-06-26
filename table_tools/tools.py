@@ -9,6 +9,7 @@ import urllib2, urllib
 
 import MySQLdb
 import simplejson
+from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore
 
 def get_headings(db, query):
@@ -139,7 +140,7 @@ class Database(object):
     know what attributes and methods are to do with a database.
     '''
 
-    def __init__(self,
+    def __init__(self, parent=None,
                  host='localhost', user=None, passwd=None,
                  using_db=None, table=None, port=3306):
         '''
@@ -159,6 +160,7 @@ class Database(object):
         self.base_url = "http://localhost:12345/"
         self.param_url = self.base_url + "getdb/%s.%s"
         self.login_url = self.base_url + "login/"
+        self.parent = parent
 
     def connect(self):
         '''
@@ -179,10 +181,11 @@ class Database(object):
                 self.login_url,
                 urllib.urlencode(json_payload)
             )
-            print urllib2.urlopen(http_post).read()
+            json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError as error:
-            print "Error: %s" % error
-
+            self.parent.show_error("Cannot connect to dataserver.")
+        except JSONDecodeError as error:
+            self.parent.show_error("The information from the server was invald.")
         self._connection = MySQLdb.connect(
             host=self.host, user=self.user,
             passwd=self.password, db=self.using_db,
@@ -223,7 +226,9 @@ class Database(object):
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError as error:
-            print "Error: %s" % error
+            self.parent.show_error("Cannot connect to dataserver.")
+        except JSONDecodeError as error:
+            self.parent.show_error("The information from the server was invalid.")
         return [result for result in itersql(self._connection, query)]
 
     def commit(self):

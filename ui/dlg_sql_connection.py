@@ -38,6 +38,7 @@ class SQLDisplaySetup(QtGui.QDialog):
 
         # create Database object
         self.parent.database = Database(
+            self,
             to_unicode(host),
             to_unicode(username),
             to_unicode(password),
