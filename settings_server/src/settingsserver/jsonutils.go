@@ -8,7 +8,7 @@ import (
 // This type allows us to easily marshal incoming JSON data into
 // the fields of a struct by statically mapping the values.
 // Our JSON will be a map of maps to interface types.
-type Metadata map[string]map[string][]interface{}
+type Metadata map[string]map[string]interface{}
 
 // Initializes a JSONMessage structure
 func NewJSONMessage(md Metadata) JSONMessage {
@@ -44,8 +44,12 @@ func SendJSONError(w http.ResponseWriter, message error) {
 
 // Helper method to clean up syntax of adding new rows
 // to the map
-func (self *JSONMessage) AddRow(row []string) {
-	self.Rows = append(self.Rows, row)
+func (self *JSONMessage) AddRow(row [][]byte) {
+	str_add := []string{}
+	for _, item := range row {
+		str_add = append(str_add, string(item))
+	}
+	self.Rows = append(self.Rows, str_add)
 }
 
 // A JSON message in our case will be a [][]string field
@@ -60,9 +64,9 @@ type JSONMessage struct {
 }
 
 // Adds metadata to the JSONMessage object
-func (self *JSONMessage) AddMetadata(heading, option string, data []interface{}) {
+func (self *JSONMessage) AddMetadata(heading, option string, data interface{}) {
 	if _, ok := self.Metadata[heading]; !ok {
-		self.Metadata[heading] = make(map[string][]interface{})
+		self.Metadata[heading] = make(map[string]interface{})
 	}
 	self.Metadata[heading][option] = data
 }

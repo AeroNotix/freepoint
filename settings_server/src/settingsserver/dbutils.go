@@ -1,11 +1,11 @@
 package settingsserver
 
 import (
+	"connection_details"
 	"encoding/json"
+	"fmt"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
-	"connection_details"
-	"fmt"
 )
 
 type User struct {
@@ -93,7 +93,7 @@ func GetMetadata(table string) (Metadata, error) {
 	return metadata, nil
 }
 
-func GetRows(database, table string) ([]mysql.Row, error) { 
+func GetRows(database, table string) ([]mysql.Row, error) {
 	db, err := CreateConnection(database)
 	if err != nil {
 		return nil, err
@@ -109,4 +109,3 @@ func GetRows(database, table string) ([]mysql.Row, error) {
 	return rows, nil
 
 }
-	

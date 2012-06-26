@@ -65,16 +65,22 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 
 	// Marshal our metadata into a struct and encode
 	jsonMap := settingsserver.NewJSONMessage(metadata)
+
+	rows, _ := settingsserver.GetRows("db_timetracker", "tbluser")
+
+	for _, row := range rows {
+		var newrow = [][]byte{}
+		for _, item := range row {
+			newrow = append(newrow, item.([]byte))
+		}
+		jsonMap.AddRow(newrow)
+	}
+
 	err = json.NewEncoder(w).Encode(jsonMap)
 	if err != nil {
 		return err
 	}
 
-	rows, _ := settingsserver.GetRows("db_timetracker", "tbluser")
-
-	for _, item := range rows {
-		log.Println(item)
-	}
 	return nil
 }
 
@@ -88,7 +94,6 @@ func userLogin(w http.ResponseWriter, req *http.Request) error {
 		settingsserver.SendJSONError(w, err)
 		return err
 	}
-	log.Println("Login Error")
 	settingsserver.SendJSON(w, "Logged in!")
 	return nil
 }
@@ -124,7 +129,11 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 		row.Str(2),
 	}
 	// if we've got here, we either are logged in or not.
-	return user == req_user, nil
+	success := user == req_user
+	if !success {
+		return success, settingsserver.LoginError
+	}
+	return success, nil
 }
 
 func main() {

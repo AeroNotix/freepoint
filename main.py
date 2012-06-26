@@ -6,12 +6,10 @@ import os
 import sys
 import argparse
 import ConfigParser
-import urllib
 
 from PyQt4 import QtGui, QtCore
 
 import _mysql_exceptions
-import simplejson
 
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup

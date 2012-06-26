@@ -182,9 +182,10 @@ class Database(object):
                 urllib.urlencode(json_payload)
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
-        except IOError as error:
+            print json
+        except IOError:
             self.parent.show_error("Cannot connect to dataserver.")
-        except JSONDecodeError as error:
+        except JSONDecodeError:
             self.parent.show_error("The information from the server was invald.")
         self._connection = MySQLdb.connect(
             host=self.host, user=self.user,
@@ -224,10 +225,12 @@ class Database(object):
                 self.param_url % (self.using_db, self.table),
                 urllib.urlencode(json_payload)
             )
+            print self.using_db, self.table
             json = simplejson.loads(urllib2.urlopen(http_post).read())
-        except IOError as error:
+            print json
+        except IOError:
             self.parent.show_error("Cannot connect to dataserver.")
-        except JSONDecodeError as error:
+        except JSONDecodeError:
             self.parent.show_error("The information from the server was invalid.")
         return [result for result in itersql(self._connection, query)]
 

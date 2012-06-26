@@ -1,9 +1,8 @@
 package settingsserver
 
-
 type AppError struct {
 	errorString string
-	errorCode int
+	errorCode   int
 }
 
 func (e AppError) Error() string {
@@ -15,7 +14,7 @@ func (e AppError) Code() int {
 }
 
 var (
-	LoginError = AppError{"Login Failure", 1}
+	LoginError   = AppError{"Login Failure", 1}
 	RequestError = AppError{"Incorrect request mode", 2}
 	InvalidTable = AppError{"Table not found", 3}
 )
