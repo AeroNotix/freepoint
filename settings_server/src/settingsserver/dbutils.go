@@ -5,6 +5,7 @@ import (
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"connection_details"
+	"fmt"
 )
 
 type User struct {
@@ -12,14 +13,14 @@ type User struct {
 	Password string
 }
 
-func CreateConnection() (mysql.Conn, error) {
+func CreateConnection(dbname string) (mysql.Conn, error) {
 	db := mysql.New(
 		"tcp",
 		"",
 		connection_details.IP,
 		connection_details.User,
 		connection_details.Password,
-		connection_details.Database,
+		dbname,
 	)
 	err := db.Connect()
 	if err != nil {
@@ -33,7 +34,7 @@ func CreateConnection() (mysql.Conn, error) {
 // back a single row, if not an error
 func GetUser(user string) (mysql.Row, error) {
 
-	db, err := CreateConnection()
+	db, err := CreateConnection("db_freepoint")
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +60,7 @@ func GetUser(user string) (mysql.Row, error) {
 }
 
 func GetMetadata(table string) (Metadata, error) {
-	db, err := CreateConnection()
+	db, err := CreateConnection("db_freepoint")
 	if err != nil {
 		return nil, err
 	}
@@ -91,3 +92,21 @@ func GetMetadata(table string) (Metadata, error) {
 
 	return metadata, nil
 }
+
+func GetRows(database, table string) ([]mysql.Row, error) { 
+	db, err := CreateConnection(database)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	sqlStr := fmt.Sprintf("SELECT * FROM %s", table)
+	rows, _, err := db.Query(sqlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
+
+}
+	

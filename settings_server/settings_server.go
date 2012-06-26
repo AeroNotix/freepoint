@@ -69,6 +69,12 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 	if err != nil {
 		return err
 	}
+
+	rows, _ := settingsserver.GetRows("db_timetracker", "tbluser")
+
+	for _, item := range rows {
+		log.Println(item)
+	}
 	return nil
 }
 
