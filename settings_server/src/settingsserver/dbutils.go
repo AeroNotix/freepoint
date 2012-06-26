@@ -1,7 +1,7 @@
 package settingsserver
 
 import (
-	"log"
+	"encoding/json"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"connection_details"
@@ -35,9 +35,9 @@ func GetUser(user string) (mysql.Row, error) {
 
 	db, err := CreateConnection()
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
+	// multiple return paths so we just defer closing till then
 	defer db.Close()
 	// Prepare the statement and execute
 	stmt, err := db.Prepare("SELECT * FROM tblusers WHERE userid=(?)")
@@ -56,4 +56,38 @@ func GetUser(user string) (mysql.Row, error) {
 		return nil, LoginError
 	}
 	return row, nil
+}
+
+func GetMetadata(table string) (Metadata, error) {
+	db, err := CreateConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	// multiple return paths so we defer the database close
+	defer db.Close()
+
+	stmt, err := db.Prepare("SELECT metadata FROM metadata WHERE tablename=(?)")
+	if err != nil {
+		return nil, err
+	}
+	resp, err := stmt.Run(table)
+	if err != nil {
+		return nil, err
+	}
+	row, err := resp.GetRow()
+	if len(row) != 1 {
+		return nil, InvalidTable
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	metadata := make(Metadata)
+	err = json.Unmarshal(row[0].([]byte), &metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	return metadata, nil
 }

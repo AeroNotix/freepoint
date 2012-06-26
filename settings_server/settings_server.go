@@ -50,40 +50,20 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 	http.NotFound(w, req)
 }
 
-// Simple server which is used to store and return parameters
-// for particular databases.
+// Simple server which is used to return parameters for particular databases.
 func databaseParameters(w http.ResponseWriter, req *http.Request) error {
-	db, err := settingsserver.CreateConnection()
+
+	// We add the content type so the browser can accept it properly if
+	// we get requested via a browser.
+	w.Header().Set("Content Type", "application/json")
+	// Get the metadata associated with the table
+	metadata, err := settingsserver.GetMetadata(req.URL.Path[len("/getdb/"):])
 	if err != nil {
+		settingsserver.SendJSONError(w, err)
 		return err
 	}
 
-	// multiple return paths so we defer the database close
-	defer db.Close()
-
-	stmt, err := db.Prepare("SELECT metadata FROM metadata WHERE tablename=(?)")
-	if err != nil {
-		return err
-	}
-	resp, err := stmt.Run(req.URL.Path[len("/getdb/"):])
-	if err != nil {
-		return err
-	}
-	row, err := resp.GetRow()
-	if len(row) != 1 {
-		settingsserver.SendJSON(w, settingsserver.InvalidTable)
-		return err
-	}
-	if err != nil {
-		return err
-	}
-	w.Header().Set("Content-type", "application/json")
-	metadata := make(settingsserver.Metadata)
-	err = json.Unmarshal(row[0].([]byte), &metadata)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
+	// Marshal our metadata into a struct and encode
 	jsonMap := settingsserver.NewJSONMessage(metadata)
 	err = json.NewEncoder(w).Encode(jsonMap)
 	if err != nil {
