@@ -20,7 +20,7 @@ func NewJSONMessage(md Metadata) JSONMessage {
 // Sends JSON using the message as the payload. Determines the
 // underlying type and uses some specific handling for that type.
 func SendJSON(w http.ResponseWriter, message interface{}) {
-
+	w.Header().Set("Content-type", "application/json")
 	// type switch on the message interface
 	switch message.(type) {
 	case string:
@@ -36,6 +36,7 @@ func SendJSON(w http.ResponseWriter, message interface{}) {
 }
 
 func SendJSONError(w http.ResponseWriter, message error) {
+	w.Header().Set("Content-type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"Error": message.Error(),
 	})

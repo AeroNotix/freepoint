@@ -2,7 +2,6 @@ package settingsserver
 
 import (
 	"log"
-	"errors"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"connection_details"
@@ -54,7 +53,7 @@ func GetUser(user string) (mysql.Row, error) {
 		return nil, err
 	}
 	if len(row) == 0 {
-		return nil, errors.New("1: Login Failure")
+		return nil, LoginError
 	}
 	return row, nil
 }

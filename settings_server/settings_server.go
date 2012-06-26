@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"log"
 	"net/http"
@@ -41,7 +40,10 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 		matches := route.URL.FindAllStringSubmatch(request, 1)
 		if len(matches) > 0 {
 			log.Println("Request:", route.Name)
-			route.Handler(w, req)
+			err := route.Handler(w, req)
+			if err != nil {
+				log.Println(err)
+			}
 			return
 		}
 	}
@@ -50,11 +52,10 @@ func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request)
 
 // Simple server which is used to store and return parameters
 // for particular databases.
-func databaseParameters(w http.ResponseWriter, req *http.Request) {
+func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 	db, err := settingsserver.CreateConnection()
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 
 	// multiple return paths so we defer the database close
@@ -62,36 +63,33 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 
 	stmt, err := db.Prepare("SELECT metadata FROM metadata WHERE tablename=(?)")
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 	resp, err := stmt.Run(req.URL.Path[len("/getdb/"):])
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 	row, err := resp.GetRow()
 	if len(row) != 1 {
-		settingsserver.SendJSON(w, "Table not found")
-		return
+		settingsserver.SendJSON(w, settingsserver.InvalidTable)
+		return err
 	}
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
-
 	w.Header().Set("Content-type", "application/json")
 	metadata := make(settingsserver.Metadata)
 	err = json.Unmarshal(row[0].([]byte), &metadata)
 	if err != nil {
 		log.Println(err)
+		return err
 	}
 	jsonMap := settingsserver.NewJSONMessage(metadata)
 	err = json.NewEncoder(w).Encode(jsonMap)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
+	return nil
 }
 
 // This is a URL attached to ^login/?$ because then we can
@@ -99,13 +97,14 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) {
 // user is login-able. Eventually userLogin will create a
 // session row in the database and send the sessionid key
 // back to the requester.
-func userLogin(w http.ResponseWriter, req *http.Request) {
-	if !Login(w, req) {
-		settingsserver.SendJSONError(w, errors.New("Error logging in"))
-		return
+func userLogin(w http.ResponseWriter, req *http.Request) error {
+	if ok, err := Login(w, req); !ok {
+		settingsserver.SendJSONError(w, err)
+		return err
 	}
+	log.Println("Login Error")
 	settingsserver.SendJSON(w, "Logged in!")
-	return
+	return nil
 }
 
 // Checks if the user is a valid user.
@@ -114,42 +113,32 @@ func userLogin(w http.ResponseWriter, req *http.Request) {
 // because other with we would have a string return type
 // or multiple return types which need to be parsed out
 // or error checks on them and this seems cleaner.
-func Login(w http.ResponseWriter, req *http.Request) bool {
+func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 
 	if req.Method != "POST" {
-		return false
+		return false, settingsserver.RequestError
 	}
-
-	w.Header().Set("Content-type", "application/json")
 
 	username := req.FormValue("User")
 	pass := req.FormValue("Password")
 	if len(username) == 0 || len(pass) == 0 {
-		settingsserver.SendJSONError(
-			w, errors.New("Missing username or password"),
-		)
-		return false
+		return false, settingsserver.LoginError
 	}
-
 	user := settingsserver.User{
 		User:     username,
 		Password: pass,
 	}
-
 	row, err := settingsserver.GetUser(user.User)
 	if err != nil {
-		settingsserver.SendJSONError(w, err)
-		return false
+		return false, err
 	}
-
 	// Create a User instance from the SQL Results.
 	req_user := settingsserver.User{
 		row.Str(1),
 		row.Str(2),
 	}
-
 	// if we've got here, we either are logged in or not.
-	return user == req_user
+	return user == req_user, nil
 }
 
 func main() {

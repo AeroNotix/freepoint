@@ -7,7 +7,7 @@ import (
 
 // This type defines what signatures of functions can be used
 // as request handlers.
-type RouterHandler func(w http.ResponseWriter, req *http.Request)
+type RouterHandler func(w http.ResponseWriter, req *http.Request) error
 
 // RoutingEntry takes a URL, a RouterHandler and a String
 // we define the URL as a regex because this way we can
