@@ -179,8 +179,7 @@ class Database(object):
                 self.login_url,
                 urllib.urlencode(json_payload)
             )
-            json = simplejson.loads(urllib2.urlopen(http_post).read())
-            print json
+            print urllib2.urlopen(http_post).read()
         except IOError as error:
             print "Error: %s" % error
 
@@ -215,14 +214,14 @@ class Database(object):
             json_payload = {
                 'User': self.user,
                 'Password': self.password,
-                "Database": self.using_db,
+                "Database": "%s.%s" % (self.using_db, self.table),
             }
             http_post = urllib2.Request(
+                # string interpolation
                 self.param_url % (self.using_db, self.table),
                 urllib.urlencode(json_payload)
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
-            print json
         except IOError as error:
             print "Error: %s" % error
         return [result for result in itersql(self._connection, query)]
