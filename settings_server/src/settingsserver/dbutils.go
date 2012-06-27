@@ -143,7 +143,7 @@ func ChangeData(database, table, column, data, id string) error {
 		table, column, data, id,
 	)
 
-	_, _, err := db.Query(sqlStr)
+	_, _, err = db.Query(sqlStr)
 	if err != nil {
 		return err
 	}

@@ -25,9 +25,9 @@ var Routes []settingsserver.RoutingEntry = []settingsserver.RoutingEntry{
 		Name:    "Login",
 	},
 	settingsserver.RoutingEntry{
-		URL: regexp.MustCompile("^/update/$"),
+		URL:     regexp.MustCompile("^/update/$"),
 		Handler: changeTable,
-		Name: "Change Table Data",
+		Name:    "Change Table Data",
 	},
 }
 
@@ -85,7 +85,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 	rows, _ := settingsserver.GetRows(
 		database_name,
 		table_name,
-		)
+	)
 
 	headings, err := settingsserver.GetHeadings(database_name, table_name)
 	if err != nil {
@@ -100,7 +100,6 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 		}
 		jsonMap.AddRow(newrow)
 	}
-
 
 	// Send the JSON to the client.
 	err = json.NewEncoder(w).Encode(jsonMap)
@@ -173,6 +172,7 @@ func changeTable(w http.ResponseWriter, req *http.Request) error {
 		req.FormValue("ID"),
 	)
 	if err != nil {
+		settingsserver.SendJSONError(w, err)
 		return err
 	}
 	return nil
