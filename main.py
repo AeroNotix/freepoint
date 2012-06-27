@@ -14,6 +14,7 @@ import _mysql_exceptions
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 from qtsqlviewer.ui.connection_dialog import ConnectionDialog
+from qtsqlviewer.ui.login import Login
 
 from qtsqlviewer.table_tools.tools import get_headings, table_wrapper, Database
 from qtsqlviewer.table_tools.argument import Argument
@@ -57,6 +58,7 @@ class MainGui(QtGui.QMainWindow):
         QtGui.QMainWindow.__init__(self, parent)
         self.gui = Ui_MainWindow()
         self.gui.setupUi(self)
+        self.login()
         self.toolbar = self.addToolBar("Toolbar")
         self.populated = False
         self.cell = ''
@@ -156,7 +158,6 @@ class MainGui(QtGui.QMainWindow):
         self.gui.tableWidget.setHorizontalHeaderLabels(self.headings)
 
         # iterate through the query set and get the data into the table
-        # for idx, data in enumerate(itersql(self.database, query)):
         for idx, data in enumerate(queryset):
             if not data:
                 break
@@ -360,6 +361,9 @@ class MainGui(QtGui.QMainWindow):
         setup_dlg.exec_()
         return
 
+    def login(self):
+        login = Login(self)
+        login.exec_()
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)
