@@ -47,15 +47,12 @@ class ConnectionDialog(QtGui.QDialog):
         self.gui.txt_host.setText(self.parent.config.get(connection, "host"))
         self.gui.txt_database.setText(self.parent.config.get(connection, "database"))
         self.gui.txt_table.setText(self.parent.config.get(connection, "table"))
-        self.gui.txt_username.setText(self.parent.config.get(connection, "username"))
-        self.gui.txt_password.setText(self.parent.config.get(connection, "password"))
         self.gui.txt_port.setText(self.parent.config.get(connection, "port"))
                 
     def clearTable(self):
         """
         Clears all the table of the QListWidgetItems
         """
-
         for row in range(self.gui.listWidget.count()):
             self.gui.listWidget.takeItem(row)
 
@@ -78,15 +75,11 @@ class ConnectionDialog(QtGui.QDialog):
         host = self.gui.txt_host.text()
         database = self.gui.txt_database.text()
         table = self.gui.txt_table.text()
-        username = self.gui.txt_username.text()
-        password = self.gui.txt_password.text()
         port = self.gui.txt_port.text()
         connection = self.getCurrentItem()
         self.parent.config.set(connection, "host", host)
         self.parent.config.set(connection, "database", database)
         self.parent.config.set(connection, "table", table)
-        self.parent.config.set(connection, "username", username)
-        self.parent.config.set(connection, "password", password)
         self.parent.config.set(connection, "port", port)
 
     def deleteRow(self):

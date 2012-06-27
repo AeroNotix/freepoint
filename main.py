@@ -228,8 +228,6 @@ class MainGui(QtGui.QMainWindow):
         self.database.host = self.config.get(section, "host")
         self.database.database = self.config.get(section, "database")
         self.database.table = self.config.get(section, "table")
-        self.database.user = self.config.get(section, "username")
-        self.database.password = self.config.get(section, "password")
         self.database.port = self.config.get(section, "port")
 
         self.populate_table()

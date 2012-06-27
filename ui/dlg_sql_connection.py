@@ -96,8 +96,6 @@ class SQLDisplaySetup(QtGui.QDialog):
         """
 
         self.gui.txt_host.setText(self.parent.database.host)
-        self.gui.txt_username.setText(self.parent.database.user)
-        self.gui.txt_password.setText(self.parent.database.password)
         self.gui.txt_database.setText(self.parent.database.using_db)
         self.gui.txt_table.setText(self.parent.database.table)
         self.gui.txt_port.setText(str(self.parent.database.port))
