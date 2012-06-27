@@ -38,7 +38,7 @@ class SQLDisplaySetup(QtGui.QDialog):
 
         # create Database object
         self.parent.database = Database(
-            self,
+            self.parent,
             to_unicode(host),
             to_unicode(username),
             to_unicode(password),
@@ -90,10 +90,10 @@ class SQLDisplaySetup(QtGui.QDialog):
             self.parent.current_section = new_section
 
     def populate_fields(self):
-        '''
+        """
         Populates the dialog's fields with the info stored on the parent which
         created this instance if we have already connected to a database.
-        '''
+        """
 
         self.gui.txt_host.setText(self.parent.database.host)
         self.gui.txt_username.setText(self.parent.database.user)
