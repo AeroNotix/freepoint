@@ -15,7 +15,7 @@ class SQLDisplaySetup(QtGui.QDialog):
         """
         Creation of the dlg
         """
-        QtGui.QWidget.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         self.gui = Ui_frm_sql_data_entry()
         self.gui.setupUi(self)
         self.parent = parent
