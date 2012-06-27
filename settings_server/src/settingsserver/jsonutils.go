@@ -10,6 +10,18 @@ import (
 // Our JSON will be a map of maps to interface types.
 type Metadata map[string]map[string]interface{}
 
+// A JSON message in our case will be a [][]string field
+// which corresponds to the rows in a database call and
+// we also need to get the metadata for that call so
+// we need to have a metadata field in our message. This
+// way we can easily marshal data into the json wire
+// format.
+type JSONMessage struct {
+	Rows     [][]string
+	Metadata Metadata
+	Headings []string
+}
+
 // Initializes a JSONMessage structure
 func NewJSONMessage(md Metadata) JSONMessage {
 	var message JSONMessage
@@ -50,17 +62,6 @@ func (self *JSONMessage) AddRow(row [][]byte) {
 		str_add = append(str_add, string(item))
 	}
 	self.Rows = append(self.Rows, str_add)
-}
-
-// A JSON message in our case will be a [][]string field
-// which corresponds to the rows in a database call and
-// we also need to get the metadata for that call so
-// we need to have a metadata field in our message. This
-// way we can easily marshal data into the json wire
-// format.
-type JSONMessage struct {
-	Rows     [][]string
-	Metadata Metadata
 }
 
 // Adds metadata to the JSONMessage object

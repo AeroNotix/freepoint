@@ -105,7 +105,47 @@ func GetRows(database, table string) ([]mysql.Row, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return rows, nil
+}
 
+func GetHeadings(database, table string) ([]string, error) {
+	db, err := CreateConnection(database)
+	defer db.Close()
+	defer db.Query("DROP TABLE temp")
+	if err != nil {
+		return nil, err
+	}
+	sqlStr := fmt.Sprintf(`SHOW COLUMNS FROM %s`, table)
+	rows, _, err := db.Query(sqlStr)
+	if err != nil {
+		return nil, err
+	}
+
+	headers := []string{}
+	for _, row := range rows {
+		headers = append(headers, string(row[0].([]byte)))
+	}
+	return headers, nil
+}
+
+func ChangeData(database, table, column, data, id string) error {
+	db, err := CreateConnection(database)
+	if err != nil {
+		return err
+	}
+
+	defer db.Close()
+
+	sqlStr := fmt.Sprintf(
+		`UPDATE %s
+		 SET %s="%s"
+		 WHERE id=%s`,
+		table, column, data, id,
+	)
+
+	_, _, err := db.Query(sqlStr)
+	if err != nil {
+		return err
+	}
+	return nil
 }

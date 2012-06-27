@@ -16,7 +16,7 @@ from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 from qtsqlviewer.ui.connection_dialog import ConnectionDialog
 from qtsqlviewer.ui.login import Login
 
-from qtsqlviewer.table_tools.tools import get_headings, table_wrapper, Database
+from qtsqlviewer.table_tools.tools import table_wrapper, Database
 from qtsqlviewer.table_tools.argument import Argument
 from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
 
@@ -71,8 +71,8 @@ class MainGui(QtGui.QMainWindow):
             self.database = Database(
                 self,
                 RESULTS.host,
-                RESULTS.user,
-                RESULTS.password,
+                self.username,
+                self.password,
                 RESULTS.db,
                 RESULTS.table,
                 RESULTS.port
@@ -94,8 +94,8 @@ class MainGui(QtGui.QMainWindow):
                 self.database = Database(
                     self,
                     host,
-                    self.config.get(self.current_table, "username"),
-                    self.config.get(self.current_table, "password"),
+                    self.username,
+                    self.password,
                     self.config.get(self.current_table, "database"),
                     self.config.get(self.current_table, "table"),
                     port
@@ -142,9 +142,8 @@ class MainGui(QtGui.QMainWindow):
 
         # get the headings so we can set up the table
         try:
-            query = """SELECT * FROM %s""" % self.database.table
-            queryset = self.database.query(query)
-            self.headings = get_headings(self.database, query)
+            queryset = self.database.query()
+            self.headings = self.database.get_headings()
         except _mysql_exceptions.OperationalError, error:
             self.show_error(str(error))
             return
@@ -172,55 +171,7 @@ class MainGui(QtGui.QMainWindow):
         self.populated = True
 
     def changeTable(self, xrow, ycol):
-        """
-        When a cell is edited the data is written back into the database.
-
-        This is highly alpha code. There is no error handling, no locking.
-        Nothing. It's a work in progress.
-
-        :param xrow: :class:`Int` which is passed directly from the signal
-        :param ycol: :class:`Int` which is passed directly from the signal
-        :returns: None
-        """
-
-        try:
-            self.database.connect()
-        except _mysql_exceptions.OperationalError as error:
-            if error[0] == 2003:
-                self.show_message("Cannot connect to database", time=10000)
-                return
-            else:
-                raise
-
-        cur = self.database.cursor()
-        sql = ' '.join(
-            # we create somethings ourselves using string interpolation
-            # this is because the MySQLdb doesn't let you parameterize
-            # things like table names and column titles.
-            [
-                "UPDATE %s" % self.database.table,
-                "SET %s" % self.headings[ycol] + "=%s",
-                "WHERE id=%s"
-            ]
-        )
-        cur.execute(
-            # we pass our SQL string as the first argument and the second
-            # argument are the strings to parameterize into the first.
-            sql,
-            (
-                self.gui.tableWidget.item(xrow, ycol).text(),
-                self.gui.tableWidget.item(xrow, 0).text()
-            )
-        )
-
-        try:
-            self.database.commit()
-            self.database.close()
-        except _mysql_exceptions.OperationalError as error:
-            self.show_message(mysqlerror(error), time=10000)
-            return
-
-        self.show_message("Data has been saved to the database")
+        self.database.changeTable(xrow, ycol)
 
     def clear_table(self):
         """

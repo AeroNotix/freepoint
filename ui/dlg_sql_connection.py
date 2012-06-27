@@ -30,8 +30,8 @@ class SQLDisplaySetup(QtGui.QDialog):
         self.hide()
 
         host = self.gui.txt_host.text()
-        username = self.gui.txt_username.text()
-        password = self.gui.txt_password.text()
+        username = self.parent.username
+        password = self.parent.password
         database = self.gui.txt_database.text()
         table = self.gui.txt_table.text()
         port = self.gui.txt_port.text()
@@ -82,8 +82,6 @@ class SQLDisplaySetup(QtGui.QDialog):
         if not self.parent.config.has_section(new_section):
             self.parent.config.add_section(new_section)
             self.parent.config.set(new_section, "host", host)
-            self.parent.config.set(new_section, "username", username)
-            self.parent.config.set(new_section, "password", password)
             self.parent.config.set(new_section, "database", database)
             self.parent.config.set(new_section, "table", table)
             self.parent.config.set(new_section, "port", port)

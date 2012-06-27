@@ -12,61 +12,6 @@ import simplejson
 from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore
 
-def get_headings(db, query):
-    '''
-    get the headings from a table in the specified database
-
-    Takes a reference to a database, and a string for which
-    table you want to query, returns the headers.
-
-    MySQL database syntax.
-
-    :param db: A :class:`MySQLdb.connect`.
-    :param query: A :class:`string` which contains the query to be executed
-    '''
-
-    cursor = db.cursor()
-    cursor.execute('''CREATE TEMPORARY TABLE temp (%s)''' % query)
-    cursor.execute('''SHOW COLUMNS FROM temp''')
-    headings = cursor.fetchall()
-    ioheadings = []
-    [ioheadings.append(item[0]) for item in headings]
-    cursor.execute('''DROP TABLE temp''')
-    return ioheadings
-
-
-@contextlib.contextmanager
-def sql_query(db, query):
-    '''
-    Ability to use a set of sql results
-    within a with statement.
-
-    :param db: A :class:`MySQLdb.connect`.
-    :param query: A :class:`string` which contains the query to be executed
-    '''
-
-    cursor = db.cursor()
-    cursor.execute(query)
-    yield cursor.fetchall()
-
-
-def itersql(db, query):
-    '''
-    Yields a row of data from the query
-
-    Used to iterate over query rather than querying
-    then assigning, then looping over that data.
-
-    :param db: A :class:`MySQLdb.connect`.
-    :param query: A :class:`string` which contains the query to be executed
-    :returns: Yields a row from the database.
-    '''
-
-    cursor = db.cursor()
-    cursor.execute(query)
-
-    for row in cursor.fetchall():
-        yield row
 
 def to_unicode(string, encoding='utf-8'):
     '''
@@ -160,6 +105,7 @@ class Database(object):
         self.base_url = "http://localhost:12345/"
         self.param_url = self.base_url + "getdb/%s.%s"
         self.login_url = self.base_url + "login/"
+        self.update_url = self.base_url + "update/"
         self.parent = parent
 
     def connect(self):
@@ -185,35 +131,24 @@ class Database(object):
             print json
         except IOError:
             self.parent.show_error("Cannot connect to dataserver.")
+            return
         except JSONDecodeError:
             self.parent.show_error("The information from the server was invald.")
-        self._connection = MySQLdb.connect(
-            host=self.host, user=self.user,
-            passwd=self.password, db=self.using_db,
-            port=int(self.port), charset="utf8",
-            use_unicode=True
-        )
+            return
         self.connected = True
 
     def close(self):
         '''
         Closes the database connection
         '''
-        try:
-            self._connection.close()
-            self.connected = False
-        except:
-            pass
+        self.connected = False
 
-    def cursor(self):
-        return self._connection.cursor()
-
-    def query(self, query):
-        '''
+    def query(self):
+        """
         Returns a QuerySet for the passed in query
 
         :param query: :class:`str` which is the query to be executed
-        '''
+        """
         try:
             json_payload = {
                 'User': self.user,
@@ -226,24 +161,61 @@ class Database(object):
                 self.param_url % (self.using_db, self.table),
                 urllib.urlencode(json_payload)
             )
-            print self.using_db, self.table
             json = simplejson.loads(urllib2.urlopen(http_post).read())
-            print json
         except IOError:
             self.parent.show_error("Cannot connect to dataserver.")
+            return []
         except JSONDecodeError:
             self.parent.show_error("The information from the server was invalid.")
+            return []
+        try:
+            self.headings = json['Headings']
+        except KeyError:
+            self.parent.parent.show_error("The database did not return the correct data.")
+            return
+        try:
+            self.metadata = json['Metadata']
+        except KeyError:
+            self.metadata = False
         try:
             return json['Rows']
         except KeyError:
-            self.parent.show_error("The server did not return any data")
+            self.parent.show_error("The server did not return any data.")
             return []
 
     def commit(self):
-        self._connection.commit()
+        raise NotImplementedError
 
-    def __str__(self):
-        return """Database Connection on: %s using %s
-               Connected: %s
-               Current Table: %s
-               """ % (self.host,self.using_db,self.conncted,self.table)
+    def get_headings(self):
+        """
+        """
+        return self.headings
+
+    def changeTable(self, xrow, ycol):
+        """
+        When a cell is edited the data is written back into the database.
+
+        This is highly alpha code. There is no error handling, no locking.
+        Nothing. It's a work in progress.
+
+        :param xrow: :class:`Int` which is passed directly from the signal
+        :param ycol: :class:`Int` which is passed directly from the signal
+        :returns: None
+        """
+
+        json = {
+            "Database": self.using_db,
+            "Table": self.table,
+            "Column": self.headings[ycol],
+            "Data": self.parent.gui.tableWidget.item(xrow, ycol).text(),
+            "ID": self.parent.gui.tableWidget.item(xrow, 0).text()
+        }
+
+        http_post = urllib2.Request(
+            # string interpolation
+            self.update_url,
+            urllib.urlencode(json)
+        )
+
+        json = urllib2.urlopen(http_post).read()
+        self.parent.show_message("Data has been saved to the database")

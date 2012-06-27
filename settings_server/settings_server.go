@@ -24,6 +24,11 @@ var Routes []settingsserver.RoutingEntry = []settingsserver.RoutingEntry{
 		Handler: userLogin,
 		Name:    "Login",
 	},
+	settingsserver.RoutingEntry{
+		URL: regexp.MustCompile("^/update/$"),
+		Handler: changeTable,
+		Name: "Change Table Data",
+	},
 }
 
 // Struct so that we may assign ServeHTTP to something to satisfy the
@@ -75,10 +80,19 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 	jsonMap := settingsserver.NewJSONMessage(metadata)
 
 	// Get the rows from the database and encode them into JSON.
+	database_name := req.FormValue("Database")
+	table_name := req.FormValue("Table")
 	rows, _ := settingsserver.GetRows(
-		req.FormValue("Database"),
-		req.FormValue("Table"),
+		database_name,
+		table_name,
 		)
+
+	headings, err := settingsserver.GetHeadings(database_name, table_name)
+	if err != nil {
+		return err
+	}
+	// Add the column names to the jsonMap
+	jsonMap.Headings = headings
 	for _, row := range rows {
 		var newrow = [][]byte{}
 		for _, item := range row {
@@ -86,6 +100,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 		}
 		jsonMap.AddRow(newrow)
 	}
+
 
 	// Send the JSON to the client.
 	err = json.NewEncoder(w).Encode(jsonMap)
@@ -146,6 +161,21 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 		return success, settingsserver.LoginError
 	}
 	return success, nil
+}
+
+func changeTable(w http.ResponseWriter, req *http.Request) error {
+
+	err := settingsserver.ChangeData(
+		req.FormValue("Database"),
+		req.FormValue("Table"),
+		req.FormValue("Column"),
+		req.FormValue("Data"),
+		req.FormValue("ID"),
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func main() {
