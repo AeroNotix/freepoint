@@ -3,11 +3,9 @@ Set of tools that will come in handy when dealing with SQL
 databases and Qt applications
 """
 
-import contextlib
 import functools
 import urllib2, urllib
 
-import MySQLdb
 import simplejson
 from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore
@@ -145,9 +143,12 @@ class Database(object):
 
     def query(self):
         """
-        Returns a QuerySet for the passed in query
+        Queries the database for a select *.
 
-        :param query: :class:`str` which is the query to be executed
+        Will mutate the self.headings with the headings for the database and
+        return a list.
+
+        :returns: A list of the data returned.
         """
         try:
             json_payload = {
@@ -166,28 +167,29 @@ class Database(object):
             self.parent.show_error("Cannot connect to dataserver.")
             return []
         except JSONDecodeError:
-            self.parent.show_error("The information from the server was invalid.")
+            self.parent.show_error(
+                "The information from the server was invalid."
+            )
             return []
-        try:
-            self.headings = json['Headings']
-        except KeyError:
-            self.parent.parent.show_error("The database did not return the correct data.")
-            return
-        try:
-            self.metadata = json['Metadata']
-        except KeyError:
-            self.metadata = False
-        try:
-            return json['Rows']
-        except KeyError:
+        # Get the headings from the returned JSON and send an error message
+        # to the user if we found nothing.
+        self.headings = json.get("Headings")
+        if not self.headings:
+            self.parent.show_error(
+                "The database did not return the correct data."
+            )
+            return []
+        self.metadata = json.get("Metadata", False)
+        rows = json.get("Rows", [])
+        if not rows:
             self.parent.show_error("The server did not return any data.")
-            return []
-
-    def commit(self):
-        raise NotImplementedError
-
+            return rows
+        return rows
     def get_headings(self):
         """
+        We use a get method for this as the API isn't stable and having to
+        change the call sites is a PITA so we just leave the call site with a
+        method to get and we can change the implementation as we see fit.
         """
         return self.headings
 
@@ -195,8 +197,7 @@ class Database(object):
         """
         When a cell is edited the data is written back into the database.
 
-        This is highly alpha code. There is no error handling, no locking.
-        Nothing. It's a work in progress.
+        This is highly alpha code.
 
         :param xrow: :class:`Int` which is passed directly from the signal
         :param ycol: :class:`Int` which is passed directly from the signal
@@ -217,5 +218,5 @@ class Database(object):
             urllib.urlencode(json)
         )
 
-        json = urllib2.urlopen(http_post).read()
+        json = simplejson.loads(urllib2.urlopen(http_post).read())
         self.parent.show_message("Data has been saved to the database")
