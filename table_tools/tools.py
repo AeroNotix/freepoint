@@ -218,7 +218,8 @@ class Database(object):
             json_payload = {
                 'User': self.user,
                 'Password': self.password,
-                "Database": "%s.%s" % (self.using_db, self.table),
+                "Database": self.using_db,
+                "Table": self.table
             }
             http_post = urllib2.Request(
                 # string interpolation
@@ -232,7 +233,11 @@ class Database(object):
             self.parent.show_error("Cannot connect to dataserver.")
         except JSONDecodeError:
             self.parent.show_error("The information from the server was invalid.")
-        return [result for result in itersql(self._connection, query)]
+        try:
+            return json['Rows']
+        except KeyError:
+            self.parent.show_error("The server did not return any data")
+            return []
 
     def commit(self):
         self._connection.commit()

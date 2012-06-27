@@ -56,18 +56,29 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 	// We add the content type so the browser can accept it properly if
 	// we get requested via a browser.
 	w.Header().Set("Content Type", "application/json")
-	// Get the metadata associated with the table
+
+	// Get the metadata associated with the table.
 	metadata, err := settingsserver.GetMetadata(req.URL.Path[len("/getdb/"):])
 	if err != nil {
-		settingsserver.SendJSONError(w, err)
-		return err
+		val, ok := err.(settingsserver.AppError)
+		if !ok {
+			settingsserver.SendJSONError(w, err)
+			return err
+		}
+		if val.Code() != 3 {
+			settingsserver.SendJSONError(w, err)
+			return err
+		}
 	}
 
-	// Marshal our metadata into a struct and encode
+	// Marshal our metadata into a struct and encode.
 	jsonMap := settingsserver.NewJSONMessage(metadata)
 
-	rows, _ := settingsserver.GetRows("db_timetracker", "tbluser")
-
+	// Get the rows from the database and encode them into JSON.
+	rows, _ := settingsserver.GetRows(
+		req.FormValue("Database"),
+		req.FormValue("Table"),
+		)
 	for _, row := range rows {
 		var newrow = [][]byte{}
 		for _, item := range row {
@@ -76,6 +87,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 		jsonMap.AddRow(newrow)
 	}
 
+	// Send the JSON to the client.
 	err = json.NewEncoder(w).Encode(jsonMap)
 	if err != nil {
 		return err
