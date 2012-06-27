@@ -106,7 +106,7 @@ func userLogin(w http.ResponseWriter, req *http.Request) error {
 		settingsserver.SendJSONError(w, err)
 		return err
 	}
-	settingsserver.SendJSON(w, "Logged in!")
+	settingsserver.SendJSON(w, true)
 	return nil
 }
 
