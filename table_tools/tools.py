@@ -8,8 +8,29 @@ import urllib2, urllib
 
 import simplejson
 from simplejson.decoder import JSONDecodeError
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 
+def create_action(obj, text, fname=None,  slot=None, shortcut=None,
+                  tip=None, signal="triggered()"):
+    """
+    Helper method to add in buttons to a toolbar
+    """
+
+    action = QtGui.QAction(text, obj)
+
+    if fname is not None:
+        action.setIcon(QtGui.QIcon(fname))
+    if shortcut is not None:
+        action.setShortcut(shortcut)
+    if tip is not None:
+        action.setToolTip(tip)
+        action.setStatusTip(tip)
+    if slot is not None:
+        obj.connect(action, QtCore.SIGNAL(signal), slot)
+    obj.connect(action, QtCore.SIGNAL("hovered()"),
+                lambda text=text: obj.show_message(text))
+    obj.toolbar.addAction(action)
+    return action
 
 def to_unicode(string, encoding='utf-8'):
     """

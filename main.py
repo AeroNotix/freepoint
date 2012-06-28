@@ -16,9 +16,11 @@ from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 from qtsqlviewer.ui.connection_dialog import ConnectionDialog
 from qtsqlviewer.ui.login import Login
 
-from qtsqlviewer.table_tools.tools import table_wrapper, Database
+from qtsqlviewer.table_tools.tools import table_wrapper, Database, create_action
 from qtsqlviewer.table_tools.argument import Argument
 from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
+
+from qtsqlviewer.ui import resource_rc
 
 CWD = os.path.dirname(__file__)
 
@@ -120,6 +122,7 @@ class MainGui(QtGui.QMainWindow):
             self.openConnectionDialog()
         self.addMenuActions()
         self.parse_config()
+        self.populate_toolbar()
 
     @table_wrapper
     def populate_table(self):
@@ -314,7 +317,6 @@ class MainGui(QtGui.QMainWindow):
         """
         Creates an instance of the connection manager and shows it.
         """
-
         manage_dlg = ConnectionDialog(self)
         manage_dlg.exec_()
         return
@@ -331,6 +333,10 @@ class MainGui(QtGui.QMainWindow):
         login = Login(self)
         login.exec_()
 
+    def populate_toolbar(self):
+        create_action(self, "Refresh", fname=":/view-refresh", slot=self.populate_table)
+        create_action(self, "Insert Row", fname=":/list-add")
+        create_action(self, "Quit", fname=":/system-log-out", slot=sys.exit)
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)
