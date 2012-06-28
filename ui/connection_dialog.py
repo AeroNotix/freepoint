@@ -37,7 +37,7 @@ class ConnectionDialog(QtGui.QDialog):
             displaystring = QtCore.QString(host+"."+database+"."+table)
             self.gui.listWidget.addItem(QtGui.QListWidgetItem(displaystring))
             self.connection_map[displaystring] = connection
-            
+
     def populateFields(self, idx):
         """
         Populates the text boxes with the correct data for whatever has just
@@ -63,8 +63,6 @@ class ConnectionDialog(QtGui.QDialog):
         self.gui.txt_host.setText('')
         self.gui.txt_database.setText('')
         self.gui.txt_table.setText('')
-        self.gui.txt_username.setText('')
-        self.gui.txt_password.setText('')
         self.gui.txt_port.setText('')
 
     def editRow(self):
@@ -81,17 +79,28 @@ class ConnectionDialog(QtGui.QDialog):
         self.parent.config.set(connection, "database", database)
         self.parent.config.set(connection, "table", table)
         self.parent.config.set(connection, "port", port)
+        self.gui.listWidget.blockSignals(True)
+        self.clearTable()
+        self.parent.rewriteConfig()
+        self.populateList()
+        self.clearFields()
+        self.gui.listWidget.blockSignals(False)
+        self.parent.addMenuActions()
 
     def deleteRow(self):
         """
         Deletes the row
         """
         self.parent.config.remove_section(self.getCurrentItem())
-        self.parent.rewriteConfig()
+        idx = self.gui.listWidget.currentRow()
         self.gui.listWidget.blockSignals(True)
+        self.gui.listWidget.takeItem(idx)
+        self.clearTable()
+        self.parent.rewriteConfig()
         self.populateList()
-        self.gui.listWidget.blockSignals(False)
         self.clearFields()
+        self.gui.listWidget.blockSignals(False)
+        self.parent.addMenuActions()
 
     def getCurrentItem(self):
         """

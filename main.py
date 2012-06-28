@@ -43,6 +43,26 @@ for arg in ARGS:
 RESULTS = PARSER.parse_args()
 
 
+class TableDelegate(QtGui.QItemDelegate):
+    def __init__(self, headers, metadata, parent=None):
+        QtGui.QItemDelegate.__init__(self, parent)
+        self.headers = headers
+        self.metadata = metadata
+        self.field_types = {
+            "COMBO": QtGui.QComboBox
+            }
+    def createEditor(self, parent, option, index):
+#        print index
+#        cmb = QtGui.QComboBox(parent)
+#        cmb.addItems(["Yes", "No"])
+#        return cmb
+        pass
+        
+
+    def setModelData(self, editor, model, index):
+        model.setData(index, editor.currentText())
+
+
 class MainGui(QtGui.QMainWindow):
     """
     Main GUI class which creates the window, responds to user input and holds
@@ -68,7 +88,7 @@ class MainGui(QtGui.QMainWindow):
         self.config = ConfigParser.RawConfigParser()
         self.configpath = os.path.join(CWD, "conf.cfg")
         self.actionList = []
-
+        
         if RESULTS.db:
             # if we got command line arguments, open that
             self.database = Database(
@@ -155,6 +175,9 @@ class MainGui(QtGui.QMainWindow):
             self.show_message(mysqlerror(error), time=10000)
             return
 
+        self.gui.tableWidget.setItemDelegate(
+            TableDelegate(self.headings, self.database.metadata)
+            )
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(self.headings))
         # set the labels to the column names
@@ -313,6 +336,7 @@ class MainGui(QtGui.QMainWindow):
         Writes a the updated config back to disk
         """
         self.config.write(open(self.configpath, 'wb'))
+        self.parse_config()
 
     def openManageDialog(self):
         """
