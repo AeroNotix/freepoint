@@ -12,17 +12,17 @@ from PyQt4 import QtCore
 
 
 def to_unicode(string, encoding='utf-8'):
-    '''
+    """
     Returns a string in the specified encoding,
     default is utf-8
 
     :param string: :class:`string` which needs to be converted
     :param encoding: :class:`string` which is a encoding type.
-    '''
+    """
     return unicode(string).encode(encoding)
 
 def table_wrapper(func):
-    '''
+    """
     Wrapper function to enable or disable signals.
 
     Disables:
@@ -36,7 +36,7 @@ def table_wrapper(func):
     turn causes the callbacks assigned to those signals to
     be fired. This causes a problem when those functions
     have side-effects such as writing to a database.
-    '''
+    """
 
     @functools.wraps(func)
     def inner(obj, *args, **kwargs):
@@ -70,7 +70,7 @@ def table_wrapper(func):
 
 
 class Database(object):
-    '''
+    """
     This class encapsulates all the interactions between the client code
     and the database.
 
@@ -81,15 +81,15 @@ class Database(object):
     recent queries. This allows a much finer API to emerge because we
     can keep track of a single database instance rather than having to
     know what attributes and methods are to do with a database.
-    '''
+    """
 
     def __init__(self, parent=None,
                  host='localhost', user=None, passwd=None,
                  using_db=None, table=None, port=3306):
-        '''
+        """
         Creates an instance of a Database which holds connection details
         and commonly used methods on a database.
-        '''
+        """
         self.host = host
         self.user = user
         self.password = passwd
@@ -107,14 +107,14 @@ class Database(object):
         self.parent = parent
 
     def connect(self):
-        '''
+        """
         Creates the database connection. This needs to be overloaded when
         moving to use the client/server model. Currently we're connecting
         directly to the MySQL database.
 
         We're experimentally checking in to the login server to check if
         the user details authenticate.
-        '''
+        """
 
         try:
             json_payload = {
@@ -136,9 +136,9 @@ class Database(object):
         self.connected = True
 
     def close(self):
-        '''
+        """
         Closes the database connection
-        '''
+        """
         self.connected = False
 
     def query(self):
@@ -219,4 +219,10 @@ class Database(object):
         )
 
         json = simplejson.loads(urllib2.urlopen(http_post).read())
-        self.parent.show_message("Data has been saved to the database")
+        if json.get('Success') == False:
+            self.parent.gui.tableWidget.blockSignals(True)
+            self.parent.revertCellData(xrow, ycol)
+            self.parent.gui.tableWidget.blockSignals(False)
+            self.parent.show_error("Data could not be saved to the database.")
+        else:
+            self.parent.show_message("Data has been saved to the database.")

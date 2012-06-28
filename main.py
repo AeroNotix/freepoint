@@ -171,7 +171,27 @@ class MainGui(QtGui.QMainWindow):
         self.populated = True
 
     def changeTable(self, xrow, ycol):
+        """
+        When data in the form is changed we contact the server to change the data.
+        """
         self.database.changeTable(xrow, ycol)
+
+    def storeCell(self, xrow, ycol):
+        """
+        When a cell is entered we store it in case the validation for the
+        data that the user enters fails.
+
+        :param xrow: :class:`Int` which is passed directly from the signal
+        :param ycol: :class:`Int` which is passed directly from the signal
+        :returns: None
+        """
+        self.cell = self.gui.tableWidget.item(xrow, ycol).text()
+
+    def revertCellData(self, xrow, ycol):
+        """
+        Reverts the cell at (xrow, ycol) to the value which is held in self.cell
+        """
+        self.gui.tableWidget.setItem(xrow, ycol, QtGui.QTableWidgetItem(self.cell))
 
     def clear_table(self):
         """
@@ -188,17 +208,6 @@ class MainGui(QtGui.QMainWindow):
             for row in range(row_count + 1):
                 self.gui.tableWidget.removeRow(row_count - row)
         self.populated = False
-
-    def storeCell(self, xrow, ycol):
-        """
-        When a cell is entered we store it in case the validation for the
-        data that the user enters fails.
-
-        :param xrow: :class:`Int` which is passed directly from the signal
-        :param ycol: :class:`Int` which is passed directly from the signal
-        :returns: None
-        """
-        self.cell = self.gui.tableWidget.item(xrow, ycol).text()
 
     def show_message(self, message, time=1000):
         """
@@ -313,6 +322,7 @@ class MainGui(QtGui.QMainWindow):
     def login(self):
         login = Login(self)
         login.exec_()
+
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)

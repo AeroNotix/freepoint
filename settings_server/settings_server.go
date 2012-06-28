@@ -172,9 +172,10 @@ func changeTable(w http.ResponseWriter, req *http.Request) error {
 		req.FormValue("ID"),
 	)
 	if err != nil {
-		settingsserver.SendJSONError(w, err)
+		settingsserver.SendJSON(w, false)
 		return err
 	}
+	settingsserver.SendJSON(w, true)
 	return nil
 }
 
