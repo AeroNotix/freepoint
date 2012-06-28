@@ -10,6 +10,7 @@ import simplejson
 from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore, QtGui
 
+
 def create_action(obj, text, fname=None,  slot=None, shortcut=None,
                   tip=None, signal="triggered()"):
     """
@@ -147,7 +148,6 @@ class Database(object):
                 urllib.urlencode(json_payload)
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
-            print json
         except IOError:
             self.parent.show_error("Cannot connect to dataserver.")
             return

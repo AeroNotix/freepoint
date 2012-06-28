@@ -6,6 +6,7 @@ import os
 import sys
 import argparse
 import ConfigParser
+import csv
 
 from PyQt4 import QtGui, QtCore
 
@@ -330,12 +331,51 @@ class MainGui(QtGui.QMainWindow):
         return
 
     def login(self):
+        """
+        Invokes the Login form.
+        """
         login = Login(self)
         login.exec_()
 
+    def export_as_csv(self):
+        """
+        Method which we attach to the toolbar button to create and setup the Save As.. dialog
+        """
+        savedialog = QtGui.QFileDialog()
+        savedialog.setAcceptMode(1)      # Sets it to a save dialog
+        savedialog.setDefaultSuffix("csv")
+        self.connect(savedialog, QtCore.SIGNAL("fileSelected(QString)"), self.write_csv)
+        savedialog.exec_()
+
+    def write_csv(self, fname):
+        """
+        The method which actually writes the CSV to disk.
+
+        This should be in a separate thread because if the dataset is large then we will end
+        up overloading the main thread.
+        """
+        try:
+            fout = open(fname, "wb")
+        except IOError:
+            self.show_error("Cannot open output file. Is it open elsewhere?")
+            return
+        csvout =  csv.writer(fout)
+        csvout.writerow(self.database.get_headings())
+        for row in range(self.gui.tableWidget.rowCount()):
+            thisrow = list()
+            for col in range(self.gui.tableWidget.columnCount()):
+                thisrow.append(self.gui.tableWidget.item(row, col).text())
+            csvout.writerow(thisrow)
+        fout.close()
+
     def populate_toolbar(self):
+        """
+        Method which allows us to programmatically add the toolbar buttons instead of littering
+        the initializer with calls to the create_action function.
+        """
         create_action(self, "Refresh", fname=":/view-refresh", slot=self.populate_table)
         create_action(self, "Insert Row", fname=":/list-add")
+        create_action(self, "Export as CSV", fname=":/document-save-as", slot=self.export_as_csv)
         create_action(self, "Quit", fname=":/system-log-out", slot=sys.exit)
 
 if __name__ == '__main__':
