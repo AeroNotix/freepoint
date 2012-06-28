@@ -19,7 +19,7 @@ class ComboDelegate(QtGui.QItemDelegate):
 
         self.data = list()
         super(ComboDelegate, self).__init__(parent)
-    
+
     def createEditor(self, parent, option, index):
         """
         Returns an instance of the delegated widget with which to interact
@@ -40,6 +40,7 @@ class ComboDelegate(QtGui.QItemDelegate):
 
         model.setData(index, editor.currentText())
 
+
 class BooleanDelegate(ComboDelegate):
     """
     This class throws a value error if len(data) != 2. This is to signify that
@@ -52,6 +53,7 @@ class BooleanDelegate(ComboDelegate):
         else:
             self.data = data
         super(BooleanDelegate, self).__init__(parent)
+
 
 class ChoiceDelegate(ComboDelegate):
     """
@@ -100,7 +102,7 @@ class Delegator(QtGui.QItemDelegate):
             return delentry.createEditor(parent, option, index)
         except (AttributeError, KeyError):
             return super(Delegator, self).createEditor(parent, option, index)
-        
+
     def setModelData(self, parent, option, index):
         """
         Similar to creating the editor, we check which column and dispatch the
@@ -112,7 +114,7 @@ class Delegator(QtGui.QItemDelegate):
             return delentry.setModelData(parent, option, index)
         except (AttributeError, KeyError):
             return super(Delegator, self).setModelData(parent, option, index)
-        
+
     def parseMetadata(self):
         """
         The metadata contains the types of rows and the data associated with
