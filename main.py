@@ -20,7 +20,10 @@ from qtsqlviewer.ui.login import Login
 from qtsqlviewer.table_tools.tools import table_wrapper, Database, create_action
 from qtsqlviewer.table_tools.argument import Argument
 from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
+from qtsqlviewer.table_tools.delegates import Delegator
 
+# this is strange because it gets used implicitly when using the
+# Qt syntax for QResource objects
 from qtsqlviewer.ui import resource_rc
 
 CWD = os.path.dirname(__file__)
@@ -41,26 +44,6 @@ ARGS = (
 for arg in ARGS:
     PARSER.add_argument(arg.name, **arg.data)
 RESULTS = PARSER.parse_args()
-
-
-class TableDelegate(QtGui.QItemDelegate):
-    def __init__(self, headers, metadata, parent=None):
-        QtGui.QItemDelegate.__init__(self, parent)
-        self.headers = headers
-        self.metadata = metadata
-        self.field_types = {
-            "COMBO": QtGui.QComboBox
-            }
-    def createEditor(self, parent, option, index):
-#        print index
-#        cmb = QtGui.QComboBox(parent)
-#        cmb.addItems(["Yes", "No"])
-#        return cmb
-        pass
-        
-
-    def setModelData(self, editor, model, index):
-        model.setData(index, editor.currentText())
 
 
 class MainGui(QtGui.QMainWindow):
@@ -176,7 +159,7 @@ class MainGui(QtGui.QMainWindow):
             return
 
         self.gui.tableWidget.setItemDelegate(
-            TableDelegate(self.headings, self.database.metadata)
+            Delegator(self.headings, self.database.metadata, parent=self)
             )
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(self.headings))
