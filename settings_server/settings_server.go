@@ -1,3 +1,8 @@
+/*
+ This file works as the server-side implementation for a mysql database layer
+ which marshals access rights, metadata, selects and rewrites.
+*/
+
 package main
 
 import (
@@ -162,8 +167,12 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 	return success, nil
 }
 
+// This is a handler which checks the POST for the data required to make
+// a change to the database.
+//
+// This function will have one of two possible side effects which are
+// writing a JSON response to the caller.
 func changeTable(w http.ResponseWriter, req *http.Request) error {
-
 	err := settingsserver.ChangeData(
 		req.FormValue("Database"),
 		req.FormValue("Table"),

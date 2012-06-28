@@ -173,6 +173,10 @@ class MainGui(QtGui.QMainWindow):
     def changeTable(self, xrow, ycol):
         """
         When data in the form is changed we contact the server to change the data.
+
+        :param xrow: :class:`Int`
+        :param ycol: :class:`Int`
+        :returns: None
         """
         self.database.changeTable(xrow, ycol)
 
@@ -190,6 +194,10 @@ class MainGui(QtGui.QMainWindow):
     def revertCellData(self, xrow, ycol):
         """
         Reverts the cell at (xrow, ycol) to the value which is held in self.cell
+
+        :param xrow: :class:`Int`
+        :param ycol: :class:`Int`
+        :returns: None
         """
         self.gui.tableWidget.setItem(xrow, ycol, QtGui.QTableWidgetItem(self.cell))
 
