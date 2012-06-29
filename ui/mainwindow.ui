@@ -45,8 +45,8 @@
      <string>File</string>
     </property>
     <addaction name="separator"/>
-    <addaction name="actionQuit"/>
     <addaction name="actionConnection_details"/>
+    <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">

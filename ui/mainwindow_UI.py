@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Thu Jun 28 11:06:10 2012
+# Created: Fri Jun 29 12:57:49 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -55,8 +55,8 @@ class Ui_MainWindow(object):
         self.actionManageConnections = QtGui.QAction(MainWindow)
         self.actionManageConnections.setObjectName(_fromUtf8("actionManageConnections"))
         self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionQuit)
         self.menuFile.addAction(self.actionConnection_details)
+        self.menuFile.addAction(self.actionQuit)
         self.menuEdit.addAction(self.menuSelect_Table.menuAction())
         self.menuEdit.addAction(self.actionManageConnections)
         self.menubar.addAction(self.menuFile.menuAction())
