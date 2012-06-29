@@ -1,3 +1,8 @@
+"""
+This module defines several classes which provide delegates to editing widgets for
+different kinds of data.
+"""
+
 from PyQt4 import QtGui
 
 
@@ -179,6 +184,8 @@ class Delegator(QtGui.QItemDelegate):
         QItemDelegate associated with it and put an instance in our map with
         the column name as the key.
         """
+        if not self.metadata:
+            return
         for item in self.headers:
             row_data = self.metadata.get(item)
             if row_data:
