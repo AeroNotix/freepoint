@@ -15,6 +15,8 @@ import (
 	"time"
 )
 
+var AsyncChannel = make(chan settingsserver.AsyncUpdate, 10)
+
 // Routes is a slice of RoutingEntries, this allows
 // us to hold a map (and subsequently iterate through
 // it.)
@@ -173,13 +175,18 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 // This function will have one of two possible side effects which are
 // writing a JSON response to the caller.
 func changeTable(w http.ResponseWriter, req *http.Request) error {
-	err := settingsserver.ChangeData(
+
+	job := settingsserver.AsyncUpdate{
 		req.FormValue("Database"),
 		req.FormValue("Table"),
 		req.FormValue("Column"),
 		req.FormValue("Data"),
 		req.FormValue("ID"),
-	)
+		make(chan error),
+	}
+
+	AsyncChannel <- job
+	err := <- job.ReturnPath	
 	if err != nil {
 		settingsserver.SendJSON(w, false)
 		return err
@@ -191,9 +198,9 @@ func changeTable(w http.ResponseWriter, req *http.Request) error {
 func main() {
 	var addr string
 
-	asyncWriterChannel := make(chan settingsserver.AsyncUpdate, 10)
+//	asyncWriterChannel := make(chan settingsserver.AsyncUpdate, 10)
 	go func() {
-		settingsserver.AsyncUpdater(asyncWriterChannel)
+		settingsserver.AsyncUpdater(AsyncChannel)
 	}()
 	flag.StringVar(&addr, "port", ":12345",
 		"The port on which the server should run",
