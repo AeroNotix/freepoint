@@ -8,11 +8,17 @@ import (
 	_ "github.com/ziutek/mymysql/native"
 )
 
+// Basic struct to hold User data.
+// 
+// This was created so we have better semantics for marshaling/unmarshaling data which
+// holds the fields for the User data.
 type User struct {
 	User     string
 	Password string
 }
 
+// This struct will be used to create jobs which can be push into async worker queues
+// to asynchronously process database writes and have them write to disk sequentially.
 type AsyncUpdate struct {
 	Database string
 	Table string
@@ -22,6 +28,8 @@ type AsyncUpdate struct {
 	ReturnPath chan error
 }
 
+// Function which takes a database name and connects to that database using the details
+// defined in the connection module.
 func CreateConnection(dbname string) (mysql.Conn, error) {
 	db := mysql.New(
 		"tcp",
@@ -43,7 +51,7 @@ func CreateConnection(dbname string) (mysql.Conn, error) {
 // back a single row, if not an error
 func GetUser(user string) (mysql.Row, error) {
 
-	db, err := CreateConnection("db_freepoint")
+	db, err := CreateConnection(connection_details.SettingsDatabase)
 	if err != nil {
 		return nil, err
 	}
@@ -68,8 +76,9 @@ func GetUser(user string) (mysql.Row, error) {
 	return row, nil
 }
 
+// GetMetadata connects to our database which
 func GetMetadata(table string) (Metadata, error) {
-	db, err := CreateConnection("db_freepoint")
+	db, err := CreateConnection(connection_details.SettingsDatabase)
 	if err != nil {
 		return nil, err
 	}
@@ -137,15 +146,18 @@ func GetHeadings(database, table string) ([]string, error) {
 	return headers, nil
 }
 
+// AsyncUpdater monitors a channel of type AsyncUpdate and blocks until it receives
+// on it. Once it has received a job, it will process by calling ChangeData on the
+// job and sending it's return value down the ReturnPath associated with the job.
 func AsyncUpdater(jobqueue chan AsyncUpdate) {
 	for {
 		job := <-jobqueue
-		job.ReturnPath <- ChangeData(job.Database, job.Table, job.Column, job.Data, job.Id)
+		job.ReturnPath <- ChangeData(job)
 	}
 }
 
-func ChangeData(database, table, column, data, id string) error {
-	db, err := CreateConnection(database)
+func ChangeData(job AsyncUpdate) error {
+	db, err := CreateConnection(job.Database)
 	if err != nil {
 		return err
 	}
@@ -156,7 +168,7 @@ func ChangeData(database, table, column, data, id string) error {
 		`UPDATE %s
 		 SET %s="%s"
 		 WHERE id=%s`,
-		table, column, data, id,
+		job.Table, job.Column, job.Data, job.Id,
 	)
 
 	_, _, err = db.Query(sqlStr)
