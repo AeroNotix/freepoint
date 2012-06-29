@@ -16,8 +16,6 @@ class ComboDelegate(QtGui.QItemDelegate):
         we give ourselves something to use. Subclasses will override this
         anyway.
         """
-
-        self.data = list()
         super(ComboDelegate, self).__init__(parent)
 
     def createEditor(self, parent, option, index):
@@ -64,9 +62,26 @@ class ChoiceDelegate(ComboDelegate):
         self.data = data
         super(ChoiceDelegate, self).__init__(parent)
 
+class TimeDelegate(QtGui.QItemDelegate):
+    def __init__(self, parent=None):
+        super(TimeDelegate, self).__init__(parent)
+    def createEditor(self, parent, option, index):
+        return QtGui.QTimeEdit(parent)
+    def setModelData(self, editor, model, index):
+        model.setData(index, editor.time())
+
+class DateDelegate(QtGui.QItemDelegate):
+    def __init__(self, parent=None):
+        super(DateDelegate, self).__init__(parent)
+    def createEditor(self, parent, option, index):
+        datewidget = QtGui.QDateEdit(parent)
+        return datewidget
+
 DELEGATES = {
     "BOOL": BooleanDelegate,
-    "CHOICE": ChoiceDelegate
+    "CHOICE": ChoiceDelegate,
+    "TIME": TimeDelegate,
+    "DATE": DateDelegate
 }
 
 
@@ -125,8 +140,15 @@ class Delegator(QtGui.QItemDelegate):
         for item in self.headers:
             row_data = self.metadata.get(item)
             if row_data:
-                dtype = DELEGATES.get(row_data["TYPE"])
-                if dtype:
+                row_type = row_data["TYPE"]
+                dtype = DELEGATES.get(row_type)
+                if not dtype:
+                    continue
+                if row_type in {"CHOICE", "BOOL"}:
                     delinst = dtype(row_data["CHOICES"])
+                    delinst.setParent(self)
+                    self.delegates[item] = delinst
+                if row_type in {"TIME", "DATE"}:
+                    delinst = dtype()
                     delinst.setParent(self)
                     self.delegates[item] = delinst
