@@ -190,6 +190,11 @@ func changeTable(w http.ResponseWriter, req *http.Request) error {
 
 func main() {
 	var addr string
+
+	asyncWriterChannel := make(chan settingsserver.AsyncUpdate, 10)
+	go func() {
+		settingsserver.AsyncUpdater(asyncWriterChannel)
+	}()
 	flag.StringVar(&addr, "port", ":12345",
 		"The port on which the server should run",
 	)

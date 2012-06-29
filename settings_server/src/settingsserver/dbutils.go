@@ -13,6 +13,15 @@ type User struct {
 	Password string
 }
 
+type AsyncUpdate struct {
+	Database string
+	Table string
+	Column string
+	Data string
+	Id string
+	ReturnPath chan error
+}
+
 func CreateConnection(dbname string) (mysql.Conn, error) {
 	db := mysql.New(
 		"tcp",
@@ -126,6 +135,13 @@ func GetHeadings(database, table string) ([]string, error) {
 		headers = append(headers, string(row[0].([]byte)))
 	}
 	return headers, nil
+}
+
+func AsyncUpdater(jobqueue chan AsyncUpdate) {
+	for {
+		job := <-jobqueue
+		job.ReturnPath <- ChangeData(job.Database, job.Table, job.Column, job.Data, job.Id)
+	}
 }
 
 func ChangeData(database, table, column, data, id string) error {
