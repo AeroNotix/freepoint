@@ -62,20 +62,62 @@ class ChoiceDelegate(ComboDelegate):
         self.data = data
         super(ChoiceDelegate, self).__init__(parent)
 
+
 class TimeDelegate(QtGui.QItemDelegate):
+    """
+    Time delegate.
+
+    This class provides the editor with a subclass of a spinbox which is used for editing time.
+    """
+
     def __init__(self, parent=None):
+        """
+        We only need to override the createEditor and setModelData so we initialize the base
+        class explicitly.
+        """
         super(TimeDelegate, self).__init__(parent)
+
     def createEditor(self, parent, option, index):
+        """
+        Return a QTimeEdit with the correct parent widget.
+        """
         return QtGui.QTimeEdit(parent)
+
     def setModelData(self, editor, model, index):
+        """
+        The QTimeEdit provides .time() as a means to retrieve the QString representation of the
+        data. We use that to set the model's data to
+        """
         model.setData(index, editor.time())
 
+
 class DateDelegate(QtGui.QItemDelegate):
+    """
+    Date delegate.
+
+    This class provides the editor with a subclass of a spinbox which is used for editing dates.
+    """
+
     def __init__(self, parent=None):
+        """
+        We only need to override the createEditor and setModelData so we initialize the base
+        class explicitly.
+        """
         super(DateDelegate, self).__init__(parent)
+
     def createEditor(self, parent, option, index):
-        datewidget = QtGui.QDateEdit(parent)
-        return datewidget
+        """
+        Return a QDateEdit with the correct parent widget.
+        """
+        return QtGui.QDateEdit(parent)
+
+    def setModelData(self, editor, model, index):
+        """
+        The QDateEdit provides .date() as a means to retrieve the QString representation of the
+        data. We use that to set the model's data to
+        """
+        model.setData(index, editor.date())
+
 
 DELEGATES = {
     "BOOL": BooleanDelegate,
