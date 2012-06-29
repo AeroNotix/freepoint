@@ -366,7 +366,7 @@ class MainGui(QtGui.QMainWindow):
         except IOError:
             self.show_error("Cannot open output file. Is it open elsewhere?")
             return
-        csvout =  csv.writer(fout)
+        csvout = csv.writer(fout)
         csvout.writerow(self.database.get_headings())
         for row in range(self.gui.tableWidget.rowCount()):
             thisrow = list()
