@@ -76,7 +76,8 @@ func GetUser(user string) (mysql.Row, error) {
 	return row, nil
 }
 
-// GetMetadata connects to our database which
+// GetMetadata connects to our database which returns a Metadata instance.
+// Metadata is an instance which holds JSON data.
 func GetMetadata(table string) (Metadata, error) {
 	db, err := CreateConnection(connection_details.SettingsDatabase)
 	if err != nil {
@@ -126,6 +127,9 @@ func GetRows(database, table string) ([]mysql.Row, error) {
 	return rows, nil
 }
 
+// GetHeadings is a function which returns a []string which contains
+// the headings names and an error indicating the status of the function
+// call.
 func GetHeadings(database, table string) ([]string, error) {
 	db, err := CreateConnection(database)
 	defer db.Close()
@@ -156,6 +160,10 @@ func AsyncUpdater(jobqueue chan AsyncUpdate) {
 	}
 }
 
+// ChangeData is a function which connects to the database and makes an update to a
+// table column using the data inside the AsyncUpdate instance. This shouldn't be
+// called directly because we have an asynchronous queue which is looking for jobs
+// such as this in it's channel.
 func ChangeData(job AsyncUpdate) error {
 	db, err := CreateConnection(job.Database)
 	if err != nil {
