@@ -140,7 +140,8 @@ class MainGui(QtGui.QMainWindow):
         self.clear_table()
 
         try:
-            self.database.connect()
+            if not self.database.connect():
+                return
         except _mysql_exceptions.OperationalError, error:
             # on any error report to the user and return
             QtGui.QMessageBox.warning(self, "Error", str(error))

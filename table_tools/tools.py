@@ -150,11 +150,13 @@ class Database(object):
             json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError:
             self.parent.show_error("Cannot connect to dataserver.")
-            return
+            return False
         except JSONDecodeError:
             self.parent.show_error("The information from the server was invald.")
-            return
-        self.connected = True
+            return False
+
+        self.connected = json['Success']
+        return self.connected
 
     def close(self):
         """
