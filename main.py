@@ -71,7 +71,7 @@ class MainGui(QtGui.QMainWindow):
         self.config = ConfigParser.RawConfigParser()
         self.configpath = os.path.join(CWD, "conf.cfg")
         self.actionList = []
-        
+
         if RESULTS.db:
             # if we got command line arguments, open that
             self.database = Database(
@@ -347,20 +347,23 @@ class MainGui(QtGui.QMainWindow):
 
     def export_as_csv(self):
         """
-        Method which we attach to the toolbar button to create and setup the Save As.. dialog
+        Method which we attach to the toolbar button to create and setup the
+        Save As.. dialog
         """
         savedialog = QtGui.QFileDialog()
         savedialog.setAcceptMode(1)      # Sets it to a save dialog
         savedialog.setDefaultSuffix("csv")
-        self.connect(savedialog, QtCore.SIGNAL("fileSelected(QString)"), self.write_csv)
+        self.connect(
+            savedialog, QtCore.SIGNAL("fileSelected(QString)"), self.write_csv
+        )
         savedialog.exec_()
 
     def write_csv(self, fname):
         """
         The method which actually writes the CSV to disk.
 
-        This should be in a separate thread because if the dataset is large then we will end
-        up overloading the main thread.
+        This should be in a separate thread because if the dataset is large
+        then we will end up overloading the main thread.
         """
         try:
             fout = open(fname, "wb")
@@ -373,18 +376,42 @@ class MainGui(QtGui.QMainWindow):
             thisrow = list()
             for col in range(self.gui.tableWidget.columnCount()):
                 thisrow.append(self.gui.tableWidget.item(row, col).text())
-            csvout.writerow(thisrow)
+                csvout.writerow(thisrow)
         fout.close()
+
+    def insert_row(self):
+        """
+        Inserts a new row into the table ready for editing.
+        """
+        print "here"
 
     def populate_toolbar(self):
         """
-        Method which allows us to programmatically add the toolbar buttons instead of littering
-        the initializer with calls to the create_action function.
+        Method which allows us to programmatically add the toolbar buttons
+        instead of littering the initializer with calls to the create_action
+        function.
         """
-        create_action(self, "Refresh", fname=":/view-refresh", slot=self.populate_table)
-        create_action(self, "Insert Row", fname=":/list-add")
-        create_action(self, "Export as CSV", fname=":/document-save-as", slot=self.export_as_csv)
+        create_action(
+            self, "Refresh", fname=":/view-refresh", slot=self.populate_table
+            )
+        create_action(
+            self, "Insert Row", fname=":/list-add", slot=self.insert_row
+            )
+        create_action(
+            self, "Export as CSV", fname=":/document-save-as",
+        slot=self.export_as_csv
+            )
         create_action(self, "Quit", fname=":/system-log-out", slot=sys.exit)
+
+    def keyPressEvent(self, e):
+        actions = {
+            QtCore.Qt.Key_F5: self.populate_table,
+            QtCore.Qt.Key_Insert: self.insert_row
+        }
+
+        action = actions.get(e.key())
+        if action:
+            action()
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)
