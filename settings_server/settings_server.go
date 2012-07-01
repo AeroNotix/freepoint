@@ -15,55 +15,8 @@ import (
 	"time"
 )
 
-var AsyncChannel = make(chan settingsserver.AsyncUpdate, 10)
-
-// Routes is a slice of RoutingEntries, this allows
-// us to hold a map (and subsequently iterate through
-// it.)
-var Routes []settingsserver.RoutingEntry = []settingsserver.RoutingEntry{
-	settingsserver.RoutingEntry{
-		URL:     regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
-		Handler: databaseParameters,
-		Name:    "Parameters",
-	},
-	settingsserver.RoutingEntry{
-		URL:     regexp.MustCompile("^/login/$"),
-		Handler: userLogin,
-		Name:    "Login",
-	},
-	settingsserver.RoutingEntry{
-		URL:     regexp.MustCompile("^/update/$"),
-		Handler: changeTable,
-		Name:    "Change Table Data",
-	},
-}
-
-// Struct so that we may assign ServeHTTP to something to satisfy the
-// server interface
-type SettingsHandler struct{}
-
-// This is the main 'event loop' for the web server. All requests are
-// sent to this handler, which checks the incoming request against
-// all the routes we have setup if it finds a match it will invoke
-// the handler which is attached to that match.
-func (self *SettingsHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	request := req.URL.Path
-	for _, route := range Routes {
-		matches := route.URL.FindAllStringSubmatch(request, 1)
-		if len(matches) > 0 {
-			log.Println("Request:", route.Name)
-			err := route.Handler(w, req)
-			if err != nil {
-				log.Println(err)
-			}
-			return
-		}
-	}
-	http.NotFound(w, req)
-}
-
 // Simple server which is used to return parameters for particular databases.
-func databaseParameters(w http.ResponseWriter, req *http.Request) error {
+func databaseParameters(self *settingsserver.AppServer, w http.ResponseWriter, req *http.Request) error {
 
 	// We add the content type so the browser can accept it properly if
 	// we get requested via a browser.
@@ -122,7 +75,7 @@ func databaseParameters(w http.ResponseWriter, req *http.Request) error {
 // user is login-able. Eventually userLogin will create a
 // session row in the database and send the sessionid key
 // back to the requester.
-func userLogin(w http.ResponseWriter, req *http.Request) error {
+func userLogin(self *settingsserver.AppServer, w http.ResponseWriter, req *http.Request) error {
 	if ok, err := Login(w, req); !ok {
 		settingsserver.SendJSONError(w, err)
 		return err
@@ -174,7 +127,7 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 //
 // This function will have one of two possible side effects which are
 // writing a JSON response to the caller.
-func changeTable(w http.ResponseWriter, req *http.Request) error {
+func changeTable(self *settingsserver.AppServer, w http.ResponseWriter, req *http.Request) error {
 
 	job := settingsserver.AsyncUpdate{
 		req.FormValue("Database"),
@@ -185,8 +138,8 @@ func changeTable(w http.ResponseWriter, req *http.Request) error {
 		make(chan error),
 	}
 
-	AsyncChannel <- job
-	err := <- job.ReturnPath	
+	self.DBWriter <- job
+	err := <-job.ReturnPath
 	if err != nil {
 		settingsserver.SendJSON(w, false)
 		return err
@@ -197,19 +150,43 @@ func changeTable(w http.ResponseWriter, req *http.Request) error {
 
 func main() {
 	var addr string
-
-//	asyncWriterChannel := make(chan settingsserver.AsyncUpdate, 10)
-	go func() {
-		settingsserver.AsyncUpdater(AsyncChannel)
-	}()
 	flag.StringVar(&addr, "port", ":12345",
 		"The port on which the server should run",
 	)
 	flag.Parse()
 	log.Println("Serving on", addr)
+
+	Settings := settingsserver.AppServer{
+		// Routes is a slice of RoutingEntries, this allows
+		// us to hold a map (and subsequently iterate through
+		// it.)
+		Routes: []settingsserver.RoutingEntry{
+			settingsserver.RoutingEntry{
+				URL:     regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
+				Handler: databaseParameters,
+				Name:    "Parameters",
+			},
+			settingsserver.RoutingEntry{
+				URL:     regexp.MustCompile("^/login/$"),
+				Handler: userLogin,
+				Name:    "Login",
+			},
+			settingsserver.RoutingEntry{
+				URL:     regexp.MustCompile("^/update/$"),
+				Handler: changeTable,
+				Name:    "Change Table Data",
+			},
+		},
+		DBWriter: make(chan settingsserver.AsyncUpdate, 10),
+	}
+
+	// Start the loop which will synchonize incoming database
+	// writes.
+	go settingsserver.AsyncUpdater(Settings.DBWriter)
+
 	s := http.Server{
 		Addr:        addr,
-		Handler:     &SettingsHandler{},
+		Handler:     &Settings,
 		ReadTimeout: 30 * time.Second,
 	}
 	s.ListenAndServe()
