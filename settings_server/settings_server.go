@@ -129,17 +129,8 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 // writing a JSON response to the caller.
 func changeTable(self *settingsserver.AppServer, w http.ResponseWriter, req *http.Request) error {
 
-	job := settingsserver.AsyncUpdate{
-		req.FormValue("Database"),
-		req.FormValue("Table"),
-		req.FormValue("Column"),
-		req.FormValue("Data"),
-		req.FormValue("ID"),
-		make(chan error),
-	}
-
-	self.DBWriter <- job
-	err := <-job.ReturnPath
+	job := settingsserver.NewJob(req)
+	err := self.WriteEntry(job)
 	if err != nil {
 		settingsserver.SendJSON(w, false)
 		return err
@@ -156,11 +147,11 @@ func main() {
 	flag.Parse()
 	log.Println("Serving on", addr)
 
-	Settings := settingsserver.AppServer{
+	Settings := settingsserver.NewAppServer(
 		// Routes is a slice of RoutingEntries, this allows
 		// us to hold a map (and subsequently iterate through
 		// it.)
-		Routes: []settingsserver.RoutingEntry{
+		[]settingsserver.RoutingEntry{
 			settingsserver.RoutingEntry{
 				URL:     regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
 				Handler: databaseParameters,
@@ -177,12 +168,7 @@ func main() {
 				Name:    "Change Table Data",
 			},
 		},
-		DBWriter: make(chan settingsserver.AsyncUpdate, 10),
-	}
-
-	// Start the loop which will synchonize incoming database
-	// writes.
-	go settingsserver.AsyncUpdater(Settings.DBWriter)
+	)
 
 	s := http.Server{
 		Addr:        addr,

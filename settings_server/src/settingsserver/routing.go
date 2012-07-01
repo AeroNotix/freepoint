@@ -10,7 +10,17 @@ import (
 // server interface
 type AppServer struct {
 	Routes   []RoutingEntry
-	DBWriter chan AsyncUpdate
+	dbWriter chan AsyncUpdate
+}
+
+func NewAppServer(routes []RoutingEntry) AppServer {
+	app := AppServer{
+		Routes:   routes,
+		dbWriter: make(chan AsyncUpdate, 10),
+	}
+
+	go AsyncUpdater(app.dbWriter)
+	return app
 }
 
 // This is the main 'event loop' for the web server. All requests are
@@ -31,6 +41,13 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	http.NotFound(w, req)
+}
+
+// Writes a job to the database writer queue which self has a ref
+// to.
+func (self *AppServer) WriteEntry(job AsyncUpdate) error {
+	self.dbWriter <- job
+	return <-job.ReturnPath
 }
 
 // This type defines what signatures of functions can be used

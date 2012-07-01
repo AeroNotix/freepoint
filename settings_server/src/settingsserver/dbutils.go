@@ -6,6 +6,7 @@ import (
 	"fmt"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
+	"net/http"
 )
 
 // Basic struct to hold User data.
@@ -20,12 +21,27 @@ type User struct {
 // This struct will be used to create jobs which can be push into async worker queues
 // to asynchronously process database writes and have them write to disk sequentially.
 type AsyncUpdate struct {
-	Database string
-	Table string
-	Column string
-	Data string
-	Id string
+	Database   string
+	Table      string
+	Column     string
+	Data       string
+	Id         string
 	ReturnPath chan error
+}
+
+// Using the Request form values we create a job and return it.
+// We do it like this so that the error channel doesn't have to
+// be create by the user and they just pass the request form to this.
+func NewJob(req *http.Request) AsyncUpdate {
+	job := AsyncUpdate{
+		req.FormValue("Database"),
+		req.FormValue("Table"),
+		req.FormValue("Column"),
+		req.FormValue("Data"),
+		req.FormValue("ID"),
+		make(chan error),
+	}
+	return job
 }
 
 // Function which takes a database name and connects to that database using the details
