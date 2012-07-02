@@ -11,43 +11,43 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"settingsserver"
+	ss "settingsserver"
 	"time"
 )
 
 // Simple server which is used to return parameters for particular databases.
-func databaseParameters(self *settingsserver.AppServer, w http.ResponseWriter, req *http.Request) error {
+func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
 	// We add the content type so the browser can accept it properly if
 	// we get requested via a browser.
 	w.Header().Set("Content Type", "application/json")
 
 	// Get the metadata associated with the table.
-	metadata, err := settingsserver.GetMetadata(req.URL.Path[len("/getdb/"):])
+	metadata, err := ss.GetMetadata(req.URL.Path[len("/getdb/"):])
 	if err != nil {
-		val, ok := err.(settingsserver.AppError)
+		val, ok := err.(ss.AppError)
 		if !ok {
-			settingsserver.SendJSONError(w, err)
+			ss.SendJSONError(w, err)
 			return err
 		}
 		if val.Code() != 3 {
-			settingsserver.SendJSONError(w, err)
+			ss.SendJSONError(w, err)
 			return err
 		}
 	}
 
 	// Marshal our metadata into a struct and encode.
-	jsonMap := settingsserver.NewJSONMessage(metadata)
+	jsonMap := ss.NewJSONMessage(metadata)
 
 	// Get the rows from the database and encode them into JSON.
 	database_name := req.FormValue("Database")
 	table_name := req.FormValue("Table")
-	rows, _ := settingsserver.GetRows(
+	rows, _ := ss.GetRows(
 		database_name,
 		table_name,
 	)
 
-	headings, err := settingsserver.GetHeadings(database_name, table_name)
+	headings, err := ss.GetHeadings(database_name, table_name)
 	if err != nil {
 		return err
 	}
@@ -75,12 +75,12 @@ func databaseParameters(self *settingsserver.AppServer, w http.ResponseWriter, r
 // user is login-able. Eventually userLogin will create a
 // session row in the database and send the sessionid key
 // back to the requester.
-func userLogin(self *settingsserver.AppServer, w http.ResponseWriter, req *http.Request) error {
+func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 	if ok, err := Login(w, req); !ok {
-		settingsserver.SendJSONError(w, err)
+		ss.SendJSONError(w, err)
 		return err
 	}
-	settingsserver.SendJSON(w, true)
+	ss.SendJSON(w, true)
 	return nil
 }
 
@@ -93,31 +93,31 @@ func userLogin(self *settingsserver.AppServer, w http.ResponseWriter, req *http.
 func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 
 	if req.Method != "POST" {
-		return false, settingsserver.RequestError
+		return false, ss.RequestError
 	}
 
 	username := req.FormValue("User")
 	pass := req.FormValue("Password")
 	if len(username) == 0 || len(pass) == 0 {
-		return false, settingsserver.LoginError
+		return false, ss.LoginError
 	}
-	user := settingsserver.User{
+	user := ss.User{
 		User:     username,
 		Password: pass,
 	}
-	row, err := settingsserver.GetUser(user.User)
+	row, err := ss.GetUser(user.User)
 	if err != nil {
 		return false, err
 	}
 	// Create a User instance from the SQL Results.
-	req_user := settingsserver.User{
+	req_user := ss.User{
 		row.Str(1),
 		row.Str(2),
 	}
 	// if we've got here, we either are logged in or not.
 	success := user == req_user
 	if !success {
-		return success, settingsserver.LoginError
+		return success, ss.LoginError
 	}
 	return success, nil
 }
@@ -127,15 +127,15 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 //
 // This function will have one of two possible side effects which are
 // writing a JSON response to the caller.
-func changeTable(self *settingsserver.AppServer, w http.ResponseWriter, req *http.Request) error {
+func changeTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
-	job := settingsserver.NewJob(req)
+	job := ss.NewJob(req)
 	err := self.WriteEntry(job)
 	if err != nil {
-		settingsserver.SendJSON(w, false)
+		ss.SendJSON(w, false)
 		return err
 	}
-	settingsserver.SendJSON(w, true)
+	ss.SendJSON(w, true)
 	return nil
 }
 
@@ -147,22 +147,22 @@ func main() {
 	flag.Parse()
 	log.Println("Serving on", addr)
 
-	Settings := settingsserver.NewAppServer(
+	Settings := ss.NewAppServer(
 		// Routes is a slice of RoutingEntries, this allows
 		// us to hold a map (and subsequently iterate through
 		// it.)
-		[]settingsserver.RoutingEntry{
-			settingsserver.RoutingEntry{
+		[]ss.RoutingEntry{
+			ss.RoutingEntry{
 				URL:     regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
 				Handler: databaseParameters,
 				Name:    "Parameters",
 			},
-			settingsserver.RoutingEntry{
+			ss.RoutingEntry{
 				URL:     regexp.MustCompile("^/login/$"),
 				Handler: userLogin,
 				Name:    "Login",
 			},
-			settingsserver.RoutingEntry{
+			ss.RoutingEntry{
 				URL:     regexp.MustCompile("^/update/$"),
 				Handler: changeTable,
 				Name:    "Change Table Data",
