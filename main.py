@@ -23,7 +23,9 @@ from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
 from qtsqlviewer.table_tools.delegates import Delegator
 
 # this is strange because it gets used implicitly when using the
-# Qt syntax for QResource objects
+# Qt syntax for QResource objects. It may seem that this doesn't
+# get used but there are side-effects when importing this module
+# which hook into Qt's internal resource management methods.
 from qtsqlviewer.ui import resource_rc
 
 CWD = os.path.dirname(__file__)
@@ -131,33 +133,46 @@ class MainGui(QtGui.QMainWindow):
     @table_wrapper
     def populate_table(self):
         """
-        Opens and displays a MySQL table
+        Opens and displays the data taken from the self.database.query()
 
-        Mutates the table's headings and the data in the table with
-        the data returned from the select on the passed in database.
+        We have wrapped this function in the decorator which will stop certain
+        signals running when we are inserting data into the table.
+
+        First we clear the table of all contents and make a simple login call to
+        the server. We do this so that we both know that we can connect and we
+        then will know that the login details are valid. Eventually we will have
+        a login wrapper which will wrap all functions which need to be validated.
+
+        We then ask the server for a query set, which is by default a SELECT * on
+        each table but this can be customized using the database settings metadata
+        on the metadata database.
+
+        Once we have the data itself, we get the headings and the metadata from
+        the database. We then create an instance of the Delegator QItemDelegate
+        subclass using the heading names and the metadata. Refer to
+        :class:`Delegator` documentation to see how this works. Essentially it
+        parses the JSON metadata and creates instances of further QItemDelegate
+        subclasses in order to provide the proper editors and data setting
+        behaviour.
+
+        Once this has been completed we insert the data into the table and return
+        control to the decorator which reapplies the signals and returns itself.
+
+        We call the close() method on the database because the GUI class doesn't
+        care about the implementation of the database and the idea is that the
+        database instance can be swapped out providing that the contract between
+        the GUI and the database, i.e. argument and return types  is not violated.
         """
 
         self.clear_table()
 
-        try:
-            if not self.database.connect():
-                return
-        except _mysql_exceptions.OperationalError, error:
-            # on any error report to the user and return
-            QtGui.QMessageBox.warning(self, "Error", str(error))
+        # We can't continue if we cannot make a connection to the database.
+        if not self.database.connect():
             return
-
 
         # get the headings so we can set up the table
-        try:
-            queryset = self.database.query()
-            self.headings = self.database.get_headings()
-        except _mysql_exceptions.OperationalError, error:
-            self.show_error(str(error))
-            return
-        except _mysql_exceptions.ProgrammingError as error:
-            self.show_message(mysqlerror(error), time=10000)
-            return
+        queryset = self.database.query()
+        self.headings = self.database.get_headings()
 
         self.gui.tableWidget.setItemDelegate(
             Delegator(self.headings, self.database.metadata, parent=self)
