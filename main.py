@@ -10,8 +10,6 @@ import csv
 
 from PyQt4 import QtGui, QtCore
 
-import _mysql_exceptions
-
 from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
 from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 from qtsqlviewer.ui.connection_dialog import ConnectionDialog
@@ -19,7 +17,6 @@ from qtsqlviewer.ui.login import Login
 
 from qtsqlviewer.table_tools.tools import table_wrapper, Database, create_action
 from qtsqlviewer.table_tools.argument import Argument
-from qtsqlviewer.table_tools.mysql_error_codes import mysqlerror
 from qtsqlviewer.table_tools.delegates import Delegator
 
 # this is strange because it gets used implicitly when using the
