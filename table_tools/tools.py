@@ -129,6 +129,10 @@ class Database(object):
         self.login_url = self.base_url + "login/"
         self.update_url = self.base_url + "update/"
         self.parent = parent
+        if not self.parent:
+            self.error = lambda s:s
+        else:
+            self.error = self.error
 
     def connect(self):
         """
@@ -153,10 +157,10 @@ class Database(object):
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError:
-            self.parent.show_error("Cannot connect to dataserver.")
+            self.error("Cannot connect to dataserver.")
             return False
         except JSONDecodeError:
-            self.parent.show_error("The information from the server was invald.")
+            self.error("The information from the server was invald.")
             return False
 
         self.connected = json['Success']
@@ -187,11 +191,6 @@ class Database(object):
         :returns: A list of the data returned.
         """
 
-        if self.parent:
-            error = self.parent.show_error
-        else:
-            error = lambda s:s
-
         try:
             json_payload = {
                 'User': self.user,
@@ -206,21 +205,21 @@ class Database(object):
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError:
-            error("Cannot connect to dataserver.")
+            self.error("Cannot connect to dataserver.")
             return []
         except JSONDecodeError:
-            error("The information from the server was invalid.")
+            self.error("The information from the server was invalid.")
             return []
         # Get the headings from the returned JSON and send an error message
         # to the user if we found nothing.
         self.headings = json.get("Headings")
         if not self.headings:
-            error("The database did not return the correct data.")
+            self.error("The database did not return the correct data.")
             return []
         self.metadata = json.get("Metadata", False)
         rows = json.get("Rows", [])
         if not rows:
-            error("The server did not return any data.")
+            self.error("The server did not return any data.")
             return rows
         return rows
 
@@ -262,6 +261,6 @@ class Database(object):
             self.parent.gui.tableWidget.blockSignals(True)
             self.parent.revertCellData(xrow, ycol)
             self.parent.gui.tableWidget.blockSignals(False)
-            self.parent.show_error("Data could not be saved to the database.")
+            self.error("Data could not be saved to the database.")
         else:
             self.parent.show_message("Data has been saved to the database.")
