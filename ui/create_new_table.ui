@@ -165,15 +165,16 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>140</x>
+     <x>130</x>
      <y>20</y>
-     <width>381</width>
-     <height>561</height>
+     <width>401</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="title">
     <string>Field Description</string>
    </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2"/>
   </widget>
  </widget>
  <resources/>

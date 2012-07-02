@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'create_new_table.ui'
 #
-# Created: Mon Jul 02 15:42:07 2012
+# Created: Mon Jul 02 16:57:16 2012
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -74,14 +74,15 @@ class Ui_Dialog(object):
         self.buttonGroup.addButton(self.radioButton_10)
         self.verticalLayout.addWidget(self.radioButton_10)
         self.groupBox_2 = QtGui.QGroupBox(Dialog)
-        self.groupBox_2.setGeometry(QtCore.QRect(140, 20, 381, 561))
+        self.groupBox_2.setGeometry(QtCore.QRect(130, 20, 401, 50))
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.groupBox_2)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Dialog.reject)
-        QtCore.QObject.connect(Dialog.buttonGroup, QtCore.SIGNAL(_fromUtf8("buttonClicked(int)")), Dialog.changeFieldDescriptions)
-        QtCore.QObject.connect(self.radioButton_8, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), Dialog.changeFieldDescriptions)
+        QtCore.QObject.connect(self.buttonGroup, QtCore.SIGNAL(_fromUtf8("buttonClicked(int)")), Dialog.changeFieldDescriptions)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):

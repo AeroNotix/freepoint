@@ -371,6 +371,11 @@ class MainGui(QtGui.QMainWindow):
         setup_dlg.exec_()
         return
 
+    def createTableDialog(self):
+        create_dlg = CreateNewTable(self)
+        create_dlg.exec_()
+        return
+
     def login(self):
         """
         Invokes the Login form.
@@ -435,6 +440,7 @@ class MainGui(QtGui.QMainWindow):
         slot=self.export_as_csv
             )
         create_action(self, "Quit", fname=":/system-log-out", slot=sys.exit)
+        create_action(self, "Create new table", fname=":/bookmark-new", slot=self.createTableDialog)
 
     def keyPressEvent(self, e):
         actions = {
