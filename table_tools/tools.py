@@ -111,6 +111,8 @@ class Database(object):
         """
         Creates an instance of a Database which holds connection details
         and commonly used methods on a database.
+
+        :returns: :class:`Database`
         """
         self.host = host
         self.user = user
@@ -136,6 +138,8 @@ class Database(object):
 
         We're experimentally checking in to the login server to check if
         the user details authenticate.
+
+        :returns: :class:`Bool` showing whether the connect succeeded
         """
 
         try:
@@ -161,6 +165,12 @@ class Database(object):
     def close(self):
         """
         Closes the database connection
+
+        This method mutates the self.connected attribute to show other callers
+        that we have closed the connection. It's a simple attribute because we
+        don't hold open connections to the server but instead communicate via
+        the REST-ish API. So setting this value is more of a logical thing
+        rather than a concrete close of the connection.
         """
         self.connected = False
 
@@ -171,8 +181,17 @@ class Database(object):
         Will mutate the self.headings with the headings for the database and
         return a list.
 
+        This method will communicate with the parent object via the show_error
+        method attached to it if the parent is available.
+
         :returns: A list of the data returned.
         """
+
+        if self.parent:
+            error = self.parent.show_error
+        else:
+            error = lambda s:s
+
         try:
             json_payload = {
                 'User': self.user,
@@ -187,27 +206,24 @@ class Database(object):
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError:
-            self.parent.show_error("Cannot connect to dataserver.")
+            error("Cannot connect to dataserver.")
             return []
         except JSONDecodeError:
-            self.parent.show_error(
-                "The information from the server was invalid."
-            )
+            error("The information from the server was invalid.")
             return []
         # Get the headings from the returned JSON and send an error message
         # to the user if we found nothing.
         self.headings = json.get("Headings")
         if not self.headings:
-            self.parent.show_error(
-                "The database did not return the correct data."
-            )
+            error("The database did not return the correct data.")
             return []
         self.metadata = json.get("Metadata", False)
         rows = json.get("Rows", [])
         if not rows:
-            self.parent.show_error("The server did not return any data.")
+            error("The server did not return any data.")
             return rows
         return rows
+
     def get_headings(self):
         """
         We use a get method for this as the API isn't stable and having to
