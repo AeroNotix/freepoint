@@ -68,7 +68,11 @@ class Login(QtGui.QDialog):
             )
         # no error checking because if the json is malformed
         # we're fucked anyway.
-        json = simplejson.loads(urllib2.urlopen(http_post).read())
+        try:
+            json = simplejson.loads(urllib2.urlopen(http_post).read())
+        except urllib2.URLError:
+            self.parent.show_error("Could not connect to server!")
+            return False
         try:
             return json['Success']
         except KeyError:
