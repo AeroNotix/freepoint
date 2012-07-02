@@ -1,5 +1,5 @@
 """
-intention is to make a generic GUI for interacting with a mysql database
+intention is to make a generic GUI for interacting with the SettingsServer MySQL access layer
 """
 
 import os
@@ -246,6 +246,15 @@ class MainGui(QtGui.QMainWindow):
         """
         Changes the connection to the one specified under the `section`
         heading.
+
+        if the clicked item is the current table then we check if it's
+        the only table, if so we allow the 'update' to happen. If not,
+        we return.
+
+        We do this because otherwise clicking a single item would yield
+        nothing and maybe the user wishes to refresh the table (despite,
+        having a refresh button) and if the list is len()>1 we don't
+        allow it because it may be an accidental click.
         """
 
         if self.current_table == section:
