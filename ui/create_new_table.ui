@@ -226,22 +226,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>radioButton_8</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>Dialog</receiver>
-   <slot>changeFieldDescriptions()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>112</x>
-     <y>162</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>655</x>
-     <y>647</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>changeFieldDescriptions()</slot>
