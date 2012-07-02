@@ -132,7 +132,7 @@ class Database(object):
         if not self.parent:
             self.error = lambda s:s
         else:
-            self.error = self.error
+            self.error = self.parent.show_error
 
     def connect(self):
         """

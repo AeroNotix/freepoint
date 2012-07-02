@@ -28,6 +28,8 @@ from qtsqlviewer.table_tools.delegates import Delegator
 # which hook into Qt's internal resource management methods.
 from qtsqlviewer.ui import resource_rc
 
+from qtsqlviewer.ui.createDatabase import CreateNewTable
+
 CWD = os.path.dirname(__file__)
 
 ## Argument creation
@@ -449,4 +451,7 @@ if __name__ == '__main__':
     MAINWINDOW = MainGui()
     MAINWINDOW.setStatusBar(MAINWINDOW.gui.statusbar)
     MAINWINDOW.show()
+
+    FAKE = CreateNewTable()
+    FAKE.show()
     sys.exit(APPLICATION.exec_())
