@@ -235,6 +235,10 @@ class MainGui(QtGui.QMainWindow):
         self.gui.statusbar.showMessage(message, time)
 
     def show_error(self, error_message_string):
+        """
+        Error messages are a special case of messages. We also need to show
+        the user an alert dialog along with the message in the status bar.
+        """
         QtGui.QMessageBox.warning(self, "Error", error_message_string)
         self.show_message(error_message_string, time=10000)
 
@@ -277,6 +281,9 @@ class MainGui(QtGui.QMainWindow):
 
         self.actionGroupConnections = QtGui.QActionGroup(self)
 
+        # If it's the first load our actionList will be empty so we
+        # don't need to remove them. If not, we iterate through the list
+        # and remove the actions.
         if not self.actionList:
             pass
         else:
