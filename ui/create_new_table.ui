@@ -63,7 +63,7 @@
      <x>10</x>
      <y>20</y>
      <width>114</width>
-     <height>234</height>
+     <height>281</height>
     </rect>
    </property>
    <property name="title">
@@ -71,9 +71,9 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QRadioButton" name="radioButton">
+     <widget class="QRadioButton" name="line_radio">
       <property name="text">
-       <string>Line of text</string>
+       <string>Text</string>
       </property>
       <attribute name="buttonGroup">
        <string notr="true">buttonGroup</string>
@@ -81,17 +81,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_2">
-      <property name="text">
-       <string>Comment</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
-      </attribute>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_3">
+     <widget class="QRadioButton" name="choice_radio">
       <property name="text">
        <string>Choice</string>
       </property>
@@ -101,17 +91,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_6">
-      <property name="text">
-       <string>Currency</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
-      </attribute>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_4">
+     <widget class="QRadioButton" name="num_radio">
       <property name="text">
        <string>Number</string>
       </property>
@@ -121,7 +101,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_8">
+     <widget class="QRadioButton" name="date_radio">
       <property name="text">
        <string>Date</string>
       </property>
@@ -131,7 +111,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_5">
+     <widget class="QRadioButton" name="time_radio">
       <property name="text">
        <string>Time</string>
       </property>
@@ -141,17 +121,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="radioButton_9">
-      <property name="text">
-       <string>Boolean choice</string>
-      </property>
-      <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
-      </attribute>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="radioButton_10">
+     <widget class="QRadioButton" name="grp_radio">
       <property name="text">
        <string>Person/Group</string>
       </property>
@@ -162,21 +132,324 @@
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_2">
+  <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
-     <x>130</x>
-     <y>20</y>
-     <width>401</width>
-     <height>50</height>
+     <x>140</x>
+     <y>10</y>
+     <width>381</width>
+     <height>581</height>
     </rect>
    </property>
-   <property name="title">
-    <string>Field Description</string>
+   <property name="currentIndex">
+    <number>0</number>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2"/>
+   <widget class="QWidget" name="tab_3">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QGroupBox" name="txt_group">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>361</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Field Description</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Unique:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Row Name: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Length:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spinBox">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>100000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Add &gt;&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_4">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QGroupBox" name="choice_group">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>361</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Field Description</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_2"/>
+      </item>
+      <item row="2" column="1">
+       <spacer name="verticalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="1">
+       <widget class="QTextEdit" name="textEdit">
+        <property name="toolTip">
+         <string>Enter each choice on a newline.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Row Name: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="checkBox_2">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Unique:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" alignment="Qt::AlignTop">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Choices:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="text">
+         <string>Add &gt;&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_7">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QGroupBox" name="num_group">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>361</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Field Description</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_3"/>
+      </item>
+      <item row="3" column="1">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Row Name: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="checkBox_3">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Unique:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spinBox_2">
+        <property name="maximum">
+         <number>999999998</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="spinBox_3">
+        <property name="maximum">
+         <number>999999999</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>From:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>To:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Add &gt;&gt;</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_5">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>351</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Field Description</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_6">
+    <attribute name="title">
+     <string>Page</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_6">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>351</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Field Description</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Tab 2</string>
+    </attribute>
+    <widget class="QGroupBox" name="groupBox_8">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>351</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Field Description</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>line_radio</tabstop>
+  <tabstop>choice_radio</tabstop>
+  <tabstop>num_radio</tabstop>
+  <tabstop>date_radio</tabstop>
+  <tabstop>time_radio</tabstop>
+  <tabstop>grp_radio</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>listView</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -218,8 +491,8 @@
    <slot>changeFieldDescriptions()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>630</x>
-     <y>555</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -227,9 +500,42 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptFieldAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>455</x>
+     <y>548</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>900</x>
+     <y>753</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptFieldAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>454</x>
+     <y>545</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>885</x>
+     <y>748</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeFieldDescriptions()</slot>
+  <slot>acceptFieldAdd()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="buttonGroup"/>
