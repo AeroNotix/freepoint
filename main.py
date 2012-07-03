@@ -437,7 +437,9 @@ class MainGui(QtGui.QMainWindow):
         slot=self.export_as_csv
             )
         create_action(self, "Quit", fname=":/system-log-out", slot=sys.exit)
-        create_action(self, "Create new table", fname=":/bookmark-new", slot=self.createTableDialog)
+        create_action(
+            self, "Create new table", fname=":/bookmark-new", slot=self.createTableDialog
+            )
 
     def keyPressEvent(self, e):
         actions = {
