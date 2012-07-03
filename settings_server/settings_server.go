@@ -129,7 +129,7 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 // writing a JSON response to the caller.
 func changeTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
-	job := ss.NewJob(req)
+	job := ss.NewAsyncJob(req)
 	err := self.WriteEntry(job)
 	if err != nil {
 		ss.SendJSON(w, false)
