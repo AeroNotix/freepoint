@@ -5,10 +5,13 @@ import (
 	"net/http"
 )
 
+// HeadingData is composed of strings to interfaces
+type HeadingData map[string]interface{}
+
 // This type allows us to easily marshal incoming JSON data into
 // the fields of a struct by statically mapping the values.
 // Our JSON will be a map of maps to interface types.
-type Metadata map[string]map[string]interface{}
+type Metadata map[string]HeadingData
 
 // A JSON message in our case will be a [][]string field
 // which corresponds to the rows in a database call and

@@ -15,6 +15,12 @@ import (
 	"time"
 )
 
+func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
+	ss.NewAsyncCreate(req)
+
+	return nil
+}
+
 // Simple server which is used to return parameters for particular databases.
 func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
@@ -166,6 +172,11 @@ func main() {
 				URL:     regexp.MustCompile("^/update/$"),
 				Handler: changeTable,
 				Name:    "Change Table Data",
+			},
+			ss.RoutingEntry{
+				URL:     regexp.MustCompile("^/create/$"),
+				Handler: createTable,
+				Name:    "Create table",
 			},
 		},
 	)

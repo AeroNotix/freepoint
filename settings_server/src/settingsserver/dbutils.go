@@ -29,16 +29,13 @@ type AsyncUpdate struct {
 	ReturnPath chan error
 }
 
-// Empty type
-type all interface{}
-
 // AsyncCreate holds the data from the New Table part of the API
 // we will eventually parse the TableData field into an SQL
 // string which will then be executed.
 type AsyncCreate struct {
-	Database  string
-	TableName string
-	TableData map[string]map[string]all
+	Database   string
+	TableName  string
+	TableData  Metadata
 	ReturnPath chan error
 }
 
@@ -64,14 +61,31 @@ func NewAsyncJob(req *http.Request) AsyncUpdate {
 // details about how the asynchronous nature of the update/create
 // is accomplished 
 func NewAsyncCreate(req *http.Request) AsyncCreate {
+
+	md := make(Metadata)
+	err := json.Unmarshal([]byte(req.FormValue("payload")), &md)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	//	headings := make([]string, len(md["HEADINGS"]))
+
+	for _, v := range md["HEADINGS"] {
+		if val, ok := v.(map[string]interface{}); ok {
+			fmt.Println(int(val["ROWNUM"].(float64)))
+
+		}
+	}
+
 	create := AsyncCreate{
 		"db_timetracker",
 		"tbl_newTable",
-		map[string]map[string]all{"KEY": map[string]all{"INNER": "ALL"}},
+		md,
 		make(chan error),
 	}
 	return create
 }
+
 // Function which takes a database name and connects to that database using the details
 // defined in the connection module.
 func CreateConnection(dbname string) (mysql.Conn, error) {
@@ -239,3 +253,29 @@ func CreateTable(job AsyncCreate) error {
 
 	return nil
 }
+
+/*
+
+{
+	'HEADINGS': {
+		u'Status': {
+			'ROWNUM': 2,
+			'UNIQUE': False,
+			'TYPE': 'CHOICE',
+			'CHOICES': ['Open', 'Closed', 'Pending', 'Broken']
+		},
+		u'EntryDate': {
+			'ROWNUM': 3,
+			'UNIQUE': False, 
+			'TYPE': 'DATE'
+		},
+		u'Names': {
+			'ROWNUM': 1,
+			'UNIQUE': False,
+			'TYPE': 'VARCHAR(255)'
+		}
+	}, 
+	'DATABASE': {
+		'NAME': 'MYDATABASE'}
+}
+*/

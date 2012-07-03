@@ -1,4 +1,7 @@
-from PyQt4 import QtGui, QtCore
+import simplejson
+import urllib2, urllib
+
+from PyQt4 import QtGui
 from qtsqlviewer.ui.create_new_table_UI import Ui_Dialog
 
 
@@ -18,6 +21,7 @@ class CreateNewTable(QtGui.QDialog):
             "DATABASE": {},
             "HEADINGS": {}
             }
+        self.row_num = 0
 
     def add_text_row(self):
         """
@@ -25,19 +29,20 @@ class CreateNewTable(QtGui.QDialog):
         widgets and will create a new entry in the json dictionary ready for
         when we serialize the json.
         """
-        rowname = unicode(self.gui.txt_grp_rowname.text())
+        rowname = str(self.gui.txt_grp_rowname.text())
         if not len(rowname):
             return
         if not self.check_row(rowname):
             return
         self.json_data["HEADINGS"][rowname] = {
             "TYPE": "VARCHAR(%s)" % str(self.gui.txt_grp_length.value()),
-            "UNIQUE": self.gui.txt_grp_unique.isChecked()
+            "UNIQUE": self.gui.txt_grp_unique.isChecked(),
+            "ROWNUM": self.get_row_num()
             }
         print self.json_data
 
     def add_choice_row(self):
-        rowname = unicode(self.gui.choice_grp_rowname.text())
+        rowname = str(self.gui.choice_grp_rowname.text())
         if not len(rowname):
             return
         if not self.check_row(rowname):
@@ -47,11 +52,12 @@ class CreateNewTable(QtGui.QDialog):
             "TYPE": "CHOICE",
             "UNIQUE": self.gui.txt_grp_unique.isChecked(),
             "CHOICES": choices[:],
+            "ROWNUM": self.get_row_num()
             }
         print self.json_data
 
     def add_date_row(self):
-        rowname = unicode(self.gui.date_grp_rowname.text())
+        rowname = str(self.gui.date_grp_rowname.text())
         if not len(rowname):
             return
         if not self.check_row(rowname):
@@ -59,11 +65,12 @@ class CreateNewTable(QtGui.QDialog):
         self.json_data["HEADINGS"][rowname] = {
             "TYPE": "DATE",
             "UNIQUE": self.gui.date_grp_unique.isChecked(),
+            "ROWNUM": self.get_row_num()
             }
         print self.json_data
 
     def add_time_row(self):
-        rowname = unicode(self.gui.time_grp_rowname.text())
+        rowname = str(self.gui.time_grp_rowname.text())
         if not len(rowname):
             return
         if not self.check_row(rowname):
@@ -71,6 +78,7 @@ class CreateNewTable(QtGui.QDialog):
         self.json_data["HEADINGS"][rowname] = {
             "TYPE": "TIME",
             "UNIQUE": self.gui.time_grp_unique.isChecked(),
+            "ROWNUM": self.get_row_num()
             }
         self.json_data
 
@@ -124,3 +132,21 @@ class CreateNewTable(QtGui.QDialog):
         msgbox.addButton(QtGui.QMessageBox.Yes)
         msgbox.addButton(QtGui.QMessageBox.No)
         return msgbox.exec_() == QtGui.QMessageBox.Yes
+
+    def accept(self):
+        print self.json_data
+        self.row_num = 0
+
+        payload = {"payload": simplejson.dumps(self.json_data)}
+        
+        req = urllib2.Request(
+            "http://localhost:12345/create/",
+            urllib.urlencode(payload)
+            )
+
+        f = urllib2.urlopen(req)
+        f.close()
+
+    def get_row_num(self):
+        self.row_num += 1
+        return self.row_num
