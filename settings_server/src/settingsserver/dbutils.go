@@ -29,10 +29,24 @@ type AsyncUpdate struct {
 	ReturnPath chan error
 }
 
+// Empty type
+type all interface{}
+
+// AsyncCreate holds the data from the New Table part of the API
+// we will eventually parse the TableData field into an SQL
+// string which will then be executed.
+type AsyncCreate struct {
+	Database  string
+	TableName string
+	TableData map[string]map[string]all
+	ReturnPath chan error
+}
+
 // Using the Request form values we create a job and return it.
 // We do it like this so that the error channel doesn't have to
-// be create by the user and they just pass the request form to this.
-func NewJob(req *http.Request) AsyncUpdate {
+// be create by the user and they just pass the request form to 
+// this.
+func NewAsyncJob(req *http.Request) AsyncUpdate {
 	job := AsyncUpdate{
 		req.FormValue("Database"),
 		req.FormValue("Table"),
@@ -44,6 +58,20 @@ func NewJob(req *http.Request) AsyncUpdate {
 	return job
 }
 
+// Stub function which returns a basic representation of what an
+// AsyncCreate instance might look like. We have a NewCreate()
+// function as to not enforce the user to see implementation
+// details about how the asynchronous nature of the update/create
+// is accomplished 
+func NewAsyncCreate(req *http.Request) AsyncCreate {
+	create := AsyncCreate{
+		"db_timetracker",
+		"tbl_newTable",
+		map[string]map[string]all{"KEY": map[string]all{"INNER": "ALL"}},
+		make(chan error),
+	}
+	return create
+}
 // Function which takes a database name and connects to that database using the details
 // defined in the connection module.
 func CreateConnection(dbname string) (mysql.Conn, error) {
@@ -199,5 +227,15 @@ func ChangeData(job AsyncUpdate) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func CreateTable(job AsyncCreate) error {
+	db, err := CreateConnection(job.Database)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
 	return nil
 }
