@@ -18,10 +18,9 @@ class CreateNewTable(QtGui.QDialog):
             "time_group": self.add_time_row
             }
         self.json_data = {
-            "DATABASE": {},
             "HEADINGS": {}
             }
-        self.row_num = 0
+        self.row_num = -1
 
     def add_text_row(self):
         """
@@ -34,11 +33,16 @@ class CreateNewTable(QtGui.QDialog):
             return
         if not self.check_row(rowname):
             return
+
         self.json_data["HEADINGS"][rowname] = {
-            "TYPE": "VARCHAR(%s)" % str(self.gui.txt_grp_length.value()),
-            "UNIQUE": self.gui.txt_grp_unique.isChecked(),
-            "ROWNUM": self.get_row_num()
+            "ROWNUM": self.get_row_num(),
+            "ROWDATA": {
+                "TYPE": "VARCHAR",
+                "LEN" : str(self.gui.txt_grp_length.value()),
+                "UNIQUE": self.gui.txt_grp_unique.isChecked(),
+                }
             }
+
         print self.json_data
 
     def add_choice_row(self):
@@ -49,10 +53,12 @@ class CreateNewTable(QtGui.QDialog):
             return
         choices =  map(str, list(self.gui.choice_grp_choices.toPlainText().split("\n")))
         self.json_data["HEADINGS"][rowname] = {
-            "TYPE": "CHOICE",
-            "UNIQUE": self.gui.txt_grp_unique.isChecked(),
-            "CHOICES": choices[:],
-            "ROWNUM": self.get_row_num()
+            "ROWNUM": self.get_row_num(),
+            "ROWDATA": {
+                "TYPE": "CHOICE",
+                "UNIQUE": self.gui.txt_grp_unique.isChecked(),
+                "CHOICES": choices[:],
+                }
             }
         print self.json_data
 
@@ -63,9 +69,11 @@ class CreateNewTable(QtGui.QDialog):
         if not self.check_row(rowname):
             return
         self.json_data["HEADINGS"][rowname] = {
-            "TYPE": "DATE",
-            "UNIQUE": self.gui.date_grp_unique.isChecked(),
-            "ROWNUM": self.get_row_num()
+            "ROWNUM": self.get_row_num(),
+            "ROWDATA": {
+                "TYPE": "DATE",
+                "UNIQUE": self.gui.date_grp_unique.isChecked(),
+                }
             }
         print self.json_data
 
@@ -75,10 +83,13 @@ class CreateNewTable(QtGui.QDialog):
             return
         if not self.check_row(rowname):
             return
+
         self.json_data["HEADINGS"][rowname] = {
-            "TYPE": "TIME",
-            "UNIQUE": self.gui.time_grp_unique.isChecked(),
-            "ROWNUM": self.get_row_num()
+            "ROWNUM": self.get_row_num(),
+            "ROWDATA": {
+                "TYPE": "TIME",
+                "UNIQUE": self.gui.time_grp_unique.isChecked()
+                }
             }
         self.json_data
 
@@ -100,7 +111,6 @@ class CreateNewTable(QtGui.QDialog):
         then find the associated function in the function map and return
         that function.
         """
-        self.json_data["DATABASE"]["NAME"] = "MYDATABASE"
         return self.change_map[ str(self.sender().parent().objectName()) ]()
 
     def check_row(self, rowname):
@@ -134,11 +144,11 @@ class CreateNewTable(QtGui.QDialog):
         return msgbox.exec_() == QtGui.QMessageBox.Yes
 
     def accept(self):
-        print self.json_data
+        #print self.json_data
         self.row_num = 0
 
         payload = {"payload": simplejson.dumps(self.json_data)}
-        
+        print payload
         req = urllib2.Request(
             "http://localhost:12345/create/",
             urllib.urlencode(payload)
