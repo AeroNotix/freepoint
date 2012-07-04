@@ -1,6 +1,7 @@
 package settingsserver
 
 import (
+	"strconv"
 	"connection_details"
 	"encoding/json"
 	"fmt"
@@ -9,8 +10,9 @@ import (
 	"net/http"
 )
 
+
 // Basic struct to hold User data.
-// 
+//
 // This was created so we have better semantics for marshaling/unmarshaling data which
 // holds the fields for the User data.
 type User struct {
@@ -35,13 +37,13 @@ type AsyncUpdate struct {
 type AsyncCreate struct {
 	Database   string
 	TableName  string
-	TableData  Metadata
+	Data Metadata
 	ReturnPath chan error
 }
 
 // Using the Request form values we create a job and return it.
 // We do it like this so that the error channel doesn't have to
-// be create by the user and they just pass the request form to 
+// be create by the user and they just pass the request form to
 // this.
 func NewAsyncJob(req *http.Request) AsyncUpdate {
 	job := AsyncUpdate{
@@ -59,7 +61,7 @@ func NewAsyncJob(req *http.Request) AsyncUpdate {
 // AsyncCreate instance might look like. We have a NewCreate()
 // function as to not enforce the user to see implementation
 // details about how the asynchronous nature of the update/create
-// is accomplished 
+// is accomplished
 func NewAsyncCreate(req *http.Request) AsyncCreate {
 
 	md := make(Metadata)
@@ -68,15 +70,27 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 		fmt.Println(err)
 	}
 
-	//	headings := make([]string, len(md["HEADINGS"]))
-
-	for _, v := range md["HEADINGS"] {
-		if val, ok := v.(map[string]interface{}); ok {
-			fmt.Println(int(val["ROWNUM"].(float64)))
-
+	headings := make([]string, len(md["HEADINGS"]))
+	for rowname, row := range md["HEADINGS"] {
+		if val, ok := row.(map[string]interface{}); ok {
+			rownum, ok := val["ROWNUM"].(float64)
+			if ok {
+				headings[int(rownum)] = rowname
+			}
 		}
 	}
 
+	sqlstr := "CREATE TABLE `mytable` (\n"
+	for idx, name := range headings {
+		if val, ok := md["HEADINGS"][name].(map[string]interface{}); ok {
+			sqlstr += genSQLCreateString(val, name)
+			if idx != len(headings) - 1 {
+				sqlstr += ",\n"
+			}
+		}
+	}
+	sqlstr += ");"
+	fmt.Println(sqlstr)
 	create := AsyncCreate{
 		"db_timetracker",
 		"tbl_newTable",
@@ -84,6 +98,44 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 		make(chan error),
 	}
 	return create
+}
+
+func genSQLCreateString(rowdata map[string]interface{}, rowname string) (string) {
+	rowmap, ok := rowdata["ROWDATA"].(map[string]interface{})
+	if !ok {
+		return ""
+	}
+	rowtype := rowmap["TYPE"].(string)
+	if rowtype == "VARCHAR" {
+		rowlen := rowmap["LEN"].(string)
+		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, rowlen, "", "")
+		return sqlstr
+	}
+	if rowtype == "DATE" {
+		sqlstr := fmt.Sprintf("`%s` DATE %s %s", rowname, "", "")
+		return sqlstr
+	}
+	if rowtype == "TIME" {
+		sqlstr := fmt.Sprintf("`%s` TIME %s %s", rowname, "", "")
+		return sqlstr
+	}
+	if rowtype == "CHOICE" {
+		val, ok := rowmap["CHOICES"].([]interface{})
+		if !ok {
+			return ""
+		}
+		var lenstr int
+		for _, item := range val {
+			if len(item.(string)) > lenstr {
+				lenstr = len(item.(string))
+			}
+		}
+		s := strconv.Itoa(lenstr)
+		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, s, "", "")
+		return sqlstr
+	}
+
+	return ""
 }
 
 // Function which takes a database name and connects to that database using the details
@@ -266,7 +318,7 @@ func CreateTable(job AsyncCreate) error {
 		},
 		u'EntryDate': {
 			'ROWNUM': 3,
-			'UNIQUE': False, 
+			'UNIQUE': False,
 			'TYPE': 'DATE'
 		},
 		u'Names': {
@@ -274,7 +326,7 @@ func CreateTable(job AsyncCreate) error {
 			'UNIQUE': False,
 			'TYPE': 'VARCHAR(255)'
 		}
-	}, 
+	},
 	'DATABASE': {
 		'NAME': 'MYDATABASE'}
 }
