@@ -37,7 +37,8 @@ type AsyncUpdate struct {
 type AsyncCreate struct {
 	Database   string
 	TableName  string
-	Data Metadata
+	SQLString string
+	Metadata Metadata
 	ReturnPath chan error
 }
 
@@ -69,7 +70,6 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	headings := make([]string, len(md["HEADINGS"]))
 	for rowname, row := range md["HEADINGS"] {
 		if val, ok := row.(map[string]interface{}); ok {
@@ -79,7 +79,6 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 			}
 		}
 	}
-
 	sqlstr := "CREATE TABLE `mytable` (\n"
 	for idx, name := range headings {
 		if val, ok := md["HEADINGS"][name].(map[string]interface{}); ok {
@@ -89,11 +88,12 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 			}
 		}
 	}
-	sqlstr += ");"
+	sqlstr += "\n);"
 	fmt.Println(sqlstr)
 	create := AsyncCreate{
 		"db_timetracker",
 		"tbl_newTable",
+		sqlstr,
 		md,
 		make(chan error),
 	}
@@ -106,37 +106,39 @@ func genSQLCreateString(rowdata map[string]interface{}, rowname string) (string)
 		return ""
 	}
 	rowtype := rowmap["TYPE"].(string)
-	if rowtype == "VARCHAR" {
-		rowlen := rowmap["LEN"].(string)
-		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, rowlen, "", "")
-		return sqlstr
-	}
-	if rowtype == "DATE" {
-		sqlstr := fmt.Sprintf("`%s` DATE %s %s", rowname, "", "")
-		return sqlstr
-	}
-	if rowtype == "TIME" {
-		sqlstr := fmt.Sprintf("`%s` TIME %s %s", rowname, "", "")
-		return sqlstr
-	}
-	if rowtype == "CHOICE" {
-		val, ok := rowmap["CHOICES"].([]interface{})
-		if !ok {
-			return ""
+	switch rowtype {
+	case "VARCHAR": {
+			rowlen := rowmap["LEN"].(string)
+			sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, rowlen, "", "")
+			return sqlstr
 		}
-		var lenstr int
-		for _, item := range val {
-			if len(item.(string)) > lenstr {
-				lenstr = len(item.(string))
+	case "DATE": {
+			sqlstr := fmt.Sprintf("`%s` DATE %s %s", rowname, "", "")
+			return sqlstr
+		}
+	case "TIME": {
+			sqlstr := fmt.Sprintf("`%s` TIME %s %s", rowname, "", "")
+			return sqlstr
+		}
+	case "CHOICE": {
+			val, ok := rowmap["CHOICES"].([]interface{})
+			if !ok {
+				return ""
 			}
+			var lenstr int
+			for _, item := range val {
+				if len(item.(string)) > lenstr {
+					lenstr = len(item.(string))
+				}
+			}
+			s := strconv.Itoa(lenstr)
+			sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, s, "", "")
+			return sqlstr
 		}
-		s := strconv.Itoa(lenstr)
-		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, s, "", "")
-		return sqlstr
 	}
-
 	return ""
 }
+
 
 // Function which takes a database name and connects to that database using the details
 // defined in the connection module.
