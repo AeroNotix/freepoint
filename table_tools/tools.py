@@ -124,7 +124,7 @@ class Database(object):
         self.port = port
         self._connection = None
         self.connected = False
-        self.base_url = "http://localhost:12345/"
+        self.base_url = "http://64.79.105.31:12345/"
         self.param_url = self.base_url + "getdb/%s.%s"
         self.login_url = self.base_url + "login/"
         self.update_url = self.base_url + "update/"
