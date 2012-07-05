@@ -1,5 +1,10 @@
 package sqlsettingsserver
 
+import (
+	"log"
+	"settingsserver"
+)
+
 var (
 	MetadataTable = `CREATE TABLE metadata (
 					 id int(11) NOT NULL AUTO_INCREMENT,
@@ -19,3 +24,15 @@ var (
 				 )
 				 `
 )
+
+func init() {
+	err := settingsserver.ExecuteCreate(MetadataTable)
+	if err != nil {
+		log.Println(err)
+	}
+
+	err = settingsserver.ExecuteCreate(UserTable)
+	if err != nil {
+		log.Println(err)
+	}
+}
