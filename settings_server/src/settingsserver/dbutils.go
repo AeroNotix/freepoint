@@ -1,15 +1,14 @@
 package settingsserver
 
 import (
-	"strconv"
 	"connection_details"
 	"encoding/json"
 	"fmt"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"net/http"
+	"strconv"
 )
-
 
 // Basic struct to hold User data.
 //
@@ -37,8 +36,8 @@ type AsyncUpdate struct {
 type AsyncCreate struct {
 	Database   string
 	TableName  string
-	SQLString string
-	Metadata Metadata
+	SQLString  string
+	Metadata   Metadata
 	ReturnPath chan error
 }
 
@@ -83,7 +82,7 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 	for idx, name := range headings {
 		if val, ok := md["HEADINGS"][name].(map[string]interface{}); ok {
 			sqlstr += genSQLCreateString(val, name)
-			if idx != len(headings) - 1 {
+			if idx != len(headings)-1 {
 				sqlstr += ",\n"
 			}
 		}
@@ -100,27 +99,31 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 	return create
 }
 
-func genSQLCreateString(rowdata map[string]interface{}, rowname string) (string) {
+func genSQLCreateString(rowdata map[string]interface{}, rowname string) string {
 	rowmap, ok := rowdata["ROWDATA"].(map[string]interface{})
 	if !ok {
 		return ""
 	}
 	rowtype := rowmap["TYPE"].(string)
 	switch rowtype {
-	case "VARCHAR": {
+	case "VARCHAR":
+		{
 			rowlen := rowmap["LEN"].(string)
 			sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, rowlen, "", "")
 			return sqlstr
 		}
-	case "DATE": {
+	case "DATE":
+		{
 			sqlstr := fmt.Sprintf("`%s` DATE %s %s", rowname, "", "")
 			return sqlstr
 		}
-	case "TIME": {
+	case "TIME":
+		{
 			sqlstr := fmt.Sprintf("`%s` TIME %s %s", rowname, "", "")
 			return sqlstr
 		}
-	case "CHOICE": {
+	case "CHOICE":
+		{
 			val, ok := rowmap["CHOICES"].([]interface{})
 			if !ok {
 				return ""
@@ -138,7 +141,6 @@ func genSQLCreateString(rowdata map[string]interface{}, rowname string) (string)
 	}
 	return ""
 }
-
 
 // Function which takes a database name and connects to that database using the details
 // defined in the connection module.
@@ -305,6 +307,23 @@ func CreateTable(job AsyncCreate) error {
 	}
 	defer db.Close()
 
+	return nil
+}
+
+// This function will execute a create table string.
+// It connects to whichever database the SettingsDatabase is labelled
+// as in the connection_details module but really it doesn't matter
+// since it's a CREATE TABLE query.
+func ExecuteCreate(querystr string) error {
+	db, err := CreateConnection(connection_details.SettingsDatabase)
+	if err != nil {
+		return err
+	}
+
+	_, err = db.Start(querystr)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
