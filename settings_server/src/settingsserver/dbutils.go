@@ -97,45 +97,43 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 	return create
 }
 
+// Function which takes a row of the incoming json data from a create request
+// and tries to extract a CREATE TABLE row instruction out of it.
+//
+// This function takes a map of strings->interfaces and returns a formatted
+// SQL string.
 func genSQLCreateString(rowdata map[string]interface{}, rowname string) string {
 	rowmap, ok := rowdata["ROWDATA"].(map[string]interface{})
 	if !ok {
 		return ""
 	}
 	rowtype := rowmap["TYPE"].(string)
+
 	switch rowtype {
 	case "VARCHAR":
-		{
-			rowlen := rowmap["LEN"].(string)
-			sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, rowlen, "", "")
-			return sqlstr
-		}
+		rowlen := rowmap["LEN"].(string)
+		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, rowlen, "", "")
+		return sqlstr
 	case "DATE":
-		{
-			sqlstr := fmt.Sprintf("`%s` DATE %s %s", rowname, "", "")
-			return sqlstr
-		}
+		sqlstr := fmt.Sprintf("`%s` DATE %s %s", rowname, "", "")
+		return sqlstr
 	case "TIME":
-		{
-			sqlstr := fmt.Sprintf("`%s` TIME %s %s", rowname, "", "")
-			return sqlstr
-		}
+		sqlstr := fmt.Sprintf("`%s` TIME %s %s", rowname, "", "")
+		return sqlstr
 	case "CHOICE":
-		{
-			val, ok := rowmap["CHOICES"].([]interface{})
-			if !ok {
-				return ""
-			}
-			var lenstr int
-			for _, item := range val {
-				if len(item.(string)) > lenstr {
-					lenstr = len(item.(string))
-				}
-			}
-			s := strconv.Itoa(lenstr)
-			sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, s, "", "")
-			return sqlstr
+		val, ok := rowmap["CHOICES"].([]interface{})
+		if !ok {
+			return ""
 		}
+		var lenstr int
+		for _, item := range val {
+			if len(item.(string)) > lenstr {
+				lenstr = len(item.(string))
+			}
+		}
+		s := strconv.Itoa(lenstr)
+		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, s, "", "")
+		return sqlstr
 	}
 	return ""
 }
@@ -275,7 +273,7 @@ func AsyncUpdater(jobqueue chan AsyncUpdate) {
 func AsyncCreator(jobqueue chan AsyncCreate) {
 	for {
 		job := <-jobqueue
-		job.ReturnPath<- CreateTable(job)
+		job.ReturnPath <- CreateTable(job)
 	}
 }
 
@@ -332,7 +330,6 @@ func ExecuteCreate(querystr string) error {
 }
 
 /*
-
 {
 	'HEADINGS': {
 		u'Status': {
