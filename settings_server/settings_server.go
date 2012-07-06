@@ -155,29 +155,29 @@ func main() {
 
 	Settings := ss.NewAppServer(
 		// Routes is a slice of RoutingEntries, this allows
-		// us to hold a map (and subsequently iterate through
-		// it.)
+		// us to hold routes and subsequently iterate through
+		// them to find which we are currently serving.
 		[]ss.RoutingEntry{
-			ss.RoutingEntry{
-				URL:     regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
-				Handler: databaseParameters,
-				Name:    "Parameters",
-			},
-			ss.RoutingEntry{
-				URL:     regexp.MustCompile("^/login/$"),
-				Handler: userLogin,
-				Name:    "Login",
-			},
-			ss.RoutingEntry{
-				URL:     regexp.MustCompile("^/update/$"),
-				Handler: changeTable,
-				Name:    "Change Table Data",
-			},
-			ss.RoutingEntry{
-				URL:     regexp.MustCompile("^/create/$"),
-				Handler: createTable,
-				Name:    "Create table",
-			},
+			ss.NewRoute(
+				regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
+				databaseParameters,
+				"Parameters",
+			),
+			ss.NewRoute(
+				regexp.MustCompile("^/login/$"),
+				userLogin,
+				"Login",
+			),
+			ss.NewRoute(
+				regexp.MustCompile("^/update/$"),
+				changeTable,
+				"Change Table Data",
+			),
+			ss.NewRoute(
+				regexp.MustCompile("^/create/$"),
+				createTable,
+				"Create table",
+			),
 		},
 	)
 

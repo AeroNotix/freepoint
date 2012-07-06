@@ -69,3 +69,13 @@ type RoutingEntry struct {
 	Handler RouterHandler
 	Name    string
 }
+
+// NewRoute returns a RoutingEntry instance.
+func NewRoute(r *regexp.Regexp, h RouterHandler, name string) RoutingEntry {
+	route := RoutingEntry{
+		URL:     r,
+		Handler: h,
+		Name:    name,
+	}
+	return route
+}
