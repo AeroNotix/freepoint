@@ -35,7 +35,6 @@ type AsyncUpdate struct {
 // string which will then be executed.
 type AsyncCreate struct {
 	Database   string
-	TableName  string
 	SQLString  string
 	Metadata   Metadata
 	ReturnPath chan error
@@ -88,10 +87,9 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 		}
 	}
 	sqlstr += "\n);"
-	fmt.Println(sqlstr)
+
 	create := AsyncCreate{
 		"db_timetracker",
-		"tbl_newTable",
 		sqlstr,
 		md,
 		make(chan error),
@@ -274,6 +272,13 @@ func AsyncUpdater(jobqueue chan AsyncUpdate) {
 	}
 }
 
+func AsyncCreator(jobqueue chan AsyncCreate) {
+	for {
+		job := <-jobqueue
+		job.ReturnPath<- CreateTable(job)
+	}
+}
+
 // ChangeData is a function which connects to the database and makes an update to a
 // table column using the data inside the AsyncUpdate instance. This shouldn't be
 // called directly because we have an asynchronous queue which is looking for jobs
@@ -305,15 +310,17 @@ func CreateTable(job AsyncCreate) error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
 
-	return nil
+	_, err = db.Start(job.SQLString)
+
+	defer db.Close()
+	return err
 }
 
 // This function will execute a create table string.
 // It connects to whichever database the SettingsDatabase is labelled
 // as in the connection_details module but really it doesn't matter
-// since it's a CREATE TABLE query.
+// since it's a CREATE DATABASE query.
 func ExecuteCreate(querystr string) error {
 	db, err := CreateConnection(connection_details.SettingsDatabase)
 	if err != nil {
@@ -321,10 +328,7 @@ func ExecuteCreate(querystr string) error {
 	}
 
 	_, err = db.Start(querystr)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 /*

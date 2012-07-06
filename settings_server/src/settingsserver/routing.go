@@ -11,16 +11,19 @@ import (
 type AppServer struct {
 	Routes   []RoutingEntry
 	dbWriter chan AsyncUpdate
+	dbCreator chan AsyncCreate
 }
 
 func NewAppServer(routes []RoutingEntry) AppServer {
 	app := AppServer{
 		Routes:   routes,
 		dbWriter: make(chan AsyncUpdate, 10),
+		dbCreator: make(chan AsyncCreate, 10),
 	}
 
 	go AsyncUpdater(app.dbWriter)
-	return app
+	go AsyncCreator(app.dbCreator)
+    return app
 }
 
 // This is the main 'event loop' for the web server. All requests are
@@ -47,6 +50,11 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 // to.
 func (self *AppServer) WriteEntry(job AsyncUpdate) error {
 	self.dbWriter <- job
+	return <-job.ReturnPath
+}
+
+func (self *AppServer) CreateEntry(job AsyncCreate) error {
+	self.dbCreator <- job
 	return <-job.ReturnPath
 }
 

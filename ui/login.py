@@ -26,7 +26,7 @@ class Login(QtGui.QDialog):
         self.parent = parent
         # this is hardcoded we should/could put this in a local
         # config. But how to make that config the first time?
-        self.login_url = "http://64.79.105.31:12345/login/"
+        self.login_url = "http://localhost:12345/login/"
 
     def accept(self):
         """

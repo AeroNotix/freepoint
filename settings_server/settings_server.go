@@ -16,8 +16,15 @@ import (
 )
 
 func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
-	ss.NewAsyncCreate(req)
+	job := ss.NewAsyncCreate(req)
+	err := self.CreateEntry(job)
+	if err != nil {
+		log.Println(err)
+		ss.SendJSON(w, false)
+		return err
+	}
 
+	ss.SendJSON(w, true)
 	return nil
 }
 
