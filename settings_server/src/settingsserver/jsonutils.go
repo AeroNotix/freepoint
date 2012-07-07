@@ -74,3 +74,22 @@ func (self *JSONMessage) AddMetadata(heading, option string, data interface{}) {
 	}
 	self.Metadata[heading][option] = data
 }
+
+type Row struct {
+	Rownum  int `json:"ROWNUM"`
+	Rowdata struct {
+		Unique  bool     `json:"UNIQUE"`
+		Type    string   `json:"TYPE"`
+		Null    bool     `json:"NULL"`
+		Len     int      `json:"LEN"`
+		Choices []string `json:"CHOICES"`
+	} `json:"ROWDATA"`
+}
+
+// This type allows us to unmarshal incoming JSON data
+// into a struct which contains a Map of strings to
+// Rows. This greatly simplifies the communication
+// between the client and the server.
+type Headers struct {
+	Headings map[string]Row
+}

@@ -219,8 +219,7 @@ class Database(object):
         self.metadata = json.get("Metadata", False)
         rows = json.get("Rows", [])
         if not rows:
-            self.error("The server did not return any data.")
-            return rows
+            return []
         return rows
 
     def get_headings(self):

@@ -35,8 +35,9 @@ type AsyncUpdate struct {
 // string which will then be executed.
 type AsyncCreate struct {
 	Database   string
+	Table      string
 	SQLString  string
-	Metadata   Metadata
+	Metadata   string
 	ReturnPath chan error
 }
 
@@ -56,42 +57,41 @@ func NewAsyncJob(req *http.Request) AsyncUpdate {
 	return job
 }
 
-// Stub function which returns a basic representation of what an
+// NewAsyncCreate returns a basic representation of what an
 // AsyncCreate instance might look like. We have a NewCreate()
 // function as to not enforce the user to see implementation
 // details about how the asynchronous nature of the update/create
 // is accomplished
 func NewAsyncCreate(req *http.Request) AsyncCreate {
 
-	md := make(Metadata)
-	err := json.Unmarshal([]byte(req.FormValue("payload")), &md)
+	headers := new(Headers)
+	err := json.Unmarshal([]byte(req.FormValue("Headings")), headers)
 	if err != nil {
 		fmt.Println(err)
 	}
-	headings := make([]string, len(md["HEADINGS"]))
-	for rowname, row := range md["HEADINGS"] {
-		if val, ok := row.(map[string]interface{}); ok {
-			rownum, ok := val["ROWNUM"].(float64)
-			if ok {
-				headings[int(rownum)] = rowname
-			}
-		}
-	}
-	sqlstr := "CREATE TABLE `mytable` (\n"
-	for idx, name := range headings {
-		if val, ok := md["HEADINGS"][name].(map[string]interface{}); ok {
-			sqlstr += genSQLCreateString(val, name)
-			if idx != len(headings)-1 {
-				sqlstr += ",\n"
-			}
-		}
-	}
-	sqlstr += "\n);"
 
+	headings := make([]string, len(headers.Headings))
+	for rowname, rowdata := range headers.Headings {
+		headings[rowdata.Rownum] = rowname
+	}
+
+	database_name := req.FormValue("Database")
+	table_name := req.FormValue("Table")
+
+	sqlstr := fmt.Sprintf("CREATE TABLE `%s` (\n", table_name)
+	sqlstr += "`id` int(11) NOT NULL AUTO_INCREMENT\n,"
+	for _, name := range headings {
+		sqlstr += genSQLCreateString(headers.Headings[name], name)
+		sqlstr += ",\n"
+	}
+	sqlstr += "PRIMARY KEY (id)\n);"
+
+	fmt.Println(sqlstr)
 	create := AsyncCreate{
-		"db_timetracker",
+		database_name,
+		table_name,
 		sqlstr,
-		md,
+		req.FormValue("Payload"),
 		make(chan error),
 	}
 	return create
@@ -102,37 +102,38 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 //
 // This function takes a map of strings->interfaces and returns a formatted
 // SQL string.
-func genSQLCreateString(rowdata map[string]interface{}, rowname string) string {
-	rowmap, ok := rowdata["ROWDATA"].(map[string]interface{})
-	if !ok {
-		return ""
+func genSQLCreateString(rowdata Row, rowname string) string {
+
+	rowmap := rowdata.Rowdata
+
+	rowtype := rowmap.Type
+	isnull := rowmap.Null
+
+	nullstr := ""
+	if isnull {
+		nullstr = "NOT NULL"
 	}
-	rowtype := rowmap["TYPE"].(string)
 
 	switch rowtype {
 	case "VARCHAR":
-		rowlen := rowmap["LEN"].(string)
-		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, rowlen, "", "")
+		rowlen := rowmap.Len
+		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s", rowname, strconv.Itoa(rowlen), nullstr)
 		return sqlstr
 	case "DATE":
-		sqlstr := fmt.Sprintf("`%s` DATE %s %s", rowname, "", "")
+		sqlstr := fmt.Sprintf("`%s` DATE %s", rowname, nullstr)
 		return sqlstr
 	case "TIME":
-		sqlstr := fmt.Sprintf("`%s` TIME %s %s", rowname, "", "")
+		sqlstr := fmt.Sprintf("`%s` TIME %s", rowname, nullstr)
 		return sqlstr
 	case "CHOICE":
-		val, ok := rowmap["CHOICES"].([]interface{})
-		if !ok {
-			return ""
-		}
 		var lenstr int
-		for _, item := range val {
-			if len(item.(string)) > lenstr {
-				lenstr = len(item.(string))
+		for _, item := range rowmap.Choices {
+			if len(item) > lenstr {
+				lenstr = len(item)
 			}
 		}
 		s := strconv.Itoa(lenstr)
-		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s %s", rowname, s, "", "")
+		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s", rowname, s, nullstr)
 		return sqlstr
 	}
 	return ""
@@ -270,6 +271,9 @@ func AsyncUpdater(jobqueue chan AsyncUpdate) {
 	}
 }
 
+// AsyncCreator monitors a channel of type AsyncCreate and blocks until it receives
+// on it. Once it has received a job, it will process by calling CreateTable on the
+// job and sending it's return value down the ReturnPath associated with the job.
 func AsyncCreator(jobqueue chan AsyncCreate) {
 	for {
 		job := <-jobqueue
@@ -286,7 +290,6 @@ func ChangeData(job AsyncUpdate) error {
 	if err != nil {
 		return err
 	}
-
 	defer db.Close()
 
 	sqlStr := fmt.Sprintf(
@@ -305,13 +308,39 @@ func ChangeData(job AsyncUpdate) error {
 
 func CreateTable(job AsyncCreate) error {
 	db, err := CreateConnection(job.Database)
+	metadb, metaerr := CreateConnection(connection_details.SettingsDatabase)
+	defer func() {
+		db.Close()
+		metadb.Close()
+	}()
+
 	if err != nil {
 		return err
+	}
+	if metaerr != nil {
+		return metaerr
 	}
 
 	_, err = db.Start(job.SQLString)
 
-	defer db.Close()
+	if err != nil {
+		return err
+	}
+
+	sqlstmt, err := metadb.Prepare(fmt.Sprintf(
+		"INSERT INTO `metadata` VALUES(NULL, \"%s.%s\", ?)",
+		job.Database, job.Table,
+	))
+
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	_, err = sqlstmt.Run(job.Metadata)
+	if err != nil {
+		return err
+	}
 	return err
 }
 
@@ -330,26 +359,47 @@ func ExecuteCreate(querystr string) error {
 }
 
 /*
-{
-	'HEADINGS': {
-		u'Status': {
-			'ROWNUM': 2,
-			'UNIQUE': False,
-			'TYPE': 'CHOICE',
-			'CHOICES': ['Open', 'Closed', 'Pending', 'Broken']
-		},
-		u'EntryDate': {
-			'ROWNUM': 3,
-			'UNIQUE': False,
-			'TYPE': 'DATE'
-		},
-		u'Names': {
-			'ROWNUM': 1,
-			'UNIQUE': False,
-			'TYPE': 'VARCHAR(255)'
-		}
-	},
-	'DATABASE': {
-		'NAME': 'MYDATABASE'}
+
+Example JSON:
+
+'HEADINGS': {
+    'Row1': {
+        'ROWNUM': 0, 
+        'ROWDATA': {
+            'UNIQUE': False,
+            'TYPE': 'VARCHAR',
+            'NULL': False,
+            'LEN': '255'
+        }
+    }
 }
+`{"Headings": {"a":{
+ "ROWNUM": 0,
+ "ROWDATA": {
+ "UNIQUE": false,
+ "TYPE": "VARCHAR",
+ "NULL": false,
+ "LEN": "255"
+ }
+ },
+ "as2":{
+ "ROWNUM": 0,
+ "ROWDATA": {
+ "UNIQUE": false,
+ "TYPE": "VARCHAR",
+ "NULL": false,
+ "LEN": "255"
+ }
+ }
+ }}`
+
+`{"Headings":
+ {"asd": {
+ "ROWNUM": 0,
+ "ROWDATA": {
+ "UNIQUE": false,
+ "TYPE": "VARCHAR",
+ "NULL": false,
+ "LEN": "255"}}}}
+
 */

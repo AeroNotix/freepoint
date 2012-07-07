@@ -50,6 +50,7 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 
 	// Marshal our metadata into a struct and encode.
 	jsonMap := ss.NewJSONMessage(metadata)
+	log.Println(metadata)
 
 	// Get the rows from the database and encode them into JSON.
 	database_name := req.FormValue("Database")

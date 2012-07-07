@@ -149,6 +149,7 @@ class Delegator(QtGui.QItemDelegate):
         super(Delegator, self).__init__(parent)
         self.parent = parent
         self.metadata = metadata
+        print metadata
         self.delegates = {}
         self.headers = headers
         self.parseMetadata()
@@ -184,20 +185,25 @@ class Delegator(QtGui.QItemDelegate):
         QItemDelegate associated with it and put an instance in our map with
         the column name as the key.
         """
+
         if not self.metadata:
             return
+
         for item in self.headers:
-            row_data = self.metadata.get(item)
-            if row_data:
-                row_type = row_data["TYPE"]
-                dtype = DELEGATES.get(row_type)
-                if not dtype:
-                    continue
-                if row_type in {"CHOICE", "BOOL"}:
-                    delinst = dtype(row_data["CHOICES"])
-                    delinst.setParent(self)
-                    self.delegates[item] = delinst
-                if row_type in {"TIME", "DATE"}:
-                    delinst = dtype()
-                    delinst.setParent(self)
-                    self.delegates[item] = delinst
+            try:
+                row_data = self.metadata["HEADINGS"][item]["ROWDATA"]
+            except KeyError:
+                continue
+
+            row_type = row_data["TYPE"]
+            dtype = DELEGATES.get(row_type)
+            if not dtype:
+                continue
+            if row_type in {"CHOICE", "BOOL"}:
+                delinst = dtype(row_data["CHOICES"])
+                delinst.setParent(self)
+                self.delegates[item] = delinst
+            if row_type in {"TIME", "DATE"}:
+                delinst = dtype()
+                delinst.setParent(self)
+                self.delegates[item] = delinst
