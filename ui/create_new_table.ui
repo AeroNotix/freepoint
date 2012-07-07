@@ -47,11 +47,11 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QListView" name="listView">
+  <widget class="QListWidget" name="list_db_rows">
    <property name="geometry">
     <rect>
      <x>540</x>
-     <y>30</y>
+     <y>110</y>
      <width>256</width>
      <height>192</height>
     </rect>
@@ -163,7 +163,7 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>Unique:</string>
+         <string>Unique?:</string>
         </property>
        </widget>
       </item>
@@ -217,6 +217,16 @@
        <widget class="QPushButton" name="btn_txt_group">
         <property name="text">
          <string>Add &gt;&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="txt_grp_isnull">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Null?:</string>
         </property>
        </widget>
       </item>
@@ -279,7 +289,7 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>Unique:</string>
+         <string>Unique?:</string>
         </property>
        </widget>
       </item>
@@ -297,6 +307,16 @@
         </property>
         <property name="buddy">
          <cstring>choice_grp_choices</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="3" alignment="Qt::AlignTop">
+       <widget class="QCheckBox" name="choice_grp_isnull">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Null?:</string>
         </property>
        </widget>
       </item>
@@ -320,7 +340,7 @@
       <string>Field Description - Date</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="1" column="1">
+      <item row="2" column="1">
        <spacer name="verticalSpacer_4">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -339,7 +359,7 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>Unique:</string>
+         <string>Unique?:</string>
         </property>
        </widget>
       </item>
@@ -356,10 +376,20 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
+      <item row="3" column="2">
        <widget class="QPushButton" name="btn_date_group">
         <property name="text">
          <string>Add &gt;&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="date_grp_isnull">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Null?:</string>
         </property>
        </widget>
       </item>
@@ -396,7 +426,7 @@
          <enum>Qt::RightToLeft</enum>
         </property>
         <property name="text">
-         <string>Unique:</string>
+         <string>Unique?:</string>
         </property>
        </widget>
       </item>
@@ -443,6 +473,16 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="time_grp_isnull">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Null?:</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </widget>
@@ -465,6 +505,58 @@
     </widget>
    </widget>
   </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>40</y>
+     <width>101</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Database Name:</string>
+   </property>
+   <property name="buddy">
+    <cstring>txt_database_name</cstring>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txt_database_name">
+   <property name="geometry">
+    <rect>
+     <x>650</x>
+     <y>37</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="txt_table_name">
+   <property name="geometry">
+    <rect>
+     <x>650</x>
+     <y>70</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>542</x>
+     <y>72</y>
+     <width>81</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Table Name:</string>
+   </property>
+   <property name="buddy">
+    <cstring>txt_table_name</cstring>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>line_radio</tabstop>
@@ -474,7 +566,7 @@
   <tabstop>grp_radio</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>buttonBox</tabstop>
-  <tabstop>listView</tabstop>
+  <tabstop>list_db_rows</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -527,6 +619,38 @@
    </hints>
   </connection>
   <connection>
+   <sender>btn_choice_group</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptFieldAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>501</x>
+     <y>561</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>885</x>
+     <y>748</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_txt_group</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptFieldAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>501</x>
+     <y>561</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>900</x>
+     <y>753</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
    <sender>btn_date_group_2</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
@@ -543,46 +667,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>btn_txt_group</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>acceptFieldAdd()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>436</x>
-     <y>562</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>900</x>
-     <y>753</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btn_choice_group</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>acceptFieldAdd()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>436</x>
-     <y>562</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>885</x>
-     <y>748</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>btn_date_group</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
    <slot>acceptFieldAdd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>502</x>
-     <y>554</y>
+     <x>501</x>
+     <y>561</y>
     </hint>
     <hint type="destinationlabel">
      <x>1156</x>

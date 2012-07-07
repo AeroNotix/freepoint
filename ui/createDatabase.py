@@ -18,7 +18,7 @@ class CreateNewTable(QtGui.QDialog):
             "time_group": self.add_time_row
             }
         self.json_data = {
-            "HEADINGS": {}
+            "HEADINGS": {},
             }
         self.row_num = -1
 
@@ -40,10 +40,15 @@ class CreateNewTable(QtGui.QDialog):
                 "TYPE": "VARCHAR",
                 "LEN" : str(self.gui.txt_grp_length.value()),
                 "UNIQUE": self.gui.txt_grp_unique.isChecked(),
+                "NULL": self.gui.txt_grp_isnull.isChecked()
                 }
             }
 
-        print self.json_data
+        self.add_row_to_list(rowname)
+        self.gui.txt_grp_rowname.setText("")
+        self.gui.txt_grp_length.setValue(255)
+        self.gui.txt_grp_unique.setCheckState(False)
+        self.gui.txt_grp_isnull.setCheckState(False)
 
     def add_choice_row(self):
         rowname = str(self.gui.choice_grp_rowname.text())
@@ -56,11 +61,17 @@ class CreateNewTable(QtGui.QDialog):
             "ROWNUM": self.get_row_num(),
             "ROWDATA": {
                 "TYPE": "CHOICE",
-                "UNIQUE": self.gui.txt_grp_unique.isChecked(),
+                "UNIQUE": self.gui.choice_grp_unique.isChecked(),
                 "CHOICES": choices[:],
+                "NULL": self.gui.choice_grp_isnull.isChecked()
                 }
             }
-        print self.json_data
+
+        self.add_row_to_list(rowname)
+        self.gui.choice_grp_rowname.setText("")
+        self.gui.choice_grp_length.setValue(255)
+        self.gui.choice_grp_unique.setCheckState(False)
+        self.gui.choice_grp_isnull.setCheckState(False)
 
     def add_date_row(self):
         rowname = str(self.gui.date_grp_rowname.text())
@@ -73,9 +84,15 @@ class CreateNewTable(QtGui.QDialog):
             "ROWDATA": {
                 "TYPE": "DATE",
                 "UNIQUE": self.gui.date_grp_unique.isChecked(),
+                "NULL": not self.gui.date_grp_isnull.isChecked()
                 }
             }
-        print self.json_data
+
+        self.add_row_to_list(rowname)
+        self.gui.date_grp_rowname.setText("")
+        self.gui.date_grp_length.setValue(255)
+        self.gui.date_grp_unique.setCheckState(False)
+        self.gui.date_grp_isnull.setCheckState(False)
 
     def add_time_row(self):
         rowname = str(self.gui.time_grp_rowname.text())
@@ -88,10 +105,16 @@ class CreateNewTable(QtGui.QDialog):
             "ROWNUM": self.get_row_num(),
             "ROWDATA": {
                 "TYPE": "TIME",
-                "UNIQUE": self.gui.time_grp_unique.isChecked()
+                "UNIQUE": self.gui.time_grp_unique.isChecked(),
+                "NULL": self.gui.time_grp_isnull.isChecked()
                 }
             }
-        self.json_data
+
+        self.add_row_to_list(rowname)
+        self.gui.time_grp_rowname.setText("")
+        self.gui.time_grp_length.setValue(255)
+        self.gui.time_grp_unique.setCheckState(False)
+        self.gui.time_grp_isnull.setCheckState(False)
 
     def changeFieldDescriptions(self, index):
         """
@@ -144,11 +167,16 @@ class CreateNewTable(QtGui.QDialog):
         return msgbox.exec_() == QtGui.QMessageBox.Yes
 
     def accept(self):
-        #print self.json_data
         self.row_num = 0
 
-        payload = {"payload": simplejson.dumps(self.json_data)}
-        print payload
+        headers = simplejson.dumps(self.json_data["HEADINGS"])
+        payload = {
+            "Headings": "{\"Headings\":"+headers+"}",
+            "Payload": simplejson.dumps(self.json_data),
+            "Database": str(self.gui.txt_database_name.text()),
+            "Table": str(self.gui.txt_table_name.text())
+        }
+
         req = urllib2.Request(
             "http://localhost:12345/create/",
             urllib.urlencode(payload)
@@ -160,3 +188,8 @@ class CreateNewTable(QtGui.QDialog):
     def get_row_num(self):
         self.row_num += 1
         return self.row_num
+
+    def add_row_to_list(self, row):
+        """
+        """
+        self.gui.list_db_rows.addItem(QtGui.QListWidgetItem(row))
