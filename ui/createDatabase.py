@@ -38,7 +38,7 @@ class CreateNewTable(QtGui.QDialog):
             "ROWNUM": self.get_row_num(),
             "ROWDATA": {
                 "TYPE": "VARCHAR",
-                "LEN" : str(self.gui.txt_grp_length.value()),
+                "LEN" : int(self.gui.txt_grp_length.value()),
                 "UNIQUE": self.gui.txt_grp_unique.isChecked(),
                 "NULL": self.gui.txt_grp_isnull.isChecked()
                 }
@@ -69,7 +69,6 @@ class CreateNewTable(QtGui.QDialog):
 
         self.add_row_to_list(rowname)
         self.gui.choice_grp_rowname.setText("")
-        self.gui.choice_grp_length.setValue(255)
         self.gui.choice_grp_unique.setCheckState(False)
         self.gui.choice_grp_isnull.setCheckState(False)
 
@@ -90,7 +89,6 @@ class CreateNewTable(QtGui.QDialog):
 
         self.add_row_to_list(rowname)
         self.gui.date_grp_rowname.setText("")
-        self.gui.date_grp_length.setValue(255)
         self.gui.date_grp_unique.setCheckState(False)
         self.gui.date_grp_isnull.setCheckState(False)
 
@@ -112,7 +110,6 @@ class CreateNewTable(QtGui.QDialog):
 
         self.add_row_to_list(rowname)
         self.gui.time_grp_rowname.setText("")
-        self.gui.time_grp_length.setValue(255)
         self.gui.time_grp_unique.setCheckState(False)
         self.gui.time_grp_isnull.setCheckState(False)
 
