@@ -19,7 +19,6 @@ func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 	job := ss.NewAsyncCreate(req)
 	err := self.CreateEntry(job)
 	if err != nil {
-		log.Println(err)
 		ss.SendJSON(w, false)
 		return err
 	}
