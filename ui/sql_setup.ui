@@ -18,7 +18,17 @@
     <normaloff>:/view-refresh</normaloff>:/view-refresh</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="txt_database"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Table</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Database</string>
@@ -28,7 +38,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -36,50 +46,11 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLineEdit" name="txt_port">
-     <property name="text">
-      <string>12345</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Port</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="lbl_db_name_field">
-     <property name="text">
-      <string>Server Address</string>
-     </property>
-     <property name="buddy">
-      <cstring>txt_host</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
     <widget class="QLineEdit" name="txt_table"/>
-   </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Table</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="txt_database"/>
-   </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="txt_host"/>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>txt_host</tabstop>
-  <tabstop>txt_port</tabstop>
   <tabstop>txt_database</tabstop>
   <tabstop>txt_table</tabstop>
   <tabstop>buttonBox</tabstop>

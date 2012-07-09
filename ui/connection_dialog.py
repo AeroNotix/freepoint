@@ -31,10 +31,9 @@ class ConnectionDialog(QtGui.QDialog):
         self.connection_map = dict()
 
         for connection in self.parent.config.sections():
-            host = self.parent.config.get(connection, "host")
             database = self.parent.config.get(connection, "database")
             table = self.parent.config.get(connection, "table")
-            displaystring = QtCore.QString(host+"."+database+"."+table)
+            displaystring = QtCore.QString(database+"."+table)
             self.gui.listWidget.addItem(QtGui.QListWidgetItem(displaystring))
             self.connection_map[displaystring] = connection
 
@@ -44,10 +43,8 @@ class ConnectionDialog(QtGui.QDialog):
         been clicked on.
         """
         connection = self.connection_map[self.gui.listWidget.item(idx).text()]
-        self.gui.txt_host.setText(self.parent.config.get(connection, "host"))
         self.gui.txt_database.setText(self.parent.config.get(connection, "database"))
         self.gui.txt_table.setText(self.parent.config.get(connection, "table"))
-        self.gui.txt_port.setText(self.parent.config.get(connection, "port"))
                 
     def clearTable(self):
         """
@@ -60,25 +57,19 @@ class ConnectionDialog(QtGui.QDialog):
         """
         Clears all the fields
         """
-        self.gui.txt_host.setText('')
         self.gui.txt_database.setText('')
         self.gui.txt_table.setText('')
-        self.gui.txt_port.setText('')
 
     def editRow(self):
         """
         Writes the changes made on the form into the config file
         """
 
-        host = self.gui.txt_host.text()
         database = self.gui.txt_database.text()
         table = self.gui.txt_table.text()
-        port = self.gui.txt_port.text()
         connection = self.getCurrentItem()
-        self.parent.config.set(connection, "host", host)
         self.parent.config.set(connection, "database", database)
         self.parent.config.set(connection, "table", table)
-        self.parent.config.set(connection, "port", port)
         self.gui.listWidget.blockSignals(True)
         self.clearTable()
         self.parent.rewriteConfig()
@@ -91,8 +82,12 @@ class ConnectionDialog(QtGui.QDialog):
         """
         Deletes the row
         """
-        self.parent.config.remove_section(self.getCurrentItem())
+
         idx = self.gui.listWidget.currentRow()
+        section = self.getCurrentItem()
+        if section is None:
+            return
+        self.parent.config.remove_section(section)
         self.gui.listWidget.blockSignals(True)
         self.gui.listWidget.takeItem(idx)
         self.clearTable()
@@ -106,5 +101,9 @@ class ConnectionDialog(QtGui.QDialog):
         """
         Get the currently selected item
         """
+
         idx = self.gui.listWidget.currentRow()
-        return self.connection_map[self.gui.listWidget.item(idx).text()]
+        try:
+            return self.connection_map[self.gui.listWidget.item(idx).text()]
+        except AttributeError:
+            return None

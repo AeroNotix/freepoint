@@ -29,22 +29,18 @@ class SQLDisplaySetup(QtGui.QDialog):
 
         self.hide()
 
-        host = self.gui.txt_host.text()
         username = self.parent.username
         password = self.parent.password
         database = self.gui.txt_database.text()
         table = self.gui.txt_table.text()
-        port = self.gui.txt_port.text()
 
         # create Database object
         self.parent.database = Database(
             self.parent,
-            to_unicode(host),
             to_unicode(username),
             to_unicode(password),
             to_unicode(database),
             to_unicode(table),
-            to_unicode(port)
             )
         self.parent.populate_table()
 
@@ -64,7 +60,6 @@ class SQLDisplaySetup(QtGui.QDialog):
             if not self.parent.config.has_section("connection-%s" % num):
                 continue
             connection_set = [
-                self.parent.config.get("connection-%s" % num, "host"),
                 self.parent.config.get("connection-%s" % num, "database"),
                 self.parent.config.get("connection-%s" % num, "table")
             ]
@@ -81,10 +76,8 @@ class SQLDisplaySetup(QtGui.QDialog):
         new_section = "connection-%s" % str(section_num)
         if not self.parent.config.has_section(new_section):
             self.parent.config.add_section(new_section)
-            self.parent.config.set(new_section, "host", host)
             self.parent.config.set(new_section, "database", database)
             self.parent.config.set(new_section, "table", table)
-            self.parent.config.set(new_section, "port", port)
             self.parent.rewriteConfig()
             self.parent.parse_config()
             self.parent.current_section = new_section
@@ -98,4 +91,3 @@ class SQLDisplaySetup(QtGui.QDialog):
         self.gui.txt_host.setText(self.parent.database.host)
         self.gui.txt_database.setText(self.parent.database.using_db)
         self.gui.txt_table.setText(self.parent.database.table)
-        self.gui.txt_port.setText(str(self.parent.database.port))

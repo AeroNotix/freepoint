@@ -73,39 +73,18 @@ class MainGui(QtGui.QMainWindow):
         self.configpath = os.path.join(CWD, "conf.cfg")
         self.actionList = []
 
-        if RESULTS.db:
-            # if we got command line arguments, open that
-            self.database = Database(
-                self,
-                RESULTS.host,
-                self.username,
-                self.password,
-                RESULTS.db,
-                RESULTS.table,
-                RESULTS.port
-            )
-            self.populate_table()
-            self.parse_config()
-        elif os.path.isfile(self.configpath):
+        if os.path.isfile(self.configpath):
             # if we didn't get command line arguments check if
             # there is a config file.
             self.config.read(self.configpath)
             try:
                 self.current_table = self.config.sections()[0]
-                host = self.config.get(self.current_table, "host")
-                port = self.config.get(self.current_table, "port")
-                if not host:
-                    host = "localhost"
-                if not port:
-                    port = 3306
                 self.database = Database(
                     self,
-                    host,
                     self.username,
                     self.password,
                     self.config.get(self.current_table, "database"),
                     self.config.get(self.current_table, "table"),
-                    port
                     )
                 self.populate_table()
             except ConfigParser.NoSectionError as error:
@@ -280,10 +259,8 @@ class MainGui(QtGui.QMainWindow):
         self.database.close()
         self.clear_table()
 
-        self.database.host = self.config.get(section, "host")
         self.database.database = self.config.get(section, "database")
         self.database.table = self.config.get(section, "table")
-        self.database.port = self.config.get(section, "port")
 
         self.populate_table()
         self.current_table = section
@@ -315,12 +292,11 @@ class MainGui(QtGui.QMainWindow):
             self.actionList = []
 
         for idx, section in enumerate(self.config.sections()):
-            host = self.config.get(section, "host")
             database = self.config.get(section, "database")
             table = self.config.get(section, "table")
 
             action = QtGui.QAction(self)
-            action.setText(host+"."+database+"."+table)
+            action.setText(database+"."+table)
             action.setObjectName(section)
             action.setCheckable(True)
             if section == "connection-0":

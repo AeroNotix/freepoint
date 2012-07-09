@@ -106,22 +106,19 @@ class Database(object):
     """
 
     def __init__(self, parent=None,
-                 host='localhost', user=None, passwd=None,
-                 using_db=None, table=None, port=3306):
+                 user=None, passwd=None,
+                 using_db=None, table=None):
         """
         Creates an instance of a Database which holds connection details
         and commonly used methods on a database.
 
         :returns: :class:`Database`
         """
-        self.host = host
+
         self.user = user
         self.password = passwd
         self.using_db = using_db
         self.table = table
-        if port == '':
-            port = 3306
-        self.port = port
         self._connection = None
         self.connected = False
         self.base_url = "http://localhost:12345/"
