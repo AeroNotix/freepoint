@@ -14,7 +14,6 @@ mind for this project.
 
 
 Features so far:
-----------------
 
 Server-Side
 -----------
@@ -31,3 +30,14 @@ Client-side
 * Edit data
 * Create tables
 * Manage connections
+
+
+TODO:
+
+* Implement better authentication
+* Figure out how to create Sphinx docs with Qt
+* Get GitHub to start marking the Go code
+* Get feedback from people/Show people
+* Add more datatypes
+* Make the database creator more featureful
+* Document the 'API'
