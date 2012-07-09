@@ -294,7 +294,7 @@ func ChangeData(job AsyncUpdate) error {
 
 	sqlStr := fmt.Sprintf(
 		`UPDATE %s
-		 SET`+ "`%s`"+`="%s"
+		 SET`+"`%s`"+`="%s"
 		 WHERE id=%s`,
 		job.Table, job.Column, job.Data, job.Id,
 	)
