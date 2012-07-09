@@ -75,6 +75,11 @@ func (self *JSONMessage) AddMetadata(heading, option string, data interface{}) {
 	self.Metadata[heading][option] = data
 }
 
+// Statically defined JSON struct to marshal real
+// JSON bytes into. We define all fields which
+// can be in the JSON string but not all JSON data
+// will hold it. This is allow in the spec and does
+// not throw errors.
 type Row struct {
 	Rownum  int `json:"ROWNUM"`
 	Rowdata struct {
@@ -93,3 +98,4 @@ type Row struct {
 type Headers struct {
 	Headings map[string]Row
 }
+
