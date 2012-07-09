@@ -10,3 +10,24 @@ not to mention to abhorrent liscencing that comes with it.
 
 QtSQLViewer will be the first client side implementation of the API I have in
 mind for this project.
+
+
+
+Features so far:
+----------------
+
+Server-Side
+-----------
+
+* Basic Authentication (real basic)
+* Data retrieval
+* Data updating
+* JSON Marshaling
+
+Client-side
+-----------
+
+* Open/View tables
+* Edit data
+* Create tables
+* Manage connections
