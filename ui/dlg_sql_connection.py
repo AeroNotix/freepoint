@@ -43,19 +43,22 @@ class SQLDisplaySetup(QtGui.QDialog):
             to_unicode(table),
             )
         self.parent.populate_table()
-
-        # The last thing that self.parent.populate_table() does is
-        # set self.parent.populated to True. This means that there
-        # is data in the table and more importantly, there were no
-        # connection errors. If there were no connection errors we
-        # can safely store the connection details for future use.
+        '''
+        The last thing that self.parent.populate_table() does is
+        set self.parent.populated to True. This means that there
+        is data in the table and more importantly, there were no
+        connection errors. If there were no connection errors we
+        can safely store the connection details for future use.
+        '''
         if not self.parent.populated:
             return
         sections = len(self.parent.config.sections())
         for num in range(sections):
-            # for each section, we check if the host.database.table
-            # matches a section we've already stored. If so we don't
-            # bother storing that connection.
+            '''
+            for each section, we check if the database.table matches
+            a section we've already stored. If so we don't bother
+            storing that connection.
+            '''
             num = str(num)
             if not self.parent.config.has_section("connection-%s" % num):
                 continue
@@ -65,7 +68,7 @@ class SQLDisplaySetup(QtGui.QDialog):
             ]
             # Coerce the strings into QStrings so that equality tests pass/fail
             # correctly
-            if set([host, database, table]) == set(map(QString, connection_set)):
+            if set([database, table]) == set(map(QString, connection_set)):
                 return
 
         # Now we just add the new section to the config object
@@ -88,6 +91,5 @@ class SQLDisplaySetup(QtGui.QDialog):
         created this instance if we have already connected to a database.
         """
 
-        self.gui.txt_host.setText(self.parent.database.host)
         self.gui.txt_database.setText(self.parent.database.using_db)
         self.gui.txt_table.setText(self.parent.database.table)

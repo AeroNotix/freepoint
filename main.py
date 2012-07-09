@@ -36,10 +36,6 @@ ARGS = (
     Argument('password', help='Password for the database', default=''),
     Argument('user', help='User you want to connect as', default=''),
     Argument('table', help='Which table to connect to'),
-    Argument('host', help='Which host you want to connect to',
-             default="localhost"),
-    Argument('port', help='The port you want to connect through',
-             default=3306)
 )
 
 for arg in ARGS:
@@ -73,7 +69,18 @@ class MainGui(QtGui.QMainWindow):
         self.configpath = os.path.join(CWD, "conf.cfg")
         self.actionList = []
 
-        if os.path.isfile(self.configpath):
+        if RESULTS.db:
+            # if we got command line arguments, open that
+            self.database = Database(
+                self,
+                self.username,
+                self.password,
+                RESULTS.db,
+                RESULTS.table,
+            )
+            self.populate_table()
+            self.parse_config()
+        elif os.path.isfile(self.configpath):
             # if we didn't get command line arguments check if
             # there is a config file.
             self.config.read(self.configpath)
