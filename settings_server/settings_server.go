@@ -203,11 +203,11 @@ func main() {
 				createTable,
 				"Create table",
 			),
-		ss.NewRoute(
-			regexp.MustCompile("^/insert/$"),
-			insertData,
-			"Inserting data",
-		),
+			ss.NewRoute(
+				regexp.MustCompile("^/insert/$"),
+				insertData,
+				"Inserting data",
+			),
 		},
 	)
 
