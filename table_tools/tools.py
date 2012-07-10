@@ -277,4 +277,10 @@ class Database(object):
             self.insert_url,
             json
             )
+
         json = simplejson.loads(urllib2.urlopen(http_post).read())
+        if json.get("Success"):
+            self.parent.show_message("Data has been saved to the database.")
+        else:
+            self.parent.show_error("Data could not be saved to the database")
+        self.parent.populate_table()
