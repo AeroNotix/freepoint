@@ -27,6 +27,17 @@ func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 	return nil
 }
 
+func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
+	log.Println(w)
+	js := json.NewDecoder(req.Body)
+	mapper := make(map[string]interface{})
+	err := js.Decode(&mapper)
+	log.Println(err)
+	log.Println(mapper)
+
+	return nil
+}
+
 // Simple server which is used to return parameters for particular databases.
 func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
@@ -185,6 +196,11 @@ func main() {
 				createTable,
 				"Create table",
 			),
+		ss.NewRoute(
+			regexp.MustCompile("^/insert/$"),
+			insertData,
+			"Inserting data",
+		),
 		},
 	)
 
