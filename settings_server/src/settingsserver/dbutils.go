@@ -367,17 +367,25 @@ func CreateTable(job AsyncCreate) error {
 }
 
 func InsertRow(job AsyncInsert) error {
+	db, err := CreateConnection(job.Database)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
 
 	for idx, val := range job.Data {
 		if val == "" {
 			job.Data[idx] = "NULL"
+		} else {
+			job.Data[idx] = `"`+val+`"`
 		}
 	}
-	sqlStr := fmt.Sprintf("INSERT INTO `%s` VALUES(%s)",
-		job.Table, strings.Join(job.Data, ", "),
+		sqlStr := fmt.Sprintf("INSERT INTO `%s` VALUES(NULL, %s)",
+		job.Table, strings.Join(job.Data[1:len(job.Data)], ", "),
 	)
 	fmt.Println(sqlStr)
-	return nil
+	_, _, err = db.Query(sqlStr)
+	return err
 }
 
 // This function will execute a create table string.
@@ -386,6 +394,7 @@ func InsertRow(job AsyncInsert) error {
 // since it's a CREATE DATABASE query.
 func ExecuteCreate(querystr string) error {
 	db, err := CreateConnection(connection_details.SettingsDatabase)
+	defer db.Close()
 	if err != nil {
 		return err
 	}
