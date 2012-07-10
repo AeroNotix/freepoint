@@ -5,6 +5,7 @@ different kinds of data.
 
 from PyQt4 import QtGui
 
+from qtsqlviewer.ui import add_new_row_UI
 
 class ComboDelegate(QtGui.QItemDelegate):
     """
@@ -207,3 +208,37 @@ class Delegator(QtGui.QItemDelegate):
                 delinst = dtype()
                 delinst.setParent(self)
                 self.delegates[item] = delinst
+
+    def createUIForm(self, parent=None):
+        """
+        Creates the UI for inserting a new row based on the metadata and the headings
+        of the current table.
+        """
+
+        headers = self.headers[:]
+        delegator = self
+
+        class Klass(QtGui.QDialog):
+
+            def __init__(self, parent):
+                QtGui.QDialog.__init__(self, parent)
+                self.headers = headers
+                self.parent = parent
+                self.gui = add_new_row_UI.Ui_Dialog()
+                self.gui.setupUi(self)
+                self.gui.tableWidget.setColumnCount(len(self.headers))
+                self.gui.tableWidget.setHorizontalHeaderLabels(self.headers)
+                self.gui.tableWidget.setItemDelegate(delegator)
+                self.gui.tableWidget.insertRow(0)
+                for i in range(len(self.headers)):
+                    self.gui.tableWidget.setItem(0, i, QtGui.QTableWidgetItem(""))
+
+            def accept(self):
+                data = ["NULL"]
+                for idx, heading in enumerate(self.headers[1:]):
+                    data.append(str(self.gui.tableWidget.item(0, idx+1).text()))
+                self.parent.insertData(data)
+                QtGui.QDialog.accept(self)
+
+        k = Klass(parent)
+        k.exec_()

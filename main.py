@@ -159,8 +159,10 @@ class MainGui(QtGui.QMainWindow):
         queryset = self.database.query()
         self.headings = self.database.get_headings()
 
+
+        self.delegator = Delegator(self.headings, self.database.metadata, parent=self)
         self.gui.tableWidget.setItemDelegate(
-            Delegator(self.headings, self.database.metadata, parent=self)
+            self.delegator
             )
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(self.headings))
@@ -190,6 +192,9 @@ class MainGui(QtGui.QMainWindow):
         :returns: None
         """
         self.database.changeTable(xrow, ycol)
+
+    def insertData(self, json):
+        self.database.insertData(json)
 
     def storeCell(self, xrow, ycol):
         """
@@ -401,7 +406,7 @@ class MainGui(QtGui.QMainWindow):
         """
         Inserts a new row into the table ready for editing.
         """
-        print "here"
+        self.delegator.createUIForm(self)
 
     def populate_toolbar(self):
         """

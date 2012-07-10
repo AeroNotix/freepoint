@@ -125,6 +125,7 @@ class Database(object):
         self.param_url = self.base_url + "getdb/%s.%s"
         self.login_url = self.base_url + "login/"
         self.update_url = self.base_url + "update/"
+        self.insert_url = self.base_url + "insert/"
         self.parent = parent
         if not self.parent:
             self.error = lambda s:s
@@ -260,3 +261,16 @@ class Database(object):
             self.error("Data could not be saved to the database.")
         else:
             self.parent.show_message("Data has been saved to the database.")
+
+    def insertData(self, json):
+        """
+        Inserts a new row into the table
+        """
+
+        json = simplejson.dumps({"DATA":json})
+        http_post = urllib2.Request(
+            # string interpolation
+            self.insert_url,
+            json
+            )
+        json = simplejson.loads(urllib2.urlopen(http_post).read())
