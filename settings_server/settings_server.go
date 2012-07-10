@@ -33,15 +33,18 @@ func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) er
 	mapper := new(ss.InsertData) // New causes mapper to be a pointer
 	err := js.Decode(&mapper)
 	if err != nil {
+		ss.SendJSON(w, false)
 		log.Println(err)
 		return err
 	}
 	job := ss.NewAsyncInsert(*mapper) // We need a dereferenced job here
 	err = self.InsertEntry(job)
 	if err != nil {
+		ss.SendJSON(w, false)
 		log.Println(err)
 		return err
 	}
+	ss.SendJSON(w, true)
 	return nil
 }
 
