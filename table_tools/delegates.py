@@ -217,7 +217,7 @@ class Delegator(QtGui.QItemDelegate):
 
         headers = self.headers[:]
         delegator = self
-
+        
         class Klass(QtGui.QDialog):
 
             def __init__(self, parent):
