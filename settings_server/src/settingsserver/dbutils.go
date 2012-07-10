@@ -7,8 +7,8 @@ import (
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"net/http"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 // Basic struct to hold User data.
@@ -111,8 +111,6 @@ func NewAsyncInsert(indata InsertData) AsyncInsert {
 	}
 	return insert
 }
-
-
 
 // Function which takes a row of the incoming json data from a create request
 // and tries to extract a CREATE TABLE row instruction out of it.

@@ -9,24 +9,24 @@ import (
 // Struct so that we may assign ServeHTTP to something to satisfy the
 // server interface
 type AppServer struct {
-	Routes   []RoutingEntry
-	dbWriter chan AsyncUpdate
-	dbCreator chan AsyncCreate
+	Routes     []RoutingEntry
+	dbWriter   chan AsyncUpdate
+	dbCreator  chan AsyncCreate
 	dbInserter chan AsyncInsert
 }
 
 func NewAppServer(routes []RoutingEntry) AppServer {
 	app := AppServer{
-		Routes:   routes,
-		dbWriter: make(chan AsyncUpdate, 10),
-		dbCreator: make(chan AsyncCreate, 10),
+		Routes:     routes,
+		dbWriter:   make(chan AsyncUpdate, 10),
+		dbCreator:  make(chan AsyncCreate, 10),
 		dbInserter: make(chan AsyncInsert, 10),
 	}
 
 	go AsyncUpdater(app.dbWriter)
 	go AsyncCreator(app.dbCreator)
 	go AsyncInserter(app.dbInserter)
-    return app
+	return app
 }
 
 // This is the main 'event loop' for the web server. All requests are

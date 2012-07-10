@@ -9,9 +9,9 @@ import (
 // should look like. Therefore we put the data into a struct which
 // has very specific fields.
 type InsertData struct {
-	Data []string `json:"DATA"`
-	Table string `json:"TABLE"`
-	Database string `json:"DATABASE"`
+	Data     []string `json:"DATA"`
+	Table    string   `json:"TABLE"`
+	Database string   `json:"DATABASE"`
 }
 
 // HeadingData is composed of strings to interfaces
@@ -107,4 +107,3 @@ type Row struct {
 type Headers struct {
 	Headings map[string]Row
 }
-
