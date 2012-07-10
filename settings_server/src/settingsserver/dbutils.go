@@ -1,3 +1,11 @@
+/*
+
+ This package groups together useful functions when dealing with databases
+ it also defines the Asynchronous types and the job queues which deal with
+ them.
+
+*/
+
 package settingsserver
 
 import (
@@ -104,6 +112,9 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 	return create
 }
 
+// NewAsyncInsert allows users of the dbutils lib to recieve an
+// AsyncInsert instance with the correct data without having to
+// be totally aware of the implementation details.
 func NewAsyncInsert(indata InsertData) AsyncInsert {
 	insert := AsyncInsert{
 		indata,
@@ -238,6 +249,10 @@ func GetMetadata(table string) (Metadata, error) {
 	return metadata, nil
 }
 
+// GetRows takes a database and a table as a string and returns
+// a slice of mysql.Rows. This is literally a select * on any
+// given table which will handle errors and give us a simpler API
+// to work with.
 func GetRows(database, table string) ([]mysql.Row, error) {
 	db, err := CreateConnection(database)
 	if err != nil {
@@ -296,6 +311,9 @@ func AsyncCreator(jobqueue chan AsyncCreate) {
 	}
 }
 
+// AsyncInserter monitors a channel of type AsyncCreate and blocks until it receives
+// on it. Once it has received a job, it will process by calling InsertRow on the
+// job and sending it's return value down the ReturnPath associated with the job.
 func AsyncInserter(jobqueue chan AsyncInsert) {
 	for {
 		job := <-jobqueue
@@ -328,6 +346,9 @@ func ChangeData(job AsyncUpdate) error {
 	return nil
 }
 
+// CreateTable will take an AsyncCreate job and handle the required
+// such as connecting to the database and handling specific errors
+// when creating a table.
 func CreateTable(job AsyncCreate) error {
 	db, err := CreateConnection(job.Database)
 	metadb, metaerr := CreateConnection(connection_details.SettingsDatabase)
@@ -366,6 +387,9 @@ func CreateTable(job AsyncCreate) error {
 	return err
 }
 
+// InsertRow takes an instance of type AsyncInsert and takes the required
+// steps to insert that data into the database. Handling things like making
+// the connection and handling errors along the way.
 func InsertRow(job AsyncInsert) error {
 	db, err := CreateConnection(job.Database)
 	if err != nil {
@@ -373,6 +397,7 @@ func InsertRow(job AsyncInsert) error {
 	}
 	defer db.Close()
 
+	// Subject to change. I don't think this will pass tests
 	for idx, val := range job.Data {
 		if val == "" {
 			job.Data[idx] = "NULL"
@@ -383,7 +408,9 @@ func InsertRow(job AsyncInsert) error {
 		sqlStr := fmt.Sprintf("INSERT INTO `%s` VALUES(NULL, %s)",
 		job.Table, strings.Join(job.Data[1:len(job.Data)], ", "),
 	)
-	fmt.Println(sqlStr)
+
+	// we're not concerned with the returned data from an insert
+	// merely the error status.
 	_, _, err = db.Query(sqlStr)
 	return err
 }
@@ -405,7 +432,7 @@ func ExecuteCreate(querystr string) error {
 
 /*
 
-Example JSON:
+Below is example JSON which the API can handle:
 
 'HEADINGS': {
 	'Row1': {

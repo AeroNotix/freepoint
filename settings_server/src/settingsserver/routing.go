@@ -15,6 +15,18 @@ type AppServer struct {
 	dbInserter chan AsyncInsert
 }
 
+// NewAppServer allows us to take the steps required for running the server.
+//
+// As the server is asynchronous in nature, we have chosen to include
+// synchronous writes. Simply because this makes the complexity of read/
+// write locks much easier to deal with. Having synchronous writes also
+// allows us to add-on functionality in the future using patterns such as
+// the observer pattern.
+//
+// NewAppServer takes a []RoutingEntry which are the various functions/URLS
+// which the Server will iterate through and serve once a request has been
+// recieved. We then kick off three goroutines which monitor a *specific*
+// channel for certain job types in order to process them synchronously.
 func NewAppServer(routes []RoutingEntry) AppServer {
 	app := AppServer{
 		Routes:     routes,
@@ -49,18 +61,21 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	http.NotFound(w, req)
 }
 
-// Writes a job to the database writer queue which self has a ref
-// to.
+// The next three functions {Write|Create|Insert}Entry are utility functions
+// which allow the API to not leak implementation details to the user. They
+// simply pass the correct type to this function and check the return value
+// all the while they will internally deal with the details of sending and
+// recieving to/from channels.
+//
+// Each are methods of the AppServer and return an error.
 func (self *AppServer) WriteEntry(job AsyncUpdate) error {
 	self.dbWriter <- job
 	return <-job.ReturnPath
 }
-
 func (self *AppServer) CreateEntry(job AsyncCreate) error {
 	self.dbCreator <- job
 	return <-job.ReturnPath
 }
-
 func (self *AppServer) InsertEntry(job AsyncInsert) error {
 	self.dbInserter <- job
 	return <-job.ReturnPath
