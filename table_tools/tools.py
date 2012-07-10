@@ -267,7 +267,11 @@ class Database(object):
         Inserts a new row into the table
         """
 
-        json = simplejson.dumps({"DATA":json})
+        json = simplejson.dumps({
+                "DATA":json,
+                "TABLE": self.table,
+                "DATABASE": self.using_db
+        })
         http_post = urllib2.Request(
             # string interpolation
             self.insert_url,
