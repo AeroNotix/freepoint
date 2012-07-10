@@ -30,11 +30,18 @@ func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 	log.Println(w)
 	js := json.NewDecoder(req.Body)
-	mapper := make(map[string]interface{})
+	mapper := new(ss.InsertData) // New causes mapper to be a pointer
 	err := js.Decode(&mapper)
-	log.Println(err)
-	log.Println(mapper)
-
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	job := ss.NewAsyncInsert(*mapper) // We need a dereferenced job here
+	err = self.InsertEntry(job)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 	return nil
 }
 

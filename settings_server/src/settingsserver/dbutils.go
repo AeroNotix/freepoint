@@ -7,6 +7,7 @@ import (
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"net/http"
+	"strings"
 	"strconv"
 )
 
@@ -31,13 +32,19 @@ type AsyncUpdate struct {
 }
 
 // AsyncCreate holds the data from the New Table part of the API
-// we will eventually parse the TableData field into an SQL
-// string which will then be executed.
+// The data is parsed into an SQL string which is then executed.
 type AsyncCreate struct {
 	Database   string
 	Table      string
 	SQLString  string
 	Metadata   string
+	ReturnPath chan error
+}
+
+// AsyncInsert holds the data for inserting a new row into an existing
+// table.
+type AsyncInsert struct {
+	InsertData
 	ReturnPath chan error
 }
 
@@ -96,6 +103,16 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 	}
 	return create
 }
+
+func NewAsyncInsert(indata InsertData) AsyncInsert {
+	insert := AsyncInsert{
+		indata,
+		make(chan error),
+	}
+	return insert
+}
+
+
 
 // Function which takes a row of the incoming json data from a create request
 // and tries to extract a CREATE TABLE row instruction out of it.
@@ -281,6 +298,13 @@ func AsyncCreator(jobqueue chan AsyncCreate) {
 	}
 }
 
+func AsyncInserter(jobqueue chan AsyncInsert) {
+	for {
+		job := <-jobqueue
+		job.ReturnPath <- InsertRow(job)
+	}
+}
+
 // ChangeData is a function which connects to the database and makes an update to a
 // table column using the data inside the AsyncUpdate instance. This shouldn't be
 // called directly because we have an asynchronous queue which is looking for jobs
@@ -344,6 +368,20 @@ func CreateTable(job AsyncCreate) error {
 	return err
 }
 
+func InsertRow(job AsyncInsert) error {
+
+	for idx, val := range job.Data {
+		if val == "" {
+			job.Data[idx] = "NULL"
+		}
+	}
+	sqlStr := fmt.Sprintf("INSERT INTO `%s` VALUES(%s)",
+		job.Table, strings.Join(job.Data, ", "),
+	)
+	fmt.Println(sqlStr)
+	return nil
+}
+
 // This function will execute a create table string.
 // It connects to whichever database the SettingsDatabase is labelled
 // as in the connection_details module but really it doesn't matter
@@ -363,15 +401,15 @@ func ExecuteCreate(querystr string) error {
 Example JSON:
 
 'HEADINGS': {
-    'Row1': {
-        'ROWNUM': 0, 
-        'ROWDATA': {
-            'UNIQUE': False,
-            'TYPE': 'VARCHAR',
-            'NULL': False,
-            'LEN': '255'
-        }
-    }
+	'Row1': {
+		'ROWNUM': 0, 
+		'ROWDATA': {
+			'UNIQUE': False,
+			'TYPE': 'VARCHAR',
+			'NULL': False,
+			'LEN': '255'
+		}
+	}
 }
 `{"Headings": {"a":{
  "ROWNUM": 0,

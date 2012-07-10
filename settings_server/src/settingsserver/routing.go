@@ -12,6 +12,7 @@ type AppServer struct {
 	Routes   []RoutingEntry
 	dbWriter chan AsyncUpdate
 	dbCreator chan AsyncCreate
+	dbInserter chan AsyncInsert
 }
 
 func NewAppServer(routes []RoutingEntry) AppServer {
@@ -19,10 +20,12 @@ func NewAppServer(routes []RoutingEntry) AppServer {
 		Routes:   routes,
 		dbWriter: make(chan AsyncUpdate, 10),
 		dbCreator: make(chan AsyncCreate, 10),
+		dbInserter: make(chan AsyncInsert, 10),
 	}
 
 	go AsyncUpdater(app.dbWriter)
 	go AsyncCreator(app.dbCreator)
+	go AsyncInserter(app.dbInserter)
     return app
 }
 
@@ -55,6 +58,11 @@ func (self *AppServer) WriteEntry(job AsyncUpdate) error {
 
 func (self *AppServer) CreateEntry(job AsyncCreate) error {
 	self.dbCreator <- job
+	return <-job.ReturnPath
+}
+
+func (self *AppServer) InsertEntry(job AsyncInsert) error {
+	self.dbInserter <- job
 	return <-job.ReturnPath
 }
 
