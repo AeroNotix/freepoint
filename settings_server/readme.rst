@@ -4,7 +4,7 @@ API Outline
 Logging in
 ----------
 
-Authentication is achieved by sending a request to `domain:port/getdb/` with the appropriate
+Authentication is achieved by sending a request to `domain:port/login/` with the appropriate
 content-headers for JSON along with the content-length set properly for the length of the
 JSON string.
 
@@ -34,6 +34,22 @@ whilst the prototype is being finalized.
 
 Viewing a table
 ---------------
+
+Viewing a table is as simple as ensuring that you are authenticated using the above method
+and then sending a request to `domain:port/getdb/` with the below JSON:
+
+.. code-block:: javascript
+
+    json = {
+        "USERNAME": <username>,
+        "PASSWORD": <password>
+    }
+
+    `json = {
+        "USERNAME": <username>,
+        "PASSWORD": <password>
+    }`
+
 
 Editing tabledata
 -----------------
