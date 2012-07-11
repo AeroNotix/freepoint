@@ -23,7 +23,7 @@ type User struct {
 	Password string `json:"PASSWORD"`
 }
 
-// Holds database request data.
+ // Holds database request data.
 type DatabaseRequest struct {
 	Table    string `json:"TABLE"`
 	Database string `json:"DATABASE"`
@@ -34,7 +34,8 @@ type DatabaseRequest struct {
 // has very specific fields.
 type InsertData struct {
 	Data []string `json:"DATA"`
-	DatabaseRequest
+	Table    string `json:"TABLE"`
+	Database string `json:"DATABASE"`
 }
 
 // HeadingData is composed of strings to interfaces
@@ -82,6 +83,8 @@ func SendJSON(w http.ResponseWriter, message interface{}) {
 	return
 }
 
+// SendJSONError sends an error to the client by using the Error()
+// method on the error instance.
 func SendJSONError(w http.ResponseWriter, message error) {
 	w.Header().Set("Content-type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
@@ -110,7 +113,7 @@ func (self *JSONMessage) AddMetadata(heading, option string, data interface{}) {
 // Statically defined JSON struct to marshal real
 // JSON bytes into. We define all fields which
 // can be in the JSON string but not all JSON data
-// will hold it. This is allow in the spec and does
+// will hold it. This is allowed in the spec and does
 // not throw errors.
 type Row struct {
 	Rownum  int `json:"ROWNUM"`
@@ -127,6 +130,11 @@ type Row struct {
 // into a struct which contains a Map of strings to
 // Rows. This greatly simplifies the communication
 // between the client and the server.
-type Headers struct {
-	Headings map[string]Row
+type Headers map[string]Row
+
+type CreateRequest struct {
+	Headers Headers `json:"HEADINGS"`
+	Payload string `json:"PAYLOAD"`
+	Table    string `json:"TABLE"`
+	Database string `json:"DATABASE"`
 }

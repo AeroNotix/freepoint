@@ -6,6 +6,8 @@ from qtsqlviewer.ui.create_new_table_UI import Ui_Dialog
 
 
 class CreateNewTable(QtGui.QDialog):
+    """
+    """
     def __init__(self, parent=None):
         super(CreateNewTable, self).__init__(parent)
         self.gui = Ui_Dialog()
@@ -35,7 +37,7 @@ class CreateNewTable(QtGui.QDialog):
             return
 
         self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num(),
+            "ROWNUM": self.get_row_num,
             "ROWDATA": {
                 "TYPE": "VARCHAR",
                 "LEN" : int(self.gui.txt_grp_length.value()),
@@ -58,7 +60,7 @@ class CreateNewTable(QtGui.QDialog):
             return
         choices =  map(str, list(self.gui.choice_grp_choices.toPlainText().split("\n")))
         self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num(),
+            "ROWNUM": self.get_row_num,
             "ROWDATA": {
                 "TYPE": "CHOICE",
                 "UNIQUE": self.gui.choice_grp_unique.isChecked(),
@@ -79,7 +81,7 @@ class CreateNewTable(QtGui.QDialog):
         if not self.check_row(rowname):
             return
         self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num(),
+            "ROWNUM": self.get_row_num,
             "ROWDATA": {
                 "TYPE": "DATE",
                 "UNIQUE": self.gui.date_grp_unique.isChecked(),
@@ -100,7 +102,7 @@ class CreateNewTable(QtGui.QDialog):
             return
 
         self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num(),
+            "ROWNUM": self.get_row_num,
             "ROWDATA": {
                 "TYPE": "TIME",
                 "UNIQUE": self.gui.time_grp_unique.isChecked(),
@@ -164,29 +166,44 @@ class CreateNewTable(QtGui.QDialog):
         return msgbox.exec_() == QtGui.QMessageBox.Yes
 
     def accept(self):
+        """
+        This method is a joke and totally a mess.
+
+        We need to make the request body hold the json instead of in
+        GET parameters (duh!). This will be accomplished by making
+        the datastructure a simple map which is dumped to JSON and
+        having a datastructure on the server-side to marshal this into.
+        """
         self.row_num = 0
 
-        headers = simplejson.dumps(self.json_data["HEADINGS"])
-        payload = {
-            "Headings": "{\"Headings\":"+headers+"}",
-            "Payload": simplejson.dumps(self.json_data),
-            "Database": str(self.gui.txt_database_name.text()),
-            "Table": str(self.gui.txt_table_name.text())
-        }
-
+        payload = simplejson.dumps({
+                "HEADINGS": self.json_data["HEADINGS"],
+                "PAYLOAD": simplejson.dumps(self.json_data),
+                "DATABASE": str(self.gui.txt_database_name.text()),
+                "TABLE": str(self.gui.txt_table_name.text())
+                })
         req = urllib2.Request(
             "http://localhost:12345/create/",
-            urllib.urlencode(payload)
+            payload
             )
+        json = simplejson.loads(urllib2.urlopen(req).read())
+        super(CreateNewTable, self).accept()
 
-        f = urllib2.urlopen(req)
-        f.close()
-
+    @property
     def get_row_num(self):
+        """
+        Increments the row number and returns it.
+        """
         self.row_num += 1
         return self.row_num
 
     def add_row_to_list(self, row):
         """
+        We create a row string which is just the name of the row for now.
+
+        Eventually this row will be a real QListWidgetItem which will hold
+        arbitrary data so we can click an item in the QListWidget and have
+        that repopulate the data so that quick edits can be made when
+        creating a database.
         """
         self.gui.list_db_rows.addItem(QtGui.QListWidgetItem(row))

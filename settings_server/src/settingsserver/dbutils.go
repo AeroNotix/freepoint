@@ -22,7 +22,8 @@ import (
 // This struct will be used to create jobs which can be push into async worker queues
 // to asynchronously process database writes and have them write to disk sequentially.
 type AsyncUpdate struct {
-	DatabaseRequest
+	Database string
+	Table string
 	Column     string
 	Data       string
 	Id         string
@@ -32,7 +33,8 @@ type AsyncUpdate struct {
 // AsyncCreate holds the data from the New Table part of the API
 // The data is parsed into an SQL string which is then executed.
 type AsyncCreate struct {
-	DatabaseRequest
+	Database string
+	Table string
 	SQLString  string
 	Metadata   string
 	ReturnPath chan error
@@ -68,32 +70,31 @@ func NewAsyncJob(req *http.Request) AsyncUpdate {
 // is accomplished
 func NewAsyncCreate(req *http.Request) AsyncCreate {
 
-	headers := new(Headers)
-	err := json.Unmarshal([]byte(req.FormValue("Headings")), headers)
+	createRequest := new(CreateRequest)
+	json_dec := json.NewDecoder(req.Body)
+	err := json_dec.Decode(&createRequest)
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	headings := make([]string, len(headers.Headings))
-	for rowname, rowdata := range headers.Headings {
+	fmt.Println(createRequest.Headers)
+	headings := make([]string, len(createRequest.Headers))
+	for rowname, rowdata := range createRequest.Headers {
 		headings[rowdata.Rownum] = rowname
 	}
 
-	database_name := req.FormValue("Database")
-	table_name := req.FormValue("Table")
-
-	sqlstr := fmt.Sprintf("CREATE TABLE `%s` (\n", table_name)
+	sqlstr := fmt.Sprintf("CREATE TABLE `%s` (\n", createRequest.Table)
 	sqlstr += "`id` int(11) NOT NULL AUTO_INCREMENT\n,"
 	for _, name := range headings {
-		sqlstr += genSQLCreateString(headers.Headings[name], name)
+		sqlstr += genSQLCreateString(createRequest.Headers[name], name)
 		sqlstr += ",\n"
 	}
+	fmt.Println(sqlstr)
 	sqlstr += "PRIMARY KEY (id)\n);"
 	create := AsyncCreate{
-		database_name,
-		table_name,
+		createRequest.Database,
+		createRequest.Table,
 		sqlstr,
-		req.FormValue("Payload"),
+		createRequest.Payload,
 		make(chan error),
 	}
 	return create

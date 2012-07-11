@@ -122,7 +122,7 @@ class Database(object):
         self._connection = None
         self.connected = False
         self.base_url = "http://localhost:12345/"
-        self.param_url = self.base_url + "getdb/%s.%s"
+        self.param_url = self.base_url + "getdb/"
         self.login_url = self.base_url + "login/"
         self.update_url = self.base_url + "update/"
         self.insert_url = self.base_url + "insert/"
@@ -202,8 +202,7 @@ class Database(object):
             })
 
             http_post = urllib2.Request(
-                # string interpolation
-                self.param_url % (self.using_db, self.table),
+                self.param_url,
                 json_payload
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
