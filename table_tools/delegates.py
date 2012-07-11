@@ -227,7 +227,7 @@ class Delegator(QtGui.QItemDelegate):
                 self.gui = add_new_row_UI.Ui_Dialog()
                 self.gui.setupUi(self)
                 self.gui.tableWidget.setColumnCount(len(self.headers))
-                self.gui.tableWidget.setHorizontalHeaderLabels(self.headers)
+                self.gui.tableWidget.setHorizontalHeaderLabels(self.headers[1:])
                 self.gui.tableWidget.setItemDelegate(delegator)
                 self.gui.tableWidget.insertRow(0)
                 for i in range(len(self.headers)):
