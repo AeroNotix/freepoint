@@ -14,13 +14,27 @@ import (
 	"net/http"
 )
 
+// Basic struct to hold User data.
+//
+// This was created so we have better semantics for marshaling/unmarshaling data which
+// holds the fields for the User data.
+type User struct {
+	Username string `json:"USER"`
+	Password string `json:"PASSWORD"`
+}
+
+// Holds database request data.
+type DatabaseRequest struct {
+	Table    string   `json:"TABLE"`
+	Database string   `json:"DATABASE"`
+}
+
 // When inserting data we have a very strong idea about what the data
 // should look like. Therefore we put the data into a struct which
 // has very specific fields.
 type InsertData struct {
 	Data     []string `json:"DATA"`
-	Table    string   `json:"TABLE"`
-	Database string   `json:"DATABASE"`
+	DatabaseRequest
 }
 
 // HeadingData is composed of strings to interfaces

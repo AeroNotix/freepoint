@@ -15,6 +15,10 @@ import (
 	"time"
 )
 
+
+// createTable serves as the back-end for creating new tables. The request holds the
+// form data which is needed to create an SQL String which is then executed and the
+// error status returned to the client.
 func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 	job := ss.NewAsyncCreate(req)
 	err := self.CreateEntry(job)
@@ -27,8 +31,10 @@ func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 	return nil
 }
 
+// InsertData servers as the back-end for handling data insertion into existing tables.
+// The request holds all the relevent data encoded into rows.
 func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
-	log.Println(w)
+
 	js := json.NewDecoder(req.Body)
 	mapper := new(ss.InsertData) // New causes mapper to be a pointer
 	err := js.Decode(&mapper)
@@ -55,8 +61,19 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 	// we get requested via a browser.
 	w.Header().Set("Content Type", "application/json")
 
+	// We retrieve the JSON string and encode it
+	// into the proper JSON request struct.
+	json_dec := json.NewDecoder(req.Body)
+	dbreq := new(ss.DatabaseRequest)
+	err := json_dec.Decode(&dbreq)
+	if err != nil {x
+		ss.SendJSON(w, false)
+		log.Println(err)
+		return err
+	}
+
 	// Get the metadata associated with the table.
-	metadata, err := ss.GetMetadata(req.URL.Path[len("/getdb/"):])
+	metadata, err := ss.GetMetadata(dbreq)
 	if err != nil {
 		val, ok := err.(ss.AppError)
 		if !ok {
@@ -71,22 +88,20 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 
 	// Marshal our metadata into a struct and encode.
 	jsonMap := ss.NewJSONMessage(metadata)
-	log.Println(metadata)
-
-	// Get the rows from the database and encode them into JSON.
-	database_name := req.FormValue("Database")
-	table_name := req.FormValue("Table")
-	rows, _ := ss.GetRows(
-		database_name,
-		table_name,
-	)
-
-	headings, err := ss.GetHeadings(database_name, table_name)
+	rows, err := ss.GetRows(dbreq)
+	if err != nil {
+		return err
+	}
+	headings, err := ss.GetHeadings(dbreq)
 	if err != nil {
 		return err
 	}
 	// Add the column names to the jsonMap
 	jsonMap.Headings = headings
+
+	// Iterate through the rows, create a [][]byte to hold a row.
+	// Then we encode the row by asserting it to []byte and appending
+	// it to the [][]byte row. We then AddRow that row.
 	for _, row := range rows {
 		var newrow = [][]byte{}
 		for _, item := range row {
@@ -126,20 +141,18 @@ func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 // or error checks on them and this seems cleaner.
 func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 
-	if req.Method != "POST" {
-		return false, ss.RequestError
+	// We retrieve the JSON string and encode it
+	// into the proper JSON request struct.
+	json_dec := json.NewDecoder(req.Body)
+	userdata := new(ss.User)
+	err := json_dec.Decode(&userdata)
+	if err != nil {
+		ss.SendJSON(w, false)
+		log.Println(err)
+		return false, err
 	}
 
-	username := req.FormValue("User")
-	pass := req.FormValue("Password")
-	if len(username) == 0 || len(pass) == 0 {
-		return false, ss.LoginError
-	}
-	user := ss.User{
-		User:     username,
-		Password: pass,
-	}
-	row, err := ss.GetUser(user.User)
+	row, err := ss.GetUser(userdata.Username)
 	if err != nil {
 		return false, err
 	}
@@ -149,7 +162,7 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 		row.Str(2),
 	}
 	// if we've got here, we either are logged in or not.
-	success := user == req_user
+	success := *userdata == req_user
 	if !success {
 		return success, ss.LoginError
 	}
@@ -187,7 +200,7 @@ func main() {
 		// them to find which we are currently serving.
 		[]ss.RoutingEntry{
 			ss.NewRoute(
-				regexp.MustCompile("^/getdb/[A-Za-z0-9._-]*/?$"),
+				regexp.MustCompile("^/getdb/$"),
 				databaseParameters,
 				"Parameters",
 			),

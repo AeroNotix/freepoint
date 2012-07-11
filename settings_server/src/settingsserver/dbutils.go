@@ -19,15 +19,6 @@ import (
 	"strings"
 )
 
-// Basic struct to hold User data.
-//
-// This was created so we have better semantics for marshaling/unmarshaling data which
-// holds the fields for the User data.
-type User struct {
-	User     string
-	Password string
-}
-
 // This struct will be used to create jobs which can be push into async worker queues
 // to asynchronously process database writes and have them write to disk sequentially.
 type AsyncUpdate struct {
@@ -215,7 +206,7 @@ func GetUser(user string) (mysql.Row, error) {
 
 // GetMetadata connects to our database which returns a Metadata instance.
 // Metadata is an instance which holds JSON data.
-func GetMetadata(table string) (Metadata, error) {
+func GetMetadata(dbreq *DatabaseRequest) (Metadata, error) {
 	db, err := CreateConnection(connection_details.SettingsDatabase)
 	if err != nil {
 		return nil, err
@@ -228,7 +219,7 @@ func GetMetadata(table string) (Metadata, error) {
 	if err != nil {
 		return nil, err
 	}
-	resp, err := stmt.Run(table)
+	resp, err := stmt.Run(dbreq.Table)
 	if err != nil {
 		return nil, err
 	}
@@ -253,14 +244,14 @@ func GetMetadata(table string) (Metadata, error) {
 // a slice of mysql.Rows. This is literally a select * on any
 // given table which will handle errors and give us a simpler API
 // to work with.
-func GetRows(database, table string) ([]mysql.Row, error) {
-	db, err := CreateConnection(database)
+func GetRows(dbreq *DatabaseRequest) ([]mysql.Row, error) {
+	db, err := CreateConnection(dbreq.Database)
 	if err != nil {
 		return nil, err
 	}
 	defer db.Close()
 
-	sqlStr := fmt.Sprintf("SELECT * FROM %s", table)
+	sqlStr := fmt.Sprintf("SELECT * FROM %s", dbreq.Table)
 	rows, _, err := db.Query(sqlStr)
 	if err != nil {
 		return nil, err
@@ -271,14 +262,14 @@ func GetRows(database, table string) ([]mysql.Row, error) {
 // GetHeadings is a function which returns a []string which contains
 // the headings names and an error indicating the status of the function
 // call.
-func GetHeadings(database, table string) ([]string, error) {
-	db, err := CreateConnection(database)
+func GetHeadings(dbreq *DatabaseRequest) ([]string, error) {
+	db, err := CreateConnection(dbreq.Database)
 	defer db.Close()
 	defer db.Query("DROP TABLE temp")
 	if err != nil {
 		return nil, err
 	}
-	sqlStr := fmt.Sprintf(`SHOW COLUMNS FROM %s`, table)
+	sqlStr := fmt.Sprintf(`SHOW COLUMNS FROM %s`, dbreq.Table)
 	rows, _, err := db.Query(sqlStr)
 	if err != nil {
 		return nil, err
