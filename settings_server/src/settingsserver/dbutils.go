@@ -22,8 +22,7 @@ import (
 // This struct will be used to create jobs which can be push into async worker queues
 // to asynchronously process database writes and have them write to disk sequentially.
 type AsyncUpdate struct {
-	Database   string
-	Table      string
+	DatabaseRequest
 	Column     string
 	Data       string
 	Id         string
@@ -33,8 +32,7 @@ type AsyncUpdate struct {
 // AsyncCreate holds the data from the New Table part of the API
 // The data is parsed into an SQL string which is then executed.
 type AsyncCreate struct {
-	Database   string
-	Table      string
+	DatabaseRequest
 	SQLString  string
 	Metadata   string
 	ReturnPath chan error
