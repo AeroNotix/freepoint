@@ -45,11 +45,6 @@ and then sending a request to `domain:port/getdb/` with the below JSON:
         "PASSWORD": <password>
     }
 
-    `json = {
-        "USERNAME": <username>,
-        "PASSWORD": <password>
-    }`
-
 
 Editing tabledata
 -----------------
