@@ -66,7 +66,6 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 	dbreq := new(ss.DatabaseRequest)
 	err := json_dec.Decode(&dbreq)
 	if err != nil {
-		x
 		ss.SendJSON(w, false)
 		log.Println(err)
 		return err
@@ -94,6 +93,7 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 	}
 	headings, err := ss.GetHeadings(dbreq)
 	if err != nil {
+		log.Println(err)
 		return err
 	}
 	// Add the column names to the jsonMap
