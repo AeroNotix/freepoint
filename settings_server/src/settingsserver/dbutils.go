@@ -22,11 +22,11 @@ import (
 // This struct will be used to create jobs which can be push into async worker queues
 // to asynchronously process database writes and have them write to disk sequentially.
 type AsyncUpdate struct {
-	Database string
-	Table string
-	Column     string
-	Data       string
-	Id         string
+	Database string `json:"DATABASE"`
+	Table string `json:"TABLE"`
+	Column     string `json:"COLUMN"`
+	Data       string `json:"DATA"`
+	Id         string `json:"ID"`
 	ReturnPath chan error
 }
 
@@ -36,7 +36,7 @@ type AsyncCreate struct {
 	Database string
 	Table string
 	SQLString  string
-	Metadata   string
+	Metadata   string 
 	ReturnPath chan error
 }
 
@@ -52,15 +52,15 @@ type AsyncInsert struct {
 // be create by the user and they just pass the request form to
 // this.
 func NewAsyncJob(req *http.Request) AsyncUpdate {
-	job := AsyncUpdate{
-		req.FormValue("Database"),
-		req.FormValue("Table"),
-		req.FormValue("Column"),
-		req.FormValue("Data"),
-		req.FormValue("ID"),
-		make(chan error),
+	
+	json_dec := json.NewDecoder(req.Body)
+	updateRequest := new(AsyncUpdate)
+	err := json_dec.Decode(&updateRequest)
+	if err != nil {
+		fmt.Println(err)
 	}
-	return job
+	updateRequest.ReturnPath = make(chan error)
+	return *updateRequest
 }
 
 // NewAsyncCreate returns a basic representation of what an

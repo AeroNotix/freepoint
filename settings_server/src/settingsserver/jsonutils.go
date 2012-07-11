@@ -23,7 +23,7 @@ type User struct {
 	Password string `json:"PASSWORD"`
 }
 
- // Holds database request data.
+// Holds database request data.
 type DatabaseRequest struct {
 	Table    string `json:"TABLE"`
 	Database string `json:"DATABASE"`
@@ -33,9 +33,9 @@ type DatabaseRequest struct {
 // should look like. Therefore we put the data into a struct which
 // has very specific fields.
 type InsertData struct {
-	Data []string `json:"DATA"`
-	Table    string `json:"TABLE"`
-	Database string `json:"DATABASE"`
+	Data     []string `json:"DATA"`
+	Table    string   `json:"TABLE"`
+	Database string   `json:"DATABASE"`
 }
 
 // HeadingData is composed of strings to interfaces
@@ -133,8 +133,8 @@ type Row struct {
 type Headers map[string]Row
 
 type CreateRequest struct {
-	Headers Headers `json:"HEADINGS"`
-	Payload string `json:"PAYLOAD"`
-	Table    string `json:"TABLE"`
-	Database string `json:"DATABASE"`
+	Headers  Headers `json:"HEADINGS"`
+	Payload  string  `json:"PAYLOAD"`
+	Table    string  `json:"TABLE"`
+	Database string  `json:"DATABASE"`
 }

@@ -241,18 +241,18 @@ class Database(object):
         :returns: None
         """
 
-        json_payload = {
-            "Database": self.using_db,
-            "Table": self.table,
-            "Column": self.headings[ycol],
-            "Data": self.parent.gui.tableWidget.item(xrow, ycol).text(),
-            "ID": self.parent.gui.tableWidget.item(xrow, 0).text()
-        }
+        json_payload = simplejson.dumps({
+            "DATABASE": unicode(self.using_db),
+            "TABLE": unicode(self.table),
+            "COLUMN": unicode(self.headings[ycol]),
+            "DATA": unicode(self.parent.gui.tableWidget.item(xrow, ycol).text()),
+            "ID": unicode(self.parent.gui.tableWidget.item(xrow, 0).text())
+        })
 
         http_post = urllib2.Request(
             # string interpolation
             self.update_url,
-            urllib.urlencode(json_payload)
+            json_payload
         )
 
         json = simplejson.loads(urllib2.urlopen(http_post).read())
