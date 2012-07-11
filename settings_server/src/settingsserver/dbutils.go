@@ -216,7 +216,7 @@ func GetMetadata(dbreq *DatabaseRequest) (Metadata, error) {
 	if err != nil {
 		return nil, err
 	}
-	resp, err := stmt.Run(dbreq.Table)
+	resp, err := stmt.Run(fmt.Sprintf("%s.%s", dbreq.Database, dbreq.Table))
 	if err != nil {
 		return nil, err
 	}
@@ -274,7 +274,10 @@ func GetHeadings(dbreq *DatabaseRequest) ([]string, error) {
 
 	headers := []string{}
 	for _, row := range rows {
-		headers = append(headers, string(row[0].([]byte)))
+		data, ok := row[0].([]byte)
+		if ok {
+			headers = append(headers, string(data))
+		}
 	}
 	return headers, nil
 }

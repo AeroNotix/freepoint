@@ -87,6 +87,7 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 
 	// Marshal our metadata into a struct and encode.
 	jsonMap := ss.NewJSONMessage(metadata)
+
 	rows, err := ss.GetRows(dbreq)
 	if err != nil {
 		return err
@@ -105,18 +106,17 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 	for _, row := range rows {
 		var newrow = [][]byte{}
 		for _, item := range row {
-			newrow = append(newrow, item.([]byte))
+			data, ok := item.([]byte)
+			if ok {
+				newrow = append(newrow, data)
+			}
 		}
 		jsonMap.AddRow(newrow)
 	}
 
 	// Send the JSON to the client.
 	err = json.NewEncoder(w).Encode(jsonMap)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // This is a URL attached to ^login/?$ because then we can
