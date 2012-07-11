@@ -57,14 +57,14 @@ class Login(QtGui.QDialog):
         """
 
         # construct the user/pass from the form
-        json_payload = {
-            'User': self.gui.txt_username.text(),
-            'Password': self.gui.txt_password.text(),
-            }
+        json_payload = simplejson.dumps({
+            'USER': unicode(self.gui.txt_username.text()),
+            'PASSWORD': unicode(self.gui.txt_password.text()),
+            })
         # ping the server
         http_post = urllib2.Request(
             self.login_url,
-            urllib.urlencode(json_payload)
+            json_payload
             )
         # no error checking because if the json is malformed
         # we're fucked anyway.

@@ -126,6 +126,7 @@ class Database(object):
         self.login_url = self.base_url + "login/"
         self.update_url = self.base_url + "update/"
         self.insert_url = self.base_url + "insert/"
+
         self.parent = parent
         if not self.parent:
             self.error = lambda s:s
@@ -134,6 +135,9 @@ class Database(object):
 
     def connect(self):
         """
+
+        TODO: Update this docstring
+
         Creates the database connection. This needs to be overloaded when
         moving to use the client/server model. Currently we're connecting
         directly to the MySQL database.
@@ -145,13 +149,13 @@ class Database(object):
         """
 
         try:
-            json_payload = {
-                'User': self.user,
-                'Password': self.password,
-            }
+            json_payload = simplejson.dumps({
+                'USER': unicode(self.user),
+                'PASSWORD': unicode(self.password),
+            })
             http_post = urllib2.Request(
                 self.login_url,
-                urllib.urlencode(json_payload)
+                json_payload
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError:
@@ -190,16 +194,17 @@ class Database(object):
         """
 
         try:
-            json_payload = {
-                'User': self.user,
-                'Password': self.password,
-                "Database": self.using_db,
-                "Table": self.table
-            }
+            json_payload = simplejson.dumps({
+                'User': unicode(self.user),
+                'Password': unicode(self.password),
+                "Database": unicode(self.using_db),
+                "Table": unicode(self.table)
+            })
+
             http_post = urllib2.Request(
                 # string interpolation
                 self.param_url % (self.using_db, self.table),
-                urllib.urlencode(json_payload)
+                json_payload
             )
             json = simplejson.loads(urllib2.urlopen(http_post).read())
         except IOError:
@@ -232,14 +237,12 @@ class Database(object):
         """
         When a cell is edited the data is written back into the database.
 
-        This is highly alpha code.
-
         :param xrow: :class:`Int` which is passed directly from the signal
         :param ycol: :class:`Int` which is passed directly from the signal
         :returns: None
         """
 
-        json = {
+        json_payload = {
             "Database": self.using_db,
             "Table": self.table,
             "Column": self.headings[ycol],
@@ -250,7 +253,7 @@ class Database(object):
         http_post = urllib2.Request(
             # string interpolation
             self.update_url,
-            urllib.urlencode(json)
+            urllib.urlencode(json_payload)
         )
 
         json = simplejson.loads(urllib2.urlopen(http_post).read())
@@ -267,7 +270,7 @@ class Database(object):
         Inserts a new row into the table
         """
 
-        json = simplejson.dumps({
+        json_payload = simplejson.dumps({
                 "DATA":json,
                 "TABLE": self.table,
                 "DATABASE": self.using_db
@@ -275,7 +278,7 @@ class Database(object):
         http_post = urllib2.Request(
             # string interpolation
             self.insert_url,
-            json
+            json_payload
             )
 
         json = simplejson.loads(urllib2.urlopen(http_post).read())
