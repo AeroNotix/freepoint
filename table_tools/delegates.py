@@ -150,7 +150,6 @@ class Delegator(QtGui.QItemDelegate):
         super(Delegator, self).__init__(parent)
         self.parent = parent
         self.metadata = metadata
-        print metadata
         self.delegates = {}
         self.headers = headers
         self.parseMetadata()
