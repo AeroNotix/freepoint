@@ -25,15 +25,15 @@ type User struct {
 
 // Holds database request data.
 type DatabaseRequest struct {
-	Table    string   `json:"TABLE"`
-	Database string   `json:"DATABASE"`
+	Table    string `json:"TABLE"`
+	Database string `json:"DATABASE"`
 }
 
 // When inserting data we have a very strong idea about what the data
 // should look like. Therefore we put the data into a struct which
 // has very specific fields.
 type InsertData struct {
-	Data     []string `json:"DATA"`
+	Data []string `json:"DATA"`
 	DatabaseRequest
 }
 

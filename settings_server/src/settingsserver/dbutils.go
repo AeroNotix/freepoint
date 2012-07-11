@@ -89,8 +89,6 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 		sqlstr += ",\n"
 	}
 	sqlstr += "PRIMARY KEY (id)\n);"
-
-	fmt.Println(sqlstr)
 	create := AsyncCreate{
 		database_name,
 		table_name,
@@ -391,10 +389,10 @@ func InsertRow(job AsyncInsert) error {
 		if val == "" {
 			job.Data[idx] = "NULL"
 		} else {
-			job.Data[idx] = `"`+val+`"`
+			job.Data[idx] = `"` + val + `"`
 		}
 	}
-		sqlStr := fmt.Sprintf("INSERT INTO `%s` VALUES(NULL, %s)",
+	sqlStr := fmt.Sprintf("INSERT INTO `%s` VALUES(NULL, %s)",
 		job.Table, strings.Join(job.Data[1:len(job.Data)], ", "),
 	)
 

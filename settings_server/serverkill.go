@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"fmt"
+	"net/http"
 )
 
 func main() {
@@ -16,6 +16,6 @@ func main() {
 	}
 	for x := 0; x < 50000; x++ {
 		fmt.Println(x)
-		<- ch
+		<-ch
 	}
 }

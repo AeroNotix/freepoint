@@ -15,7 +15,6 @@ import (
 	"time"
 )
 
-
 // createTable serves as the back-end for creating new tables. The request holds the
 // form data which is needed to create an SQL String which is then executed and the
 // error status returned to the client.
@@ -66,7 +65,8 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 	json_dec := json.NewDecoder(req.Body)
 	dbreq := new(ss.DatabaseRequest)
 	err := json_dec.Decode(&dbreq)
-	if err != nil {x
+	if err != nil {
+		x
 		ss.SendJSON(w, false)
 		log.Println(err)
 		return err
