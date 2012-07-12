@@ -1,6 +1,10 @@
-"""
-intention is to make a generic GUI for interacting with the SettingsServer MySQL access layer
-"""
+'''
+Main entry point for the program.
+
+Instantiates all the required GUI classes and enters the
+event loop.
+'''
+
 
 import os
 import sys
@@ -15,7 +19,9 @@ from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
 from qtsqlviewer.ui.connection_dialog import ConnectionDialog
 from qtsqlviewer.ui.login import Login
 
-from qtsqlviewer.table_tools.tools import table_wrapper, Database, create_action
+from qtsqlviewer.table_tools.tools import (
+    table_wrapper, Database, create_action
+)
 from qtsqlviewer.table_tools.argument import Argument
 from qtsqlviewer.table_tools.delegates import Delegator
 
@@ -97,15 +103,19 @@ class MainGui(QtGui.QMainWindow):
             except ConfigParser.NoSectionError as error:
                 # if the file exists but it doesn't have the required section
                 # then something is wrong. So we error.
-                QtGui.QMessageBox.warning(self,
-                                          "Error",
-                                          "Config file error: %s" % str(error),
-                                          QtGui.QMessageBox.Ok)
+                QtGui.QMessageBox.warning(
+                    self,
+                    "Error",
+                    "Config file error: %s" % str(error),
+                    QtGui.QMessageBox.Ok
+                )
             except IndexError:
-                QtGui.QMessageBox.warning(self,
-                                          "Error",
-                                          "Missing configuration: Please create.",
-                                          QtGui.QMessageBox.Ok)
+                QtGui.QMessageBox.warning(
+                    self,
+                    "Error",
+                    "Missing configuration: Please create.",
+                    QtGui.QMessageBox.Ok
+                )
                 self.openConnectionDialog()
         else:
             # else allow the user to enter the details via
@@ -159,11 +169,10 @@ class MainGui(QtGui.QMainWindow):
         queryset = self.database.query()
         self.headings = self.database.get_headings()
 
-
-        self.delegator = Delegator(self.headings, self.database.metadata, parent=self)
-        self.gui.tableWidget.setItemDelegate(
-            self.delegator
-            )
+        self.delegator = Delegator(
+            self.headings, self.database.metadata, parent=self
+        )
+        self.gui.tableWidget.setItemDelegate(self.delegator)
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(self.headings))
         # set the labels to the column names
@@ -194,6 +203,16 @@ class MainGui(QtGui.QMainWindow):
         self.database.changeTable(xrow, ycol)
 
     def insertData(self, json):
+        """
+        Pass through method which calls the underlying database call.
+
+        The reason for this is that, centrally, all class references have explicit
+        knowledge of the parent (QMainWindow) but they shouldn't/don't have any
+        idea of the classes that the MainWindow also references. It allows us
+        to make the MainWindow control/marshal access and change the API by pushing
+        the calls through a central class rather than everything calling methods
+        directly.
+        """
         self.database.insertData(json)
 
     def storeCell(self, xrow, ycol):
@@ -215,7 +234,9 @@ class MainGui(QtGui.QMainWindow):
         :param ycol: :class:`Int`
         :returns: None
         """
-        self.gui.tableWidget.setItem(xrow, ycol, QtGui.QTableWidgetItem(self.cell))
+        self.gui.tableWidget.setItem(
+            xrow, ycol, QtGui.QTableWidgetItem(self.cell)
+        )
 
     def clear_table(self):
         """
@@ -303,7 +324,7 @@ class MainGui(QtGui.QMainWindow):
                 self.gui.menuSelect_Table.removeAction(action)
             self.actionList = []
 
-        for idx, section in enumerate(self.config.sections()):
+        for _, section in enumerate(self.config.sections()):
             database = self.config.get(section, "database")
             table = self.config.get(section, "table")
 
@@ -357,6 +378,9 @@ class MainGui(QtGui.QMainWindow):
         return
 
     def createTableDialog(self):
+        """
+        Creates an instance of the create table dialog and shows it
+        """
         create_dlg = CreateNewTable(self)
         create_dlg.exec_()
         return
@@ -422,20 +446,29 @@ class MainGui(QtGui.QMainWindow):
             )
         create_action(
             self, "Export as CSV", fname=":/document-save-as",
-        slot=self.export_as_csv
+            slot=self.export_as_csv
             )
         create_action(
-            self, "Create new table", fname=":/bookmark-new", slot=self.createTableDialog
+            self, "Create new table", fname=":/bookmark-new",
+            slot=self.createTableDialog
             )
         create_action(self, "Quit", fname=":/system-log-out", slot=sys.exit)
 
-    def keyPressEvent(self, e):
+    def keyPressEvent(self, event):
+        """
+        We overload this method so that we may assign methods to keypresses
+        easily.
+
+        :param event: The event that bubbles through to this method.
+        :note: Do not call this method directly. Instead, allow the UI to
+               pass along calls to it.
+        """
         actions = {
             QtCore.Qt.Key_F5: self.populate_table,
             QtCore.Qt.Key_Insert: self.insert_row
         }
 
-        action = actions.get(e.key())
+        action = actions.get(event.key())
         if action:
             action()
 

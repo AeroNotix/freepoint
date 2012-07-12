@@ -1,6 +1,6 @@
 """
-This module defines several classes which provide delegates to editing widgets for
-different kinds of data.
+This module defines several classes which provide delegates to editing
+widgets for different kinds of data.
 """
 
 from PyQt4 import QtGui
@@ -11,27 +11,26 @@ class ComboDelegate(QtGui.QItemDelegate):
     """
     Base class for all delegates which are combo boxes.
 
-    The only method which is different is the constructor so the subclasses
-    will only override that method and the base class' methods will suffice
-    just fine for everything else.
+    The only method which is different is the constructor so the
+    subclasses will only override that method and the base class'
+    methods will suffice just fine for everything else.
     """
 
     def __init__(self, parent=None):
         """
-        Our base class methods use a reference to self.data for their items so
-        we give ourselves something to use. Subclasses will override this
-        anyway.
+        Our base class methods use a reference to self.data for their
+        items so we give ourselves something to use. Subclasses will
+        override this anyway.
         """
         super(ComboDelegate, self).__init__(parent)
 
-    def createEditor(self, parent, option, index):
+    def createEditor(self, parent, _, _):
         """
-        Returns an instance of the delegated widget with which to interact
-        with the model's data. This is a ComboDelegate so we return a
-        ComboBox. In our initializer we took the data to use for the items so
-        we attach those items to the widget.
+        Returns an instance of the delegated widget with which to
+        interact with the model's data. This is a ComboDelegate so
+        we return a ComboBox. In our initializer we took the data
+        to use for the items so we attach those items to the widget.
         """
-
         choiceEdit = QtGui.QComboBox(parent)
         choiceEdit.addItems(self.data)
         return choiceEdit
@@ -41,14 +40,14 @@ class ComboDelegate(QtGui.QItemDelegate):
         Method to insert the correct text from the choice box into the
         tableWidget's viewport.
         """
-
         model.setData(index, editor.currentText())
 
 
 class BooleanDelegate(ComboDelegate):
     """
-    This class throws a value error if len(data) != 2. This is to signify that
-    the delegate returned by this is a boolean or binary switch.
+    This class throws a value error if len(data) != 2. This is to
+    signify that the delegate returned by this is a boolean or binary
+    switch.
     """
 
     def __init__(self, data, parent=None):
@@ -73,17 +72,18 @@ class TimeDelegate(QtGui.QItemDelegate):
     """
     Time delegate.
 
-    This class provides the editor with a subclass of a spinbox which is used for editing time.
+    This class provides the editor with a subclass of a spinbox which is used
+    for editing time.
     """
 
     def __init__(self, parent=None):
         """
-        We only need to override the createEditor and setModelData so we initialize the base
-        class explicitly.
+        We only need to override the createEditor and setModelData so we
+        initialize the base class explicitly.
         """
         super(TimeDelegate, self).__init__(parent)
 
-    def createEditor(self, parent, option, index):
+    def createEditor(self, parent, _, _):
         """
         Return a QTimeEdit with the correct parent widget.
         """
@@ -91,8 +91,8 @@ class TimeDelegate(QtGui.QItemDelegate):
 
     def setModelData(self, editor, model, index):
         """
-        The QTimeEdit provides .time() as a means to retrieve the QString representation of the
-        data. We use that to set the model's data to
+        The QTimeEdit provides .time() as a means to retrieve the QString
+        representation of the data. We use that to set the model's data to
         """
         model.setData(index, editor.time())
 
@@ -101,7 +101,8 @@ class DateDelegate(QtGui.QItemDelegate):
     """
     Date delegate.
 
-    This class provides the editor with a subclass of a spinbox which is used for editing dates.
+    This class provides the editor with a subclass of a spinbox which is
+    used for editing dates.
     """
 
     def __init__(self, parent=None):
@@ -111,7 +112,7 @@ class DateDelegate(QtGui.QItemDelegate):
         """
         super(DateDelegate, self).__init__(parent)
 
-    def createEditor(self, parent, option, index):
+    def createEditor(self, parent, _, _):
         """
         Return a QDateEdit with the correct parent widget.
         """
@@ -125,6 +126,9 @@ class DateDelegate(QtGui.QItemDelegate):
         model.setData(index, editor.date())
 
 
+# Group QItemDelegates here so we can easily .get() them.
+# Use a name which will correspond to the TYPE name placed
+# in the database metadata.
 DELEGATES = {
     "BOOL": BooleanDelegate,
     "CHOICE": ChoiceDelegate,
@@ -218,8 +222,14 @@ class Delegator(QtGui.QItemDelegate):
         delegator = self
         
         class Klass(QtGui.QDialog):
-
+            """
+            Dynamically created class which creates the AddRow dialog.
+            """
             def __init__(self, parent):
+                """
+                This class is dynamically generated at runtime based upon
+                the metadata in the class.
+                """
                 QtGui.QDialog.__init__(self, parent)
                 self.headers = headers
                 self.parent = parent
@@ -230,12 +240,21 @@ class Delegator(QtGui.QItemDelegate):
                 self.gui.tableWidget.setItemDelegate(delegator)
                 self.gui.tableWidget.insertRow(0)
                 for i in range(len(self.headers)):
-                    self.gui.tableWidget.setItem(0, i, QtGui.QTableWidgetItem(""))
+                    self.gui.tableWidget.setItem(
+                        0, i, QtGui.QTableWidgetItem("")
+                    )
 
             def accept(self):
+                """
+                When accept is fired we iterate through all the headers, taking the
+                column name and appending the data in the cell which corresponds
+                to the index of the header.
+                """
                 data = ["NULL"]
-                for idx, heading in enumerate(self.headers[1:]):
-                    data.append(unicode(self.gui.tableWidget.item(0, idx+1).text()))
+                for idx, _ in enumerate(self.headers[1:]):
+                    data.append(
+                        unicode(self.gui.tableWidget.item(0, idx+1).text())
+                    )
                 self.parent.insertData(data)
                 QtGui.QDialog.accept(self)
 
