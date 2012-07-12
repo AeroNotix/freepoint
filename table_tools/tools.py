@@ -63,6 +63,8 @@ def table_wrapper(func):
     @functools.wraps(func)
     def inner(obj, *args, **kwargs):
 
+        # Disable sorting
+        obj.gui.tableWidget.setSortingEnabled(False)
         # Disable signals
         obj.disconnect(obj.gui.tableWidget,
                        QtCore.SIGNAL("cellChanged(int, int)"),
@@ -77,6 +79,8 @@ def table_wrapper(func):
         # Call the original function
         func(obj, *args, **kwargs)
 
+        # Enable sorting
+        obj.gui.tableWidget.setSortingEnabled(True)
         # Enable signals
         obj.connect(obj.gui.tableWidget,
                        QtCore.SIGNAL("cellChanged(int, int)"),
@@ -200,7 +204,6 @@ class Database(object):
                 "Database": unicode(self.using_db),
                 "Table": unicode(self.table)
             })
-
             http_post = urllib2.Request(
                 self.param_url,
                 json_payload
@@ -212,12 +215,14 @@ class Database(object):
         except JSONDecodeError:
             self.error("The information from the server was invalid.")
             return []
+
         # Get the headings from the returned JSON and send an error message
         # to the user if we found nothing.
         self.headings = json.get("Headings")
         if not self.headings:
             self.error("The database did not return the correct data.")
             return []
+
         self.metadata = json.get("Metadata", False)
         rows = json.get("Rows", [])
         if not rows:
