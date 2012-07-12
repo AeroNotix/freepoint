@@ -24,7 +24,7 @@ class ComboDelegate(QtGui.QItemDelegate):
         """
         super(ComboDelegate, self).__init__(parent)
 
-    def createEditor(self, parent, _, _):
+    def createEditor(self, parent, _, __):
         """
         Returns an instance of the delegated widget with which to
         interact with the model's data. This is a ComboDelegate so
@@ -83,7 +83,7 @@ class TimeDelegate(QtGui.QItemDelegate):
         """
         super(TimeDelegate, self).__init__(parent)
 
-    def createEditor(self, parent, _, _):
+    def createEditor(self, parent, _, __):
         """
         Return a QTimeEdit with the correct parent widget.
         """
@@ -112,7 +112,7 @@ class DateDelegate(QtGui.QItemDelegate):
         """
         super(DateDelegate, self).__init__(parent)
 
-    def createEditor(self, parent, _, _):
+    def createEditor(self, parent, _, __):
         """
         Return a QDateEdit with the correct parent widget.
         """
