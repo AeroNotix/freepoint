@@ -398,7 +398,7 @@ class MainGui(QtGui.QMainWindow):
         Save As.. dialog
         """
         savedialog = QtGui.QFileDialog()
-        savedialog.setAcceptMode(1)      # Sets it to a save dialog
+        savedialog.setAcceptMode(1)               # Sets it to a save dialog
         savedialog.setDefaultSuffix("csv")
         self.connect(
             savedialog, QtCore.SIGNAL("fileSelected(QString)"), self.write_csv

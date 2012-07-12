@@ -1,12 +1,14 @@
 """
-Module which brings together the UI widgets and places them onto a class which allows us
-to easily instantiate the login form from another dialog/widget/window and authenticate
-from there without caring *how* the authentication happens.
+Module which brings together the UI widgets and places them onto a class
+which allows us to easily instantiate the login form from another dialog
+/widget/window and authenticate from there without caring *how* the
+authentication happens.
 """
 
 import sys
-import urllib2, urllib
+import urllib2
 import simplejson
+
 from PyQt4 import QtGui
 from qtsqlviewer.ui.login_UI import Ui_frm_login
 
