@@ -411,14 +411,15 @@ func InsertRow(job AsyncInsert) error {
 // as in the connection_details module but really it doesn't matter
 // since it's a CREATE DATABASE query.
 func ExecuteCreate(querystr string) error {
+
 	db, err := CreateConnection(connection_details.SettingsDatabase)
-	defer db.Close()
 	if err != nil {
 		return err
 	}
-
-	_, err = db.Start(querystr)
-	return err
+	defer db.Close()
+	_, _, err = db.Query(querystr)
+	fmt.Println(querystr)
+	return nil
 }
 
 /*
