@@ -4,14 +4,15 @@ databases and Qt applications
 """
 
 import functools
-import urllib2, urllib
+import urllib2
 
 import simplejson
 from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore, QtGui
 
 
-def create_action(obj, text, fname=None,  slot=None, shortcut=None,
+def create_action(obj,
+                  text, fname=None,  slot=None, shortcut=None,
                   tip=None, signal="triggered()"):
     """
     Helper method to add in buttons to a toolbar
@@ -62,7 +63,16 @@ def table_wrapper(func):
 
     @functools.wraps(func)
     def inner(obj, *args, **kwargs):
+        """
+        Outline of pre/post code
 
+        * Enabled/Disables sorting
+        * Disconnects/Re-connects:
+              cellChanged(int, int)
+              cellDoubleClicked(int, int)
+              cellEntered(int, int)
+        """
+        
         # Disable sorting
         obj.gui.tableWidget.setSortingEnabled(False)
         # Disable signals
@@ -139,15 +149,10 @@ class Database(object):
 
     def connect(self):
         """
-
-        TODO: Update this docstring
-
-        Creates the database connection. This needs to be overloaded when
-        moving to use the client/server model. Currently we're connecting
-        directly to the MySQL database.
-
-        We're experimentally checking in to the login server to check if
-        the user details authenticate.
+        connect sends the USER/PASSWORD combination up to the server to
+        be authenticated by that. The server will return some JSON which
+        indicated success or failure. We parse out the response and use
+        the raw boolean value as the return value.
 
         :returns: :class:`Bool` showing whether the connect succeeded
         """
@@ -250,7 +255,9 @@ class Database(object):
             "DATABASE": unicode(self.using_db),
             "TABLE": unicode(self.table),
             "COLUMN": unicode(self.headings[ycol]),
-            "DATA": unicode(self.parent.gui.tableWidget.item(xrow, ycol).text()),
+            "DATA": unicode(
+                    self.parent.gui.tableWidget.item(xrow, ycol).text()
+            ),
             "ID": unicode(self.parent.gui.tableWidget.item(xrow, 0).text())
         })
 
