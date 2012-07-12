@@ -201,6 +201,12 @@ class Delegator(QtGui.QItemDelegate):
                 continue
 
             row_type = row_data["TYPE"]
+
+            self.validators[item] = {
+                "unique": row_data["UNIQUE"],
+                "null": row_data["NULL"]
+                }
+
             dtype = DELEGATES.get(row_type)
             if not dtype:
                 continue
@@ -212,10 +218,6 @@ class Delegator(QtGui.QItemDelegate):
                 delinst = dtype()
                 delinst.setParent(self)
                 self.delegates[item] = delinst
-            self.validators[item] = {
-                "unique": row_data["UNIQUE"],
-                "null": row_data["NULL"]
-                }
 
     def createUIForm(self, parent=None):
         """
@@ -284,6 +286,7 @@ class Delegator(QtGui.QItemDelegate):
         prefix so the map names need to only supply the suffix in the
         validator map.
         """
+        print self.validators
         if not self.metadata:
             return True
         try:
@@ -306,7 +309,9 @@ class Delegator(QtGui.QItemDelegate):
         """
         collist = []
         for idx in range(self.parent.gui.tableWidget.rowCount()):
-            collist.append(self.parent.gui.tableWidget.itemAt(idx, ycol))
+            collist.append(
+                self.parent.gui.tableWidget.item(idx, ycol).text()
+                )
         colset = set(collist)
         return len(collist) == len(colset)
 
@@ -315,4 +320,4 @@ class Delegator(QtGui.QItemDelegate):
         validator_null checks to see if the value in the cell has been set to a
         null value. This will simply be checking if len(cell.text()) == 0.
         """
-        return bool(len(self.parent.gui.tableWidget.itemAt(idx, ycol).text()))
+        return bool(len(self.parent.gui.tableWidget.item(xrow, ycol).text()))
