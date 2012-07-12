@@ -192,6 +192,7 @@ class MainGui(QtGui.QMainWindow):
         self.database.close()
         self.populated = True
 
+    @table_wrapper
     def changeTable(self, xrow, ycol):
         """
         When data in the form is changed we contact the server to change the data.
@@ -200,7 +201,11 @@ class MainGui(QtGui.QMainWindow):
         :param ycol: :class:`Int`
         :returns: None
         """
-        self.database.changeTable(xrow, ycol)
+        if self.delegator.apply_validators(xrow, ycol):
+            self.database.changeTable(xrow, ycol)
+        else:
+            self.revertCellData(xrow, ycol)
+            self.show_error("Data failed to validate.")
 
     def insertData(self, json):
         """

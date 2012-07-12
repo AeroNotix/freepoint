@@ -155,6 +155,7 @@ class Delegator(QtGui.QItemDelegate):
         self.parent = parent
         self.metadata = metadata
         self.delegates = {}
+        self.validators = {}
         self.headers = headers
         self.parseMetadata()
 
@@ -211,6 +212,10 @@ class Delegator(QtGui.QItemDelegate):
                 delinst = dtype()
                 delinst.setParent(self)
                 self.delegates[item] = delinst
+            self.validators[item] = {
+                "unique": row_data["UNIQUE"],
+                "null": row_data["NULL"]
+                }
 
     def createUIForm(self, parent=None):
         """
@@ -260,3 +265,54 @@ class Delegator(QtGui.QItemDelegate):
 
         k = Klass(parent)
         k.exec_()
+
+    def apply_validators(self, xrow, ycol):
+        """
+        Apply validators iterates through the validation dict associated
+        with the ycol name. This holds Key:Value mappings of validator
+        function names.
+
+        We iterate through that collection, checking if the value is true
+        if so, we call the validator to see if it returns True/False. If
+        it returns False, it has failed validation and the data will not
+        be sent to the server.
+
+        Validation functions should be name in the form:
+            "validator_{{ name }}"
+
+        When looking up these validators we use getattr to fill in the
+        prefix so the map names need to only supply the suffix in the
+        validator map.
+        """
+        if not self.metadata:
+            return True
+        try:
+            colname = self.validators[self.headers[ycol]]
+        except KeyError:
+            return True
+        for validator, active in colname.items():
+            if not active:
+                continue
+            if not getattr(self, "validator_%s" % validator)(xrow, ycol):
+                return False
+        return True
+
+    def validator_unique(self, xrow, ycol):
+        """
+        validator_unique checks to see if all the values in a column are unique.
+
+        If data has been set programmatically, i.e., outside of the validation
+        routine then this function will also include those values in the checks.
+        """
+        collist = []
+        for idx in range(self.parent.gui.tableWidget.rowCount()):
+            collist.append(self.parent.gui.tableWidget.itemAt(idx, ycol))
+        colset = set(collist)
+        return len(collist) == len(colset)
+
+    def validator_null(self, xrow, ycol):
+        """
+        validator_null checks to see if the value in the cell has been set to a
+        null value. This will simply be checking if len(cell.text()) == 0.
+        """
+        return bool(len(self.parent.gui.tableWidget.itemAt(idx, ycol).text()))
