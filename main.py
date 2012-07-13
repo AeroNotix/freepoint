@@ -460,6 +460,8 @@ class MainGui(QtGui.QMainWindow):
             self, "Create new table", fname=":/bookmark-new",
             slot=self.createTableDialog
             )
+        create_action(self, "Prev Table", fname=":/go-previous", slot=self.previous)
+        create_action(self, "Next Table", fname=":/go-next", slot=self.next)
         create_action(self, "Quit", fname=":/system-log-out", slot=sys.exit)
 
     def keyPressEvent(self, event):
@@ -518,6 +520,23 @@ class MainGui(QtGui.QMainWindow):
         self.gui.tableWidget.blockSignals(False)
         self.gui.tableWidget.setSortingEnabled(True)
 
+    def next(self):
+        """
+        Advances to the next connection
+        """
+        n = self.current_table.split('-')
+        next_connection = n[0]+'-'+str(int(n[1])+1)
+        if self.config.has_section(next_connection):
+            self.changeConnection(next_connection)
+
+    def previous(self):
+        """
+        Selects the previous connection
+        """
+        p = self.current_table.split('-')
+        prev_connection = p[0]+'-'+str(int(p[1])-1)
+        if self.config.has_section(prev_connection):
+            self.changeConnection(prev_connection)
 
 class RowInserter(QtCore.QThread):
     """
@@ -588,9 +607,10 @@ class TableUpdater(QtCore.QThread):
                 )
                 APPLICATION.processEvents()
 
+
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)
     MAINWINDOW = MainGui()
     MAINWINDOW.setStatusBar(MAINWINDOW.gui.statusbar)
-    MAINWINDOW.show()
+    MAINWINDOW.showMaximized()
     sys.exit(APPLICATION.exec_())
