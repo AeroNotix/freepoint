@@ -72,10 +72,9 @@ def table_wrapper(func):
               cellDoubleClicked(int, int)
               cellEntered(int, int)
         """
-        
-        # Disable sorting
+
+        # Disable sorting/signals
         obj.gui.tableWidget.setSortingEnabled(False)
-        # Disable signals
         obj.disconnect(obj.gui.tableWidget,
                        QtCore.SIGNAL("cellChanged(int, int)"),
                        obj.changeTable)
@@ -89,18 +88,18 @@ def table_wrapper(func):
         # Call the original function
         func(obj, *args, **kwargs)
 
-        # Enable sorting
+        # Enable sorting/signals
         obj.gui.tableWidget.setSortingEnabled(True)
-        # Enable signals
         obj.connect(obj.gui.tableWidget,
-                       QtCore.SIGNAL("cellChanged(int, int)"),
-                       obj.changeTable)
+                    QtCore.SIGNAL("cellChanged(int, int)"),
+                    obj.changeTable)
         obj.connect(obj.gui.tableWidget,
-                       QtCore.SIGNAL("cellDoubleClicked(int, int)"),
-                       obj.storeCell)
+                    QtCore.SIGNAL("cellDoubleClicked(int, int)"),
+                    obj.storeCell)
         obj.connect(obj.gui.tableWidget,
-                       QtCore.SIGNAL("cellEntered(int, int)"),
-                       obj.storeCell)
+                    QtCore.SIGNAL("cellEntered(int, int)"),
+                    obj.storeCell)
+
 
     return inner
 

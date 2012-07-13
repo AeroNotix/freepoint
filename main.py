@@ -5,7 +5,6 @@ Instantiates all the required GUI classes and enters the
 event loop.
 '''
 
-
 import os
 import sys
 import argparse
@@ -121,11 +120,11 @@ class MainGui(QtGui.QMainWindow):
             # else allow the user to enter the details via
             # the gui
             self.openConnectionDialog()
+
         self.addMenuActions()
         self.parse_config()
         self.populate_toolbar()
 
-    @table_wrapper
     def populate_table(self):
         """
         Opens and displays the data taken from the self.database.query()
@@ -159,40 +158,45 @@ class MainGui(QtGui.QMainWindow):
         the GUI and the database, i.e. argument and return types  is not violated.
         """
 
-        self.clear_table()
-
         # We can't continue if we cannot make a connection to the database.
         if not self.database.connect():
             return
 
         # get the headings so we can set up the table
-        queryset = self.database.query()
+        self.queryset = self.database.query()
         self.headings = self.database.get_headings()
 
         self.delegator = Delegator(
             self.headings, self.database.metadata, parent=self
         )
+
         self.gui.tableWidget.setItemDelegate(self.delegator)
         # set the column size according to the headings
         self.gui.tableWidget.setColumnCount(len(self.headings))
         # set the labels to the column names
         self.gui.tableWidget.setHorizontalHeaderLabels(self.headings)
 
-        # iterate through the query set and get the data into the table
-        for idx, data in enumerate(queryset):
-            if not data:
-                break
-
-            self.gui.tableWidget.insertRow(idx)
-            for num, info in enumerate(data):
-                self.gui.tableWidget.setItem(
-                    idx, num, QtGui.QTableWidgetItem(unicode(info))
-                )
+        self.clear_table()
+        self.rowInserter = RowInserter(len(self.queryset), self)
+        self.gui.tableWidget.blockSignals(True)
+        self.gui.tableWidget.setSortingEnabled(False)
+        self.connect(
+            self.rowInserter, QtCore.SIGNAL("finished()"), self.threaded_populate
+            )
+        self.rowInserter.start()
         # close the connection
         self.database.close()
         self.populated = True
 
-    @table_wrapper
+    def threaded_populate(self):
+
+        self.tableThreader = TableUpdater(self.queryset[:], self)
+        self.connect(
+            self.tableThreader, QtCore.SIGNAL("finished()"), self.reattach
+            )
+        self.tableThreader.start()
+
+
     def changeTable(self, xrow, ycol):
         """
         When data in the form is changed we contact the server to change the data.
@@ -201,11 +205,15 @@ class MainGui(QtGui.QMainWindow):
         :param ycol: :class:`Int`
         :returns: None
         """
-        if self.delegator.apply_validators(xrow, ycol):
+
+        validation_check = self.delegator.apply_validators(xrow, ycol)
+        if validation_check[0]:
             self.database.changeTable(xrow, ycol)
         else:
             self.revertCellData(xrow, ycol)
-            self.show_error("Data failed to validate.")
+            self.show_error(
+                "Data failed to validate. Failed on check: validation_%s." % validation_check[1]
+            )
 
     def insertData(self, json):
         """
@@ -253,10 +261,14 @@ class MainGui(QtGui.QMainWindow):
 
         :returns: :class:`None`
         """
-        if self.gui.tableWidget.rowCount():
-            row_count = self.gui.tableWidget.rowCount()
-            for row in range(row_count + 1):
-                self.gui.tableWidget.removeRow(row_count - row)
+
+        self.gui.tableWidget.setRowCount(0)
+        return
+        row_count = self.gui.tableWidget.rowCount()
+        if not row_count:
+            return
+        for row in range(row_count+1):
+            self.gui.tableWidget.removeRow(row_count - row)
         self.populated = False
 
     def show_message(self, message, time=1000):
@@ -476,6 +488,79 @@ class MainGui(QtGui.QMainWindow):
         action = actions.get(event.key())
         if action:
             action()
+
+    def reattach(self):
+        self.gui.tableWidget.blockSignals(False)
+        self.gui.tableWidget.setSortingEnabled(True)
+
+class RowInserter(QtCore.QThread):
+    """
+    RowInserter implements the threading associated with *creating* rows
+    and adding blank rows to the table. We do this since there is a mis-
+    match between adding rows in sub-threads and the way that they are
+    added to the table in the main thread.
+    """
+
+    def __init__(self, number, obj):
+        """
+        Creates an instance of RowInserter
+
+        number is the amount of rows to add to the QTableWidget and obj
+        is the instance of a QMainWindow of which the QTableWidget is
+        attached to.
+        """
+        super(RowInserter, self).__init__()
+        self.n = number
+        self.obj = obj
+
+    def run(self):
+        """
+        Never call this directly. Use the .start() method as that will
+        set up some Qt specific things and then call this method.
+
+        Task to run in a separate thread.
+        """
+        for row in range(self.n):
+            self.obj.gui.tableWidget.insertRow(row)
+            APPLICATION.processEvents()
+
+class TableUpdater(QtCore.QThread):
+    """
+    TableUpdater implements the threading of inserting QTableWidgetItems
+    into the table. We do this because if the data were to grow to extr-
+    emely large levels then having it single-threaded would mean that
+    the GUI event loop would block whilst the data was being inserted
+    into the table.
+    """
+    def __init__(self, queryset, obj):
+        """
+        Creates an instance of TableUpdater.
+
+        queryset is the actual data to be inserted into the table and obj
+        is the instance of QMainWindow which the QTableWidget is a child
+        of.
+        """
+        self.queryset = queryset
+        self.obj = obj
+        super(TableUpdater, self).__init__()
+
+    def run(self):
+        """
+        Never call this directly. Use the .start() method as that will
+        set up some Qt specific things and then call this method.
+
+        Task to run in a separate thread.
+        """
+
+        # iterate through the query set and get the data into the table
+        for idx, data in enumerate(self.queryset):
+            if not data:
+                break
+            for num, info in enumerate(data):
+                self.obj.gui.tableWidget.setItem(
+                    idx, num, QtGui.QTableWidgetItem(unicode(info))
+                )
+                APPLICATION.processEvents()
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)

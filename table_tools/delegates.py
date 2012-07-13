@@ -116,7 +116,9 @@ class DateDelegate(QtGui.QItemDelegate):
         """
         Return a QDateEdit with the correct parent widget.
         """
-        return QtGui.QDateEdit(parent)
+        d = QtGui.QDateEdit(parent)
+        d.setCalendarPopup(True)
+        return d
 
     def setModelData(self, editor, model, index):
         """
@@ -286,19 +288,18 @@ class Delegator(QtGui.QItemDelegate):
         prefix so the map names need to only supply the suffix in the
         validator map.
         """
-        print self.validators
         if not self.metadata:
-            return True
+            return True, ""
         try:
             colname = self.validators[self.headers[ycol]]
         except KeyError:
-            return True
+            return True, ""
         for validator, active in colname.items():
             if not active:
                 continue
             if not getattr(self, "validator_%s" % validator)(xrow, ycol):
-                return False
-        return True
+                return False, validator
+        return True, ""
 
     def validator_unique(self, xrow, ycol):
         """
