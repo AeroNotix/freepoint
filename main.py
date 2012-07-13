@@ -181,21 +181,12 @@ class MainGui(QtGui.QMainWindow):
         self.gui.tableWidget.blockSignals(True)
         self.gui.tableWidget.setSortingEnabled(False)
         self.connect(
-            self.rowInserter, QtCore.SIGNAL("finished()"), self.threaded_populate
+            self.rowInserter, QtCore.SIGNAL("finished()"), self.__threaded_populate
             )
         self.rowInserter.start()
         # close the connection
         self.database.close()
         self.populated = True
-
-    def threaded_populate(self):
-
-        self.tableThreader = TableUpdater(self.queryset[:], self)
-        self.connect(
-            self.tableThreader, QtCore.SIGNAL("finished()"), self.reattach
-            )
-        self.tableThreader.start()
-
 
     def changeTable(self, xrow, ycol):
         """
@@ -489,9 +480,44 @@ class MainGui(QtGui.QMainWindow):
         if action:
             action()
 
-    def reattach(self):
+    def __threaded_populate(self):
+        """
+        __threaded_populate is supposed to be a private method which will set
+        off inserting rows and adding data to the table in the proper order.
+
+        A typical run will look like this:
+
+        Main GUI Event Loop:
+                |
+                |
+                |
+                |>populate_table
+                        |
+                        |
+                        \_______>-----RowInserter()
+                        /                   |
+                       /                finished()
+                |<-----                     |>--TableInserter()
+                |                                     |
+                Return To GUI EventLoop           finished()
+                                                      |
+                                              End Worker Threads
+        """
+        self.tableThreader = TableUpdater(self.queryset[:], self)
+        self.connect(
+            self.tableThreader, QtCore.SIGNAL("finished()"), self.__reattach
+            )
+        self.tableThreader.start()
+
+    def __reattach(self):
+        """
+        __reattach is the callback attached to the RowInserter thread call
+        we use this to re-enable signals and allow for sorting on the table
+        data.
+        """
         self.gui.tableWidget.blockSignals(False)
         self.gui.tableWidget.setSortingEnabled(True)
+
 
 class RowInserter(QtCore.QThread):
     """
