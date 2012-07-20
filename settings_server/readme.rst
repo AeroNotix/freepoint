@@ -254,8 +254,8 @@ design is quite extensible providing that the implementation and execution of va
 is carried out.
 
 A reference metadata decoder and dynamic application of validation rules is supplied in the reference
-client implementation, please see the code in `qtsqlviewer/table_tools/tools.py` and 
-`qtsqlviewer/ui/createDatabase.py` for more details in how the validation rules are enforced and how
+client implementation, please see the code in qtsqlviewer/table_tools/tools.py and 
+qtsqlviewer/ui/createDatabase.py for more details in how the validation rules are enforced and how
 new validation functions can be written.
 
 Payload
