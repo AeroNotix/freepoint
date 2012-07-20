@@ -12,6 +12,7 @@ import (
 	"connection_details"
 	"encoding/json"
 	"fmt"
+	"log"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"net/http"
@@ -51,16 +52,17 @@ type AsyncInsert struct {
 // We do it like this so that the error channel doesn't have to
 // be create by the user and they just pass the request form to
 // this.
-func NewAsyncJob(req *http.Request) AsyncUpdate {
+	func NewAsyncJob(req *http.Request) (AsyncUpdate, error) {
 
 	json_dec := json.NewDecoder(req.Body)
 	updateRequest := new(AsyncUpdate)
 	err := json_dec.Decode(&updateRequest)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
+		return *updateRequest, err
 	}
 	updateRequest.ReturnPath = make(chan error)
-	return *updateRequest
+	return *updateRequest, err
 }
 
 // NewAsyncCreate returns a basic representation of what an
@@ -68,15 +70,16 @@ func NewAsyncJob(req *http.Request) AsyncUpdate {
 // function as to not enforce the user to see implementation
 // details about how the asynchronous nature of the update/create
 // is accomplished
-func NewAsyncCreate(req *http.Request) AsyncCreate {
+func NewAsyncCreate(req *http.Request) (out AsyncCreate, e error) {
 
 	createRequest := new(CreateRequest)
 	json_dec := json.NewDecoder(req.Body)
 	err := json_dec.Decode(&createRequest)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
+		return
 	}
-	fmt.Println(createRequest.Headers)
+
 	headings := make([]string, len(createRequest.Headers))
 	for rowname, rowdata := range createRequest.Headers {
 		headings[rowdata.Rownum] = rowname
@@ -90,25 +93,35 @@ func NewAsyncCreate(req *http.Request) AsyncCreate {
 	}
 	fmt.Println(sqlstr)
 	sqlstr += "PRIMARY KEY (id)\n);"
-	create := AsyncCreate{
+	out = AsyncCreate{
 		createRequest.Database,
 		createRequest.Table,
 		sqlstr,
 		createRequest.Payload,
 		make(chan error),
 	}
-	return create
+	return
 }
 
 // NewAsyncInsert allows users of the dbutils lib to recieve an
 // AsyncInsert instance with the correct data without having to
 // be totally aware of the implementation details.
-func NewAsyncInsert(indata InsertData) AsyncInsert {
-	insert := AsyncInsert{
-		indata,
+func NewAsyncInsert(req *http.Request) (insert AsyncInsert, err error) {
+
+	js := json.NewDecoder(req.Body)
+	indata := new(InsertData) // New causes mapper to be a pointer
+
+	err = js.Decode(&indata)
+	if err != nil {
+		log.Println(err)
+		return insert, err
+	}
+
+	insert = AsyncInsert{
+		*indata,
 		make(chan error),
 	}
-	return insert
+	return insert, err
 }
 
 // Function which takes a row of the incoming json data from a create request

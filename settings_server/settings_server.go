@@ -15,12 +15,41 @@ import (
 	"time"
 )
 
+// This is a handler which checks the POST for the data required to make
+// a change to the database.
+//
+// This function will have one of two possible side effects which are
+// writing a JSON response to the caller.
+func changeTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
+
+	job, err := ss.NewAsyncJob(req)
+	if err != nil {
+		ss.SendJSON(w, false)
+		return err
+	}
+
+	err = self.WriteEntry(job)
+	if err != nil {
+		ss.SendJSON(w, false)
+		return err
+	}
+
+	ss.SendJSON(w, true)
+	return nil
+}
+
 // createTable serves as the back-end for creating new tables. The request holds the
 // form data which is needed to create an SQL String which is then executed and the
 // error status returned to the client.
 func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
-	job := ss.NewAsyncCreate(req)
-	err := self.CreateEntry(job)
+
+	job, err := ss.NewAsyncCreate(req)
+	if err != nil {
+		ss.SendJSON(w, false)
+		return err
+	}
+
+	err = self.CreateEntry(job)
 	if err != nil {
 		ss.SendJSON(w, false)
 		return err
@@ -34,21 +63,19 @@ func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 // The request holds all the relevent data encoded into rows.
 func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
-	js := json.NewDecoder(req.Body)
-	mapper := new(ss.InsertData) // New causes mapper to be a pointer
-	err := js.Decode(&mapper)
+	job, err := ss.NewAsyncInsert(req)
 	if err != nil {
 		ss.SendJSON(w, false)
-		log.Println(err)
 		return err
 	}
-	job := ss.NewAsyncInsert(*mapper) // We need a dereferenced job here
+
 	err = self.InsertEntry(job)
 	if err != nil {
 		ss.SendJSON(w, false)
 		log.Println(err)
 		return err
 	}
+
 	ss.SendJSON(w, true)
 	return nil
 }
@@ -167,23 +194,6 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 		return success, ss.LoginError
 	}
 	return success, nil
-}
-
-// This is a handler which checks the POST for the data required to make
-// a change to the database.
-//
-// This function will have one of two possible side effects which are
-// writing a JSON response to the caller.
-func changeTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
-
-	job := ss.NewAsyncJob(req)
-	err := self.WriteEntry(job)
-	if err != nil {
-		ss.SendJSON(w, false)
-		return err
-	}
-	ss.SendJSON(w, true)
-	return nil
 }
 
 func main() {
