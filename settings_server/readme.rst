@@ -168,3 +168,100 @@ To which a typical response will be:
 
 Creating a table
 ----------------
+
+Creating a table is the about creating the necessary metadata for the database you are constructing.
+
+The JSON metadata serves as both the data which gets interpreted into raw SQL and what gets stored
+in the metadata table as what will get served when the relevant tables get accessed.
+
+Each table should be described with at least:
+
+.. code-block:: javascript
+
+    json = {
+        "DATABASE": <database>,
+        "TABLE": <table>,
+        "HEADINGS": <headings map>,
+        "PAYLOAD": <string encoded headings map>,
+    }
+
+This is the message which the server will receive which contains the needed fields to create a new
+table.
+
+Database
+~~~~~~~~
+
+Type: string. 
+
+This represents the logical database in which the table will be created under. If this table does not
+exist then an error will be returned and the table will not be created.
+
+Table
+~~~~~
+
+Type: string
+
+This represents the table name under which the new table will be referred to as. Usual table naming
+restrictions apply. See your database manual for allowed names. If this is null then the request will
+return an error.
+
+Headings
+~~~~~~~~
+
+Type: Map/Associative Array
+
+This represents the metadata associated with the new table and makes up the meat of this request. This
+call will contain at least:
+
+.. code-block:: javascript
+
+   HEADINGS = {
+       "RowA" : {
+          "RowNum": <col number, integer>  // Real programming languages implement Maps as hashtables
+          "RowData": {
+              "TYPE": <type name, string>,     // see supported types
+              "NULL": <allow NULL, bool>,
+              "UNIQUE": <is unique, bool>
+          }
+       }
+
+The above is what all request will have since it is the most basic data required to make a column. What
+makes the UNIQUE and NULL interesting is that they have validators both server-side (database level)
+and are implemented in the reference client as client-side validation rules. Below is a deeper
+explanation of this.
+
+Specific datatypes will have their own extra data associations and are required to insert them as so:
+
+.. code-block:: javascript
+
+    json = {
+        "DIRECTIVE": <type>
+    }
+
+    // in the case of a CHOICE column this is implemented as so:
+
+    {
+        "CHOICES": ["Choice1", "Choice2", "Choice3"]
+    }
+
+Herein lies an interesting property. Consider that we know that a column is a choice type, based on
+the metadata that we received saying as much. We can build in validation rules which are enforced at
+the client level. Rather than server-side (where they are also implemented). Since this will allow
+a rich set of data manipulation functions not normally allowed in direct database connections.
+Consider again that specifying extra data about what kinds of validation is required could be
+attached to the database metadata at database creation time in arbitrary json fields then the
+design is quite extensible providing that the implementation and execution of validation rules
+is carried out.
+
+A reference metadata decoder and dynamic application of validation rules is supplied in the reference
+client implementation, please see the code in `qtsqlviewer/table_tools/tools.py` and 
+`qtsqlviewer/ui/createDatabase.py` for more details in how the validation rules are enforced and how
+new validation functions can be written.
+
+Payload
+~~~~~~~
+
+Payload is a json string encoded version of the headings map. This may not be required in future
+versions as this could be implemented server-side. As for now just encode JSON into a string as you
+normally would prior to sending the JSON data and insert that into what will be the final JSON
+message.
