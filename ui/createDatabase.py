@@ -36,21 +36,14 @@ class CreateNewTable(QtGui.QDialog):
         if not self.check_row(rowname):
             return
 
-        self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num,
-            "ROWDATA": {
+        self.add_generic_data("txt_grp")
+        self.json_data["HEADINGS"][rowname]["ROWDATA"].update({
                 "TYPE": "VARCHAR",
-                "LEN" : int(self.gui.txt_grp_length.value()),
-                "UNIQUE": self.gui.txt_grp_unique.isChecked(),
-                "NULL": self.gui.txt_grp_isnull.isChecked()
-                }
-            }
+                "LEN" : int(self.gui.txt_grp_length.value())
+                })
 
-        self.add_row_to_list(rowname)
-        self.gui.txt_grp_rowname.setText("")
         self.gui.txt_grp_length.setValue(255)
-        self.gui.txt_grp_unique.setCheckState(False)
-        self.gui.txt_grp_isnull.setCheckState(False)
+        self.generic_cleanup("txt_grp")
 
     def add_choice_row(self):
         rowname = str(self.gui.choice_grp_rowname.text())
@@ -58,21 +51,17 @@ class CreateNewTable(QtGui.QDialog):
             return
         if not self.check_row(rowname):
             return
-        choices =  map(str, list(self.gui.choice_grp_choices.toPlainText().split("\n")))
-        self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num,
-            "ROWDATA": {
-                "TYPE": "CHOICE",
-                "UNIQUE": self.gui.choice_grp_unique.isChecked(),
-                "CHOICES": choices[:],
-                "NULL": self.gui.choice_grp_isnull.isChecked()
-                }
-            }
 
-        self.add_row_to_list(rowname)
-        self.gui.choice_grp_rowname.setText("")
-        self.gui.choice_grp_unique.setCheckState(False)
-        self.gui.choice_grp_isnull.setCheckState(False)
+        choices =  map(
+            str, list(self.gui.choice_grp_choices.toPlainText().split("\n"))
+        )
+
+        self.add_generic_data("choice_grp")
+        self.json_data["HEADINGS"][rowname]["ROWDATA"].update({
+                "TYPE": "CHOICE",
+                "CHOICES": choices[:]
+                })
+        self.generic_cleanup("choice_grp")
 
     def add_date_row(self):
         rowname = str(self.gui.date_grp_rowname.text())
@@ -80,19 +69,12 @@ class CreateNewTable(QtGui.QDialog):
             return
         if not self.check_row(rowname):
             return
-        self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num,
-            "ROWDATA": {
-                "TYPE": "DATE",
-                "UNIQUE": self.gui.date_grp_unique.isChecked(),
-                "NULL": not self.gui.date_grp_isnull.isChecked()
-                }
-            }
 
-        self.add_row_to_list(rowname)
-        self.gui.date_grp_rowname.setText("")
-        self.gui.date_grp_unique.setCheckState(False)
-        self.gui.date_grp_isnull.setCheckState(False)
+        self.add_generic_data("date_grp")
+        self.json_data["HEADINGS"][rowname]["ROWDATA"].update({
+                "TYPE": "DATE",
+                })
+        self.generic_cleanup("date_grp")
 
     def add_time_row(self):
         rowname = str(self.gui.time_grp_rowname.text())
@@ -101,19 +83,11 @@ class CreateNewTable(QtGui.QDialog):
         if not self.check_row(rowname):
             return
 
-        self.json_data["HEADINGS"][rowname] = {
-            "ROWNUM": self.get_row_num,
-            "ROWDATA": {
+        self.add_generic_data("time_grp")
+        self.json_data["HEADINGS"][rowname]["ROWDATA"].update({
                 "TYPE": "TIME",
-                "UNIQUE": self.gui.time_grp_unique.isChecked(),
-                "NULL": self.gui.time_grp_isnull.isChecked()
-                }
-            }
-
-        self.add_row_to_list(rowname)
-        self.gui.time_grp_rowname.setText("")
-        self.gui.time_grp_unique.setCheckState(False)
-        self.gui.time_grp_isnull.setCheckState(False)
+                })
+        self.generic_cleanup("time_grp")
 
     def changeFieldDescriptions(self, index):
         """
@@ -143,7 +117,7 @@ class CreateNewTable(QtGui.QDialog):
         if self.row_exists(rowname):
             return self.check_overwrite(rowname)
         return True
-    
+
     def row_exists(self, rowname):
         """
         Checks to see if a row exists in the HEADINGS map.
@@ -163,7 +137,11 @@ class CreateNewTable(QtGui.QDialog):
         msgbox.setText("Row Exists: %s. Overwrite?" % rowname)
         msgbox.addButton(QtGui.QMessageBox.Yes)
         msgbox.addButton(QtGui.QMessageBox.No)
-        return msgbox.exec_() == QtGui.QMessageBox.Yes
+        ans = msgbox.exec_() == QtGui.QMessageBox.Yes
+        if ans:
+            self.row_num -= 1
+            return True
+        return False
 
     def accept(self):
         """
@@ -207,3 +185,35 @@ class CreateNewTable(QtGui.QDialog):
         creating a database.
         """
         self.gui.list_db_rows.addItem(QtGui.QListWidgetItem(row))
+
+    def add_generic_data(self, tab_name):
+        """
+        add_generic_data factors out generic code which is used to add data
+        to the json_data map. As each column has a ROWNUM, UNIQUE and NULL
+        value, then this can be determined in the same way we factored it out
+        to be done here.
+        """
+        rowname = str(getattr(self.gui, "%s_rowname" % tab_name).text())
+
+        self.json_data["HEADINGS"][rowname] = {
+            "ROWNUM": self.get_row_num,
+            "ROWDATA": {
+                "UNIQUE": getattr(self.gui, "%s_unique" % tab_name).isChecked(),
+                "NULL": getattr(self.gui, "%s_isnull" % tab_name).isChecked()
+                }
+            }
+
+    def generic_cleanup(self, tab_name):
+        """
+        generic cleanup factors our generic code which is used to clean up
+        the tab which the new column's data is added to. Each column has a
+        name, a unique check and an is null check. We reset each of these
+        and add the row to the list of rows.
+        """
+
+        rowname = str(getattr(self.gui, "%s_rowname" % tab_name).text())
+        self.add_row_to_list(rowname)
+
+        getattr(self.gui, "%s_rowname" % tab_name).setText("")
+        getattr(self.gui, "%s_unique" % tab_name).setCheckState(False)
+        getattr(self.gui, "%s_isnull" % tab_name).setCheckState(False)
