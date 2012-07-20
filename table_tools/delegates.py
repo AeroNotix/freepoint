@@ -308,13 +308,14 @@ class Delegator(QtGui.QItemDelegate):
         If data has been set programmatically, i.e., outside of the validation
         routine then this function will also include those values in the checks.
         """
-        collist = []
-        for idx in range(self.parent.gui.tableWidget.rowCount()):
-            collist.append(
-                self.parent.gui.tableWidget.item(idx, ycol).text()
-                )
-        colset = set(collist)
-        return len(collist) == len(colset)
+
+        table = self.parent.gui.tableWidget
+        item = table.item(xrow, ycol).text()
+        for idx in range(table.rowCount()):
+            if xrow == idx: continue
+            if item == table.item(idx, ycol).text():
+                return False
+        return True
 
     def validator_null(self, xrow, ycol):
         """

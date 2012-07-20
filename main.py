@@ -4,6 +4,7 @@ Main entry point for the program.
 Instantiates all the required GUI classes and enters the
 event loop.
 '''
+import time
 
 import os
 import sys
@@ -238,9 +239,11 @@ class MainGui(QtGui.QMainWindow):
         :param ycol: :class:`Int`
         :returns: None
         """
+        self.gui.tableWidget.blockSignals(True)
         self.gui.tableWidget.setItem(
             xrow, ycol, QtGui.QTableWidgetItem(self.cell)
         )
+        self.gui.tableWidget.blockSignals(False)
 
     def clear_table(self):
         """
@@ -565,9 +568,11 @@ class RowInserter(QtCore.QThread):
 
         Task to run in a separate thread.
         """
+
+        insertRow = self.obj.gui.tableWidget.insertRow
         for row in range(self.n):
-            self.obj.gui.tableWidget.insertRow(row)
-            APPLICATION.processEvents()
+            insertRow(row)
+        APPLICATION.processEvents()
 
 class TableUpdater(QtCore.QThread):
     """
@@ -597,16 +602,18 @@ class TableUpdater(QtCore.QThread):
         Task to run in a separate thread.
         """
 
+        # take references via the dot operator for efficiency because the
+        # below can potentially be a hot loop for large datasets
+        setItem = self.obj.gui.tableWidget.setItem
+        QTableWidgetItem = QtGui.QTableWidgetItem
         # iterate through the query set and get the data into the table
         for idx, data in enumerate(self.queryset):
             if not data:
                 break
             for num, info in enumerate(data):
-                self.obj.gui.tableWidget.setItem(
-                    idx, num, QtGui.QTableWidgetItem(unicode(info))
+                setItem(
+                    idx, num, QTableWidgetItem(unicode(info))
                 )
-                APPLICATION.processEvents()
-
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)
