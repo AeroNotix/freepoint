@@ -177,10 +177,10 @@ class CreateNewTable(QtGui.QDialog):
         self.row_num = 0
 
         payload = simplejson.dumps({
-                "HEADINGS": self.json_data["HEADINGS"],
-                "PAYLOAD": simplejson.dumps(self.json_data),
                 "DATABASE": str(self.gui.txt_database_name.text()),
-                "TABLE": str(self.gui.txt_table_name.text())
+                "TABLE": str(self.gui.txt_table_name.text()),
+                "HEADINGS": self.json_data["HEADINGS"],
+                "PAYLOAD": simplejson.dumps(self.json_data)
                 })
         req = urllib2.Request(
             "http://localhost:12345/create/",
