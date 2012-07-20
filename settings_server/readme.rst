@@ -1,3 +1,4 @@
+
 API Outline
 ===========
 
@@ -189,7 +190,7 @@ This is the message which the server will receive which contains the needed fiel
 table.
 
 Database
-~~~~~~~~
+########
 
 Type: string. 
 
@@ -197,7 +198,7 @@ This represents the logical database in which the table will be created under. I
 exist then an error will be returned and the table will not be created.
 
 Table
-~~~~~
+#####
 
 Type: string
 
@@ -206,7 +207,7 @@ restrictions apply. See your database manual for allowed names. If this is null 
 return an error.
 
 Headings
-~~~~~~~~
+########
 
 Type: Map/Associative Array
 
@@ -259,7 +260,7 @@ qtsqlviewer/ui/createDatabase.py for more details in how the validation rules ar
 new validation functions can be written.
 
 Payload
-~~~~~~~
+#######
 
 Payload is a json string encoded version of the headings map. This may not be required in future
 versions as this could be implemented server-side. As for now just encode JSON into a string as you
