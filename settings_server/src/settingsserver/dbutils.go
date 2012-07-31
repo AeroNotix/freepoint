@@ -5,7 +5,7 @@
 package settingsserver
 
 import (
-	"bytes"
+	"stressql"
 	"connection_details"
 	"encoding/json"
 	"fmt"
@@ -82,13 +82,14 @@ func NewAsyncCreate(req *http.Request) (out AsyncCreate, e error) {
 	}
 
 	sqlstr := fmt.Sprintf("CREATE TABLE `%s` (\n", createRequest.Table)
-	sqlstr += "`id` int(11) NOT NULL AUTO_INCREMENT\n,"
+	sqlstr += "`id` int(11) NOT NULL AUTO_INCREMENT,\n"
 	for _, name := range headings {
 		sqlstr += genSQLCreateString(createRequest.Headers[name], name)
 		sqlstr += ",\n"
 	}
-	fmt.Println(sqlstr)
 	sqlstr += "PRIMARY KEY (id)\n);"
+
+	fmt.Println(sqlstr)
 	out = AsyncCreate{
 		createRequest.Database,
 		createRequest.Table,
@@ -131,37 +132,17 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 
 	rowtype := rowmap.Type
 	isnull := rowmap.Null
-
-	nullstr := ""
-	if isnull {
-		nullstr = "NOT NULL"
-	}
+	isunique := rowmap.Unique
 
 	switch rowtype {
 	case "VARCHAR":
-		rowlen := rowmap.Len
-		sqlstr := fmt.Sprintf("`%s` VARCHAR(%d) %s", rowname, rowlen, nullstr)
-		return sqlstr
+		return stressql.NewText(rowname, isnull, isunique, rowmap.Len).CreateString()
 	case "DATE":
-		sqlstr := fmt.Sprintf("`%s` DATE %s", rowname, nullstr)
-		return sqlstr
+		return stressql.NewDate(rowname, isnull, isunique).CreateString()
 	case "TIME":
-		sqlstr := fmt.Sprintf("`%s` TIME %s", rowname, nullstr)
-		return sqlstr
+		return stressql.NewTime(rowname, isnull, isunique).CreateString()
 	case "CHOICE":
-		// iterate through the choices and create a choice string
-		// ["A", "B", "C"] will create ENUM("A", "B", "C")
-		buf := bytes.NewBuffer([]byte{})
-		for idx, choice := range rowmap.Choices {
-			buf.Write([]byte(`"` + choice))
-			if idx != len(rowmap.Choices)-1 {
-				buf.Write([]byte(`",`))
-			} else {
-				buf.Write([]byte(`"`))
-			}
-		}
-		sqlstr := fmt.Sprintf("`%s` ENUM(%s) %s", rowname, buf.String(), nullstr)
-		return sqlstr
+		return stressql.NewEnum(rowname, rowmap.Choices).CreateString()
 	default:
 		panic("Unknown field type: " + rowtype)
 	}
