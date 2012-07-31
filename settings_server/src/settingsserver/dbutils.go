@@ -17,7 +17,6 @@ import (
 	_ "github.com/ziutek/mymysql/native"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -145,7 +144,7 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 	switch rowtype {
 	case "VARCHAR":
 		rowlen := rowmap.Len
-		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s", rowname, strconv.Itoa(rowlen), nullstr)
+		sqlstr := fmt.Sprintf("`%s` VARCHAR(%d) %s", rowname, rowlen, nullstr)
 		return sqlstr
 	case "DATE":
 		sqlstr := fmt.Sprintf("`%s` DATE %s", rowname, nullstr)
