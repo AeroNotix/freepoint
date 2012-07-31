@@ -121,7 +121,7 @@ type Row struct {
 		Unique  bool     `json:"UNIQUE"`
 		Type    string   `json:"TYPE"`
 		Null    bool     `json:"NULL"`
-		Len     int      `json:"LEN"`
+		Len     int64      `json:"LEN"`
 		Choices []string `json:"CHOICES"`
 	} `json:"ROWDATA"`
 }
