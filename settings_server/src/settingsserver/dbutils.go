@@ -9,12 +9,13 @@
 package settingsserver
 
 import (
+	"bytes"
 	"connection_details"
 	"encoding/json"
 	"fmt"
-	"log"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -52,7 +53,7 @@ type AsyncInsert struct {
 // We do it like this so that the error channel doesn't have to
 // be create by the user and they just pass the request form to
 // this.
-	func NewAsyncJob(req *http.Request) (AsyncUpdate, error) {
+func NewAsyncJob(req *http.Request) (AsyncUpdate, error) {
 
 	json_dec := json.NewDecoder(req.Body)
 	updateRequest := new(AsyncUpdate)
@@ -109,7 +110,7 @@ func NewAsyncCreate(req *http.Request) (out AsyncCreate, e error) {
 func NewAsyncInsert(req *http.Request) (insert AsyncInsert, err error) {
 
 	js := json.NewDecoder(req.Body)
-	indata := new(InsertData) // New causes mapper to be a pointer
+	indata := new(InsertData)
 
 	err = js.Decode(&indata)
 	if err != nil {
@@ -153,17 +154,26 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 		sqlstr := fmt.Sprintf("`%s` TIME %s", rowname, nullstr)
 		return sqlstr
 	case "CHOICE":
-		var lenstr int
-		for _, item := range rowmap.Choices {
-			if len(item) > lenstr {
-				lenstr = len(item)
+
+		// iterate through the choices and create a choice string
+		// ["A", "B", "C"] will create ENUM("A", "B", "C")
+		buf := bytes.NewBuffer([]byte{})
+		for idx, choice := range rowmap.Choices {
+			buf.Write([]byte(`"` + choice))
+			if idx != len(rowmap.Choices)-1 {
+				buf.Write([]byte(`",`))
+			} else {
+				buf.Write([]byte(`"`))
 			}
 		}
-		s := strconv.Itoa(lenstr)
-		sqlstr := fmt.Sprintf("`%s` VARCHAR(%s) %s", rowname, s, nullstr)
+
+		sqlstr := fmt.Sprintf("`%s` ENUM(%s) %s", rowname, buf.String(), nullstr)
 		return sqlstr
+	default:
+		panic("Unknown field type: " + rowtype)
 	}
-	return ""
+
+	panic("Unreachable")
 }
 
 // Function which takes a database name and connects to that database using the details
@@ -431,7 +441,6 @@ func ExecuteCreate(querystr string) error {
 	}
 	defer db.Close()
 	_, _, err = db.Query(querystr)
-	fmt.Println(querystr)
 	return nil
 }
 
@@ -441,7 +450,7 @@ Below is example JSON which the API can handle:
 
 'HEADINGS': {
 	'Row1': {
-		'ROWNUM': 0, 
+		'ROWNUM': 0,
 		'ROWDATA': {
 			'UNIQUE': False,
 			'TYPE': 'VARCHAR',
