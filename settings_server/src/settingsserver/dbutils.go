@@ -1,10 +1,6 @@
-/*
-
- This package groups together useful functions when dealing with databases
- it also defines the Asynchronous types and the job queues which deal with
- them.
-
-*/
+// Package groups together useful functions when dealing with databases
+// it also defines the Asynchronous types and the job queues which deal with
+// them.
 
 package settingsserver
 
@@ -153,7 +149,6 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 		sqlstr := fmt.Sprintf("`%s` TIME %s", rowname, nullstr)
 		return sqlstr
 	case "CHOICE":
-
 		// iterate through the choices and create a choice string
 		// ["A", "B", "C"] will create ENUM("A", "B", "C")
 		buf := bytes.NewBuffer([]byte{})
@@ -165,7 +160,6 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 				buf.Write([]byte(`"`))
 			}
 		}
-
 		sqlstr := fmt.Sprintf("`%s` ENUM(%s) %s", rowname, buf.String(), nullstr)
 		return sqlstr
 	default:
