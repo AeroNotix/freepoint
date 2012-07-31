@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'create_new_table.ui'
 #
-# Created: Sat Jul  7 15:44:52 2012
-#      by: PyQt4 UI code generator 4.9.4
+# Created: Tue Jul 31 14:23:49 2012
+#      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -85,7 +85,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label_2, 1, 0, 1, 1)
         self.txt_grp_length = QtGui.QSpinBox(self.txt_group)
         self.txt_grp_length.setMinimum(1)
-        self.txt_grp_length.setMaximum(100000)
+        self.txt_grp_length.setMaximum(255)
         self.txt_grp_length.setProperty("value", 255)
         self.txt_grp_length.setObjectName(_fromUtf8("txt_grp_length"))
         self.gridLayout.addWidget(self.txt_grp_length, 1, 1, 1, 1)
