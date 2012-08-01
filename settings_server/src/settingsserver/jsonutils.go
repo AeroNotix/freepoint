@@ -1,11 +1,7 @@
-/*
-
- This package groups together various useful functions which aid in dealing
- with JSON and the transferal of JSON to and from the client. This module
- also defines several message types which aid in the marshaling and
- unmarshaling of JSON []byte sent over the wire.
-
-*/
+// Package groups together various useful functions which aid in dealing
+// with JSON and the transferal of JSON to and from the client. This module
+// also defines several message types which aid in the marshaling and
+// unmarshaling of JSON []byte sent over the wire.
 
 package settingsserver
 
@@ -121,7 +117,7 @@ type Row struct {
 		Unique  bool     `json:"UNIQUE"`
 		Type    string   `json:"TYPE"`
 		Null    bool     `json:"NULL"`
-		Len     int64      `json:"LEN"`
+		Len     int64    `json:"LEN"`
 		Choices []string `json:"CHOICES"`
 	} `json:"ROWDATA"`
 }
