@@ -241,5 +241,8 @@ func main() {
 		Handler:     &Settings,
 		ReadTimeout: 30 * time.Second,
 	}
-	s.ListenAndServe()
+	err := s.ListenAndServe()
+	if err != nil {
+		log.Println(err)
+	}
 }
