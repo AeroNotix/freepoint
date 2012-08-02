@@ -30,10 +30,9 @@ from qtsqlviewer.table_tools.delegates import Delegator
 # get used but there are side-effects when importing this module
 # which hook into Qt's internal resource management methods.
 from qtsqlviewer.ui import resource_rc
-
 from qtsqlviewer.ui.createDatabase import CreateNewTable
 
-CWD = os.path.dirname(__file__)
+from qtsqlviewer.settings import module_path
 
 ## Argument creation
 PARSER = argparse.ArgumentParser()
@@ -47,7 +46,7 @@ ARGS = (
 for arg in ARGS:
     PARSER.add_argument(arg.name, **arg.data)
 RESULTS = PARSER.parse_args()
-
+CWD = module_path()
 
 class MainGui(QtGui.QMainWindow):
     """

@@ -3,7 +3,7 @@ import urllib2, urllib
 
 from PyQt4 import QtGui
 from qtsqlviewer.ui.create_new_table_UI import Ui_Dialog
-
+from qtsqlviewer.settings import SERVERURL
 
 class CreateNewTable(QtGui.QDialog):
     """
@@ -161,7 +161,7 @@ class CreateNewTable(QtGui.QDialog):
                 "PAYLOAD": simplejson.dumps(self.json_data)
                 })
         req = urllib2.Request(
-            "http://localhost:12345/create/",
+            SERVERURL + "create/",
             payload
             )
         json = simplejson.loads(urllib2.urlopen(req).read())

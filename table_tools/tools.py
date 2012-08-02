@@ -10,6 +10,7 @@ import simplejson
 from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore, QtGui
 
+from qtsqlviewer.settings import SERVERURL
 
 def create_action(obj,
                   text, fname=None,  slot=None, shortcut=None,
@@ -134,7 +135,7 @@ class Database(object):
         self.table = table
         self._connection = None
         self.connected = False
-        self.base_url = "http://localhost:12345/"
+        self.base_url = SERVERURL
         self.param_url = self.base_url + "getdb/"
         self.login_url = self.base_url + "login/"
         self.update_url = self.base_url + "update/"

@@ -11,6 +11,7 @@ import simplejson
 
 from PyQt4 import QtGui
 from qtsqlviewer.ui.login_UI import Ui_frm_login
+from qtsqlviewer.settings import SERVERURL
 
 class Login(QtGui.QDialog):
     """
@@ -28,7 +29,7 @@ class Login(QtGui.QDialog):
         self.parent = parent
         # this is hardcoded we should/could put this in a local
         # config. But how to make that config the first time?
-        self.login_url = "http://localhost:12345/login/"
+        self.login_url = SERVERURL + "login/"
 
     def accept(self):
         """
