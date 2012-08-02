@@ -264,8 +264,8 @@ class Delegator(QtGui.QItemDelegate):
                     data.append(
                         unicode(self.gui.tableWidget.item(0, idx+1).text())
                         )
-                self.parent.insertData(data)
-                QtGui.QDialog.accept(self)
+                if self.parent.insertData(data):
+                    QtGui.QDialog.accept(self)
 
         k = Klass(parent)
         k.exec_()

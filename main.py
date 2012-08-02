@@ -217,7 +217,7 @@ class MainGui(QtGui.QMainWindow):
         the calls through a central class rather than everything calling methods
         directly.
         """
-        self.database.insertData(json)
+        return self.database.insertData(json)
 
     def storeCell(self, xrow, ycol):
         """
