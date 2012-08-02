@@ -65,14 +65,13 @@ func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) er
 
 	job, err := ss.NewAsyncInsert(req)
 	if err != nil {
-		ss.SendJSON(w, false)
+		ss.SendJSONError(w, err)
 		return err
 	}
 
 	err = self.InsertEntry(job)
 	if err != nil {
-		ss.SendJSON(w, false)
-		log.Println(err)
+		ss.SendJSONError(w, err)
 		return err
 	}
 

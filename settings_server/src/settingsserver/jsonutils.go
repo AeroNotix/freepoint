@@ -7,6 +7,7 @@ package settingsserver
 
 import (
 	"encoding/json"
+	mysql "github.com/ziutek/mymysql/mysql"
 	"net/http"
 )
 
@@ -83,8 +84,17 @@ func SendJSON(w http.ResponseWriter, message interface{}) {
 // method on the error instance.
 func SendJSONError(w http.ResponseWriter, message error) {
 	w.Header().Set("Content-type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{
+
+	var code uint16
+	val, ok := message.(*mysql.Error)
+	if ok {
+		code = val.Code
+	}
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
 		"Error": message.Error(),
+		"Success": false,
+		"Code": code,
 	})
 }
 

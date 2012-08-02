@@ -263,7 +263,7 @@ class Delegator(QtGui.QItemDelegate):
                 for idx, _ in enumerate(self.headers[1:]):
                     data.append(
                         unicode(self.gui.tableWidget.item(0, idx+1).text())
-                    )
+                        )
                 self.parent.insertData(data)
                 QtGui.QDialog.accept(self)
 

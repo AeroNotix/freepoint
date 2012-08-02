@@ -5,6 +5,7 @@ This module is defunct but kept as a reference.
 """
 
 MYSQL_ERRORS = {
+    1062: "Duplicate values in column",
     1146: """Table does not exist""",
     2000: """Unknown MySQL error""",
     2001: """Can't create UNIX socket""",
@@ -13,7 +14,7 @@ MYSQL_ERRORS = {
     2004: """Can't create TCP/IP socket""",
     2005: """Unknown MySQL server host""",
     2006: """MySQL server has gone away""",
-    2007: """Protocol mismatch; server version = %d, client version =""",
+    2007: """Protocol mismatch""",
     2008: """MySQL client ran out of memory""",
     2009: """Wrong host info""",
     2010: """Localhost via UNIX socket""",
@@ -90,3 +91,9 @@ def mysqlerror(errorstring):
     Returns the Error string associated with the code
     '''
     return MYSQL_ERRORS[errorstring[0]]
+
+def mysqlerr(errorstring):
+    '''
+    Returns the Error string associated with the code
+    '''
+    return MYSQL_ERRORS[errorstring]

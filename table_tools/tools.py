@@ -11,6 +11,7 @@ from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore, QtGui
 
 from qtsqlviewer.settings import SERVERURL
+from qtsqlviewer.table_tools.mysql_error_codes import mysqlerr
 
 def create_action(obj,
                   text, fname=None,  slot=None, shortcut=None,
@@ -282,7 +283,7 @@ class Database(object):
         """
 
         json_payload = simplejson.dumps({
-                "DATA":json,
+                "DATA": json,
                 "TABLE": self.table,
                 "DATABASE": self.using_db
         })
@@ -293,8 +294,13 @@ class Database(object):
             )
 
         json = simplejson.loads(urllib2.urlopen(http_post).read())
+
         if json.get("Success"):
             self.parent.show_message("Data has been saved to the database.")
+            self.parent.populate_table()
+            return True
         else:
-            self.parent.show_error("Data could not be saved to the database")
-        self.parent.populate_table()
+            self.parent.show_error(
+                "Data could not be saved to the database: %s" % mysqlerr(json.get("Code"))
+                )
+            return False
