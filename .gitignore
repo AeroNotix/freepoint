@@ -7,3 +7,4 @@
 *.exe
 *.a
 .ropeproject
+*.dll
