@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>756</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Freepoint Client</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resource.qrc">
+    <normaloff>:/go-home</normaloff>:/go-home</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="columnCount">
+       <number>3</number>
+      </property>
+      <column/>
+      <column/>
+      <column/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionConnection_details"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <widget class="QMenu" name="menuSelect_Table">
+     <property name="title">
+      <string>Select Table</string>
+     </property>
+    </widget>
+    <addaction name="menuSelect_Table"/>
+    <addaction name="actionManageConnections"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit.</string>
+   </property>
+  </action>
+  <action name="actionConnection_details">
+   <property name="text">
+    <string>Add Connection</string>
+   </property>
+  </action>
+  <action name="actionManage_Connections">
+   <property name="text">
+    <string>Manage Connections</string>
+   </property>
+  </action>
+  <action name="actionSomething">
+   <property name="text">
+    <string>Something</string>
+   </property>
+  </action>
+  <action name="actionManageConnections">
+   <property name="text">
+    <string>Manage Connections</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../resources/resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellChanged(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1068</x>
+     <y>622</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionConnection_details</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openConnectionDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellDoubleClicked(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>storeCell()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>453</x>
+     <y>484</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>911</x>
+     <y>759</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellEntered(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>storeCell()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>398</x>
+     <y>368</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1022</x>
+     <y>749</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionManageConnections</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openManageDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>changeTable()</slot>
+  <slot>openConnectionDialog()</slot>
+  <slot>storeCell()</slot>
+  <slot>openManageDialog()</slot>
+ </slots>
+</ui>
