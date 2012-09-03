@@ -8,3 +8,4 @@
 *.a
 .ropeproject
 *.dll
+*.out
