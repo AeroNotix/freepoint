@@ -73,6 +73,7 @@ class MainGui(QtGui.QMainWindow):
         self.config = ConfigParser.RawConfigParser()
         self.configpath = os.path.join(CWD, "conf.cfg")
         self.actionList = []
+        self.lock = QtCore.QMutex()
 
         if RESULTS.db:
             # if we got command line arguments, open that
@@ -196,7 +197,7 @@ class MainGui(QtGui.QMainWindow):
         :param ycol: :class:`Int`
         :returns: None
         """
-
+        self.lock.lock()
         validation_check = self.delegator.apply_validators(xrow, ycol)
         if validation_check[0]:
             self.database.changeTable(xrow, ycol)
@@ -205,6 +206,7 @@ class MainGui(QtGui.QMainWindow):
             self.show_error(
                 "Data failed to validate. Failed on check: validation_%s." % validation_check[1]
             )
+        self.lock.unlock()
 
     def insertData(self, json):
         """
@@ -442,6 +444,9 @@ class MainGui(QtGui.QMainWindow):
         """
         self.delegator.createUIForm(self)
 
+    def refresh(self):
+        self.populate_table()
+
     def populate_toolbar(self):
         """
         Method which allows us to programmatically add the toolbar buttons
@@ -449,7 +454,7 @@ class MainGui(QtGui.QMainWindow):
         function.
         """
         create_action(
-            self, "Refresh", fname=":/view-refresh", slot=self.populate_table
+            self, "Refresh", fname=":/view-refresh", slot=self.refresh
             )
         create_action(
             self, "Insert Row", fname=":/list-add", slot=self.insert_row
@@ -620,3 +625,6 @@ if __name__ == '__main__':
     MAINWINDOW.setStatusBar(MAINWINDOW.gui.statusbar)
     MAINWINDOW.showMaximized()
     sys.exit(APPLICATION.exec_())
+
+
+    
