@@ -17,7 +17,6 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-LicenseFile=C:\Users\francea\Desktop\HPLICENSE
 OutputDir=C:\Users\francea\Desktop
 OutputBaseFilename=freepoint-0.1-32bit
 Compression=lzma
