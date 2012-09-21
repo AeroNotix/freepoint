@@ -74,6 +74,8 @@ class MainGui(QtGui.QMainWindow):
         self.configpath = os.path.join(CWD, "conf.cfg")
         self.actionList = []
         self.lock = QtCore.QMutex()
+        self.current_table = None
+        self.populating = False
 
         if RESULTS.db:
             # if we got command line arguments, open that
@@ -158,6 +160,15 @@ class MainGui(QtGui.QMainWindow):
         database instance can be swapped out providing that the contract between
         the GUI and the database, i.e. argument and return types  is not violated.
         """
+        if self.populating:
+            return
+        self.populating = True
+        try:
+            if self.rowInserter.isRunning():
+                return
+        except AttributeError:
+            pass
+
 
         # We can't continue if we cannot make a connection to the database.
         if not self.database.connect():
@@ -184,10 +195,19 @@ class MainGui(QtGui.QMainWindow):
         self.connect(
             self.rowInserter, QtCore.SIGNAL("finished()"), self.__threaded_populate
             )
+        self.connect(
+            self.rowInserter, QtCore.SIGNAL("addrow(int)"), self.insertNewRow
+            )
         self.rowInserter.start()
         # close the connection
         self.database.close()
         self.populated = True
+
+    def insertNewRow(self, i):
+        self.gui.tableWidget.insertRow(i)
+
+    def insertRowData(self, obj):
+        self.gui.tableWidget.setItem(obj[0], obj[1], obj[2])
 
     def changeTable(self, xrow, ycol):
         """
@@ -480,6 +500,7 @@ class MainGui(QtGui.QMainWindow):
         :note: Do not call this method directly. Instead, allow the UI to
                pass along calls to it.
         """
+
         actions = {
             QtCore.Qt.Key_F5: self.populate_table,
             QtCore.Qt.Key_Insert: self.insert_row
@@ -512,9 +533,19 @@ class MainGui(QtGui.QMainWindow):
                                                       |
                                               End Worker Threads
         """
+        try:
+            if not self.tableThreader.isFinished():
+                return
+        except AttributeError:
+            pass
+
         self.tableThreader = TableUpdater(self.queryset[:], self)
         self.connect(
             self.tableThreader, QtCore.SIGNAL("finished()"), self.__reattach
+            )
+        self.connect(
+            self.tableThreader, QtCore.SIGNAL("insertData(PyQt_PyObject)"),
+            self.insertRowData
             )
         self.tableThreader.start()
 
@@ -531,6 +562,9 @@ class MainGui(QtGui.QMainWindow):
         """
         Advances to the next connection
         """
+
+        if not self.current_table:
+            return
         n = self.current_table.split('-')
         next_connection = n[0]+'-'+str(int(n[1])+1)
         if self.config.has_section(next_connection):
@@ -540,6 +574,10 @@ class MainGui(QtGui.QMainWindow):
         """
         Selects the previous connection
         """
+
+        if not self.current_table:
+            return
+
         p = self.current_table.split('-')
         prev_connection = p[0]+'-'+str(int(p[1])-1)
         if self.config.has_section(prev_connection):
@@ -573,10 +611,9 @@ class RowInserter(QtCore.QThread):
         Task to run in a separate thread.
         """
 
-        insertRow = self.obj.gui.tableWidget.insertRow
         for row in range(self.n):
-            insertRow(row)
-        APPLICATION.processEvents()
+            self.emit(QtCore.SIGNAL("addrow(int)"), row)
+        self.exit()
 
 class TableUpdater(QtCore.QThread):
     """
@@ -615,9 +652,12 @@ class TableUpdater(QtCore.QThread):
             if not data:
                 break
             for num, info in enumerate(data):
-                setItem(
-                    idx, num, QTableWidgetItem(unicode(info))
+                self.emit(QtCore.SIGNAL("insertData(PyQt_PyObject)"),
+                          [idx, num, QTableWidgetItem(unicode(info))]
                 )
+        self.obj.blockSignals(False)
+        self.exit()
+        self.obj.populating = False
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)
