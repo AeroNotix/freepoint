@@ -5,7 +5,7 @@
 package settingsserver
 
 import (
-	"stressql"
+        stressql "github.com/AeroNotix/stressql"
 	"connection_details"
 	"encoding/json"
 	"fmt"
