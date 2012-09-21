@@ -1,7 +1,7 @@
 import os
 import sys
 
-SERVERURL = "http://16.55.142.213:12345/"
+SERVERURL = "http://16.55.133.115:12345/"
 
 def module_path():
     """
