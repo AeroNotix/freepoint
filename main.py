@@ -169,7 +169,7 @@ class MainGui(QtGui.QMainWindow):
         except AttributeError:
             pass
 
-
+        self.blockSignals(True)
         # We can't continue if we cannot make a connection to the database.
         if not self.database.connect():
             return
@@ -515,23 +515,16 @@ class MainGui(QtGui.QMainWindow):
         __threaded_populate is supposed to be a private method which will set
         off inserting rows and adding data to the table in the proper order.
 
-        A typical run will look like this:
 
-        Main GUI Event Loop:
-                |
-                |
-                |
-                |>populate_table
-                        |
-                        |
-                        \_______>-----RowInserter()
-                        /                   |
-                       /                finished()
-                |<-----                     |>--TableInserter()
-                |                                     |
-                Return To GUI EventLoop           finished()
-                                                      |
-                                              End Worker Threads
+        We use signals/slots to communicate with the main thread. How
+        we do this is similar to CSP-style concurrency if you are fami-
+        liar with that. The general gist is that you have some kind of
+        event loop/mailbox/channel on which to 'pass' messages down.
+
+        We attach a signal type to a function by using the
+        QtCore.SIGNAL function and then we execute a thread which sends
+        back data to the GUI event loop. This frees up the event loop
+        but also executes a second thread for insertion and processing.
         """
         try:
             if not self.tableThreader.isFinished():
@@ -658,6 +651,7 @@ class TableUpdater(QtCore.QThread):
         self.obj.blockSignals(False)
         self.exit()
         self.obj.populating = False
+        self.obj.blockSignals(False)
 
 if __name__ == '__main__':
     APPLICATION = QtGui.QApplication(sys.argv)
