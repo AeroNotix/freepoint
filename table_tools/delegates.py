@@ -288,7 +288,6 @@ class Delegator(QtGui.QItemDelegate):
         prefix so the map names need to only supply the suffix in the
         validator map.
         """
-        print self.metadata
         if not self.metadata:
             return True, ""
         try:
