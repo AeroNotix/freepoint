@@ -20,4 +20,5 @@ if "%1" == "build" (
    go build settings_server.go
    goto end
 )
+
 :end
