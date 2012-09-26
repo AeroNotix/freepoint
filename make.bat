@@ -14,4 +14,10 @@ if "%1" == "pull" (
    git pull origin master
    goto end
 )
+
+if "%1" == "build" (
+   cd settings_server
+   go build settings_server.go
+   goto end
+)
 :end

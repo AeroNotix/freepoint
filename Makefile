@@ -9,3 +9,6 @@ bigpush:
 	git add .
 	git commit -m "Big push"
 	git push origin master
+build:
+	cd settings_server
+	go build settings_server.go
