@@ -148,7 +148,6 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 	default:
 		panic("Unknown field type: " + rowtype)
 	}
-
 	panic("Unreachable")
 }
 
