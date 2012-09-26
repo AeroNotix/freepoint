@@ -7,6 +7,7 @@ This module is defunct but kept as a reference.
 MYSQL_ERRORS = {
     1062: "Duplicate values in column",
     1146: """Table does not exist""",
+    1366: """Invalid number for decimal column""",
     2000: """Unknown MySQL error""",
     2001: """Can't create UNIX socket""",
     2002: """Can't connect to local MySQL server through socket""",
