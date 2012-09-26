@@ -7,6 +7,30 @@ from qtsqlviewer.settings import SERVERURL
 
 class CreateNewTable(QtGui.QDialog):
     """
+    CreateNewTable allows users to create a new database table.
+
+    The member change_map holds a mapping of keys to functions. This is
+    because the GUI design presented a unique problem of having a radio
+    widget determine what other widgets were presented on screen. This
+    was solved by using a tab widget and hiding the tab selectors this
+    means that the way the widgets are hidden/shown is by selecting the
+    correct tab programmatically.
+
+    Each tab should contain at least:
+
+    a QtGui.QLineEdit : This should have an object name of "XXX_grp_rowname"
+                        where XXX is the identifier for that particular row.
+
+    a QtGui.QButton   : This should have an object name of "btn_XXX_group"
+                        where XXX is the identifier of that row (the same,
+                        as the QLineEdit).
+
+    And be inside a QtGui.QGroupBox with an object name of "XXX_group"
+    this is the identifer which you should use as a key for the change_map.
+
+    All Add>> Buttons should have their clicked() signal assigned to the
+    acceptFieldAdd button. This uses the sender() method to determine which
+    to find the group which sent the press.
     """
     def __init__(self, parent=None):
         super(CreateNewTable, self).__init__(parent)
@@ -64,6 +88,7 @@ class CreateNewTable(QtGui.QDialog):
                 "CHOICES": choices[:]
                 })
         self.generic_cleanup("choice_grp")
+        self.gui.choice_grp_choices.clear()
 
     def add_date_row(self):
         rowname = str(self.gui.date_grp_rowname.text())
@@ -161,12 +186,29 @@ class CreateNewTable(QtGui.QDialog):
 
     def accept(self):
         """
-        This method is a joke and totally a mess.
+        Accept finalizes our database and sends a request to the server.
 
-        We need to make the request body hold the json instead of in
-        GET parameters (duh!). This will be accomplished by making
-        the datastructure a simple map which is dumped to JSON and
-        having a datastructure on the server-side to marshal this into.
+        Through adding table rows using the radio boxes and various
+        widgets for customizing rows we have all the data the server
+        needs to create our table. The server directly converts the
+        JSON encoded fieldtype data into SQL statements which are
+        executed.
+
+        With the exception of the database name and the
+        table name, everything is quoted to remove the possibility of
+        SQL injection attacks.
+
+        On the server, we simply marshal the incoming JSON data into the
+        required datastructure and store the raw JSON as table metadata.
+
+        The table metadata is send to the client on the request to show
+        the table, it is then marshaled again into a datastructure (Python
+        dictionary) and then iterated through to create the GUI.
+
+        There is no error handling here because simply if the server
+        has an accountable for error, they will send it in the JSON
+        fields, otherwise we don't want to catch the error and we will
+        crash spectacularly.
         """
         self.row_num = 0
 
