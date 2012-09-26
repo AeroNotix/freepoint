@@ -5,10 +5,10 @@
 package settingsserver
 
 import (
-        stressql "github.com/AeroNotix/stressql"
 	"connection_details"
 	"encoding/json"
 	"fmt"
+	stressql "github.com/AeroNotix/stressql"
 	mysql "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native"
 	"log"
@@ -143,6 +143,8 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 		return stressql.NewTime(rowname, isnull, isunique).CreateString()
 	case "CHOICE":
 		return stressql.NewEnum(rowname, rowmap.Choices).CreateString()
+	case "CURR":
+		return stressql.NewCurrency(rowname, isnull, isunique).CreateString()
 	default:
 		panic("Unknown field type: " + rowtype)
 	}
