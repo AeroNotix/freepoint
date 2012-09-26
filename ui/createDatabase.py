@@ -17,8 +17,10 @@ class CreateNewTable(QtGui.QDialog):
             "txt_group": self.add_text_row,
             "choice_group": self.add_choice_row,
             "date_group": self.add_date_row,
-            "time_group": self.add_time_row
+            "time_group": self.add_time_row,
+            "curr_group": self.add_curr_row,
             }
+
         self.json_data = {
             "HEADINGS": {},
             }
@@ -76,6 +78,22 @@ class CreateNewTable(QtGui.QDialog):
                 })
         self.generic_cleanup("date_grp")
 
+    def add_curr_row(self):
+        rowname = str(self.gui.curr_grp_rowname.text())
+        if not len(rowname):
+            print 'fail len'
+            return
+        if not self.check_row(rowname):
+            print 'fail check'
+            return
+
+        self.add_generic_data("curr_grp")
+        self.json_data["HEADINGS"][rowname]["ROWDATA"].update({
+                "TYPE": "CURR",
+                })
+        self.generic_cleanup("curr_grp")
+        print 'completed'
+
     def add_time_row(self):
         rowname = str(self.gui.time_grp_rowname.text())
         if not len(rowname):
@@ -96,6 +114,7 @@ class CreateNewTable(QtGui.QDialog):
         some strange reason so we again unarize this integer and
         set the tab to that number.
         """
+
         self.gui.tabWidget.setCurrentIndex(~index-1)
 
     def acceptFieldAdd(self):

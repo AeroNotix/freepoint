@@ -63,7 +63,7 @@
      <x>10</x>
      <y>20</y>
      <width>114</width>
-     <height>281</height>
+     <height>311</height>
     </rect>
    </property>
    <property name="title">
@@ -117,6 +117,16 @@
      <widget class="QRadioButton" name="grp_radio">
       <property name="text">
        <string>Person/Group</string>
+      </property>
+      <attribute name="buttonGroup">
+       <string notr="true">buttonGroup</string>
+      </attribute>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="curr_radio">
+      <property name="text">
+       <string>Currency</string>
       </property>
       <attribute name="buttonGroup">
        <string notr="true">buttonGroup</string>
@@ -502,6 +512,92 @@
      <property name="title">
       <string>Field Description - Group</string>
      </property>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>50</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Not Implemented</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Currency</string>
+    </attribute>
+    <widget class="QGroupBox" name="curr_group">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>361</width>
+       <height>531</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Field Description - Currency</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="curr_grp_rowname"/>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="curr_grp_unique">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Unique?:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Row Name: </string>
+        </property>
+        <property name="buddy">
+         <cstring>txt_grp_rowname</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="btn_curr_group">
+        <property name="text">
+         <string>Add &gt;&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QCheckBox" name="curr_grp_isnull">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Null?:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>
@@ -619,22 +715,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>btn_choice_group</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>acceptFieldAdd()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>501</x>
-     <y>561</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>885</x>
-     <y>748</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>btn_txt_group</sender>
    <signal>clicked()</signal>
    <receiver>Dialog</receiver>
@@ -657,12 +737,28 @@
    <slot>acceptFieldAdd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>444</x>
-     <y>551</y>
+     <x>501</x>
+     <y>561</y>
     </hint>
     <hint type="destinationlabel">
      <x>1024</x>
      <y>847</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_choice_group</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptFieldAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>501</x>
+     <y>561</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>885</x>
+     <y>748</y>
     </hint>
    </hints>
   </connection>
@@ -679,6 +775,22 @@
     <hint type="destinationlabel">
      <x>1156</x>
      <y>854</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btn_curr_group</sender>
+   <signal>clicked()</signal>
+   <receiver>Dialog</receiver>
+   <slot>acceptFieldAdd()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>501</x>
+     <y>561</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>409</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>

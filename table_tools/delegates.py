@@ -132,10 +132,10 @@ class DateDelegate(QtGui.QItemDelegate):
 # Use a name which will correspond to the TYPE name placed
 # in the database metadata.
 DELEGATES = {
-    "BOOL": BooleanDelegate,
-    "CHOICE": ChoiceDelegate,
-    "TIME": TimeDelegate,
-    "DATE": DateDelegate
+    "BOOL"   : BooleanDelegate,
+    "CHOICE" : ChoiceDelegate,
+    "TIME"   : TimeDelegate,
+    "DATE"   : DateDelegate
 }
 
 
