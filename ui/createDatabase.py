@@ -81,10 +81,8 @@ class CreateNewTable(QtGui.QDialog):
     def add_curr_row(self):
         rowname = str(self.gui.curr_grp_rowname.text())
         if not len(rowname):
-            print 'fail len'
             return
         if not self.check_row(rowname):
-            print 'fail check'
             return
 
         self.add_generic_data("curr_grp")
@@ -92,7 +90,6 @@ class CreateNewTable(QtGui.QDialog):
                 "TYPE": "CURR",
                 })
         self.generic_cleanup("curr_grp")
-        print 'completed'
 
     def add_time_row(self):
         rowname = str(self.gui.time_grp_rowname.text())
