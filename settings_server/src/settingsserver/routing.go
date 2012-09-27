@@ -13,6 +13,7 @@ type AppServer struct {
 	dbWriter   chan AsyncUpdate
 	dbCreator  chan AsyncCreate
 	dbInserter chan AsyncInsert
+	dbDeleter  chan AsyncDelete
 }
 
 // NewAppServer allows us to take the steps required for running the server.
@@ -33,11 +34,14 @@ func NewAppServer(routes []RoutingEntry) AppServer {
 		dbWriter:   make(chan AsyncUpdate, 10),
 		dbCreator:  make(chan AsyncCreate, 10),
 		dbInserter: make(chan AsyncInsert, 10),
+		dbDeleter:  make(chan AsyncDelete, 10),
 	}
 
 	go AsyncUpdater(app.dbWriter)
 	go AsyncCreator(app.dbCreator)
 	go AsyncInserter(app.dbInserter)
+	go AsyncDeleter(app.dbDeleter)
+
 	return app
 }
 
@@ -78,6 +82,10 @@ func (self *AppServer) CreateEntry(job AsyncCreate) error {
 }
 func (self *AppServer) InsertEntry(job AsyncInsert) error {
 	self.dbInserter <- job
+	return <-job.ReturnPath
+}
+func (self *AppServer) DeleteEntries(job AsyncDelete) error {
+	self.dbDeleter <- job
 	return <-job.ReturnPath
 }
 

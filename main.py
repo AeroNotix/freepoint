@@ -37,10 +37,10 @@ from qtsqlviewer.settings import module_path
 ## Argument creation
 PARSER = argparse.ArgumentParser()
 ARGS = (
-    Argument('db', help='Database you wish to connect to'),
-    Argument('password', help='Password for the database', default=''),
-    Argument('user', help='User you want to connect as', default=''),
-    Argument('table', help='Which table to connect to'),
+    Argument('db',       help='Database you wish to connect to'         ),
+    Argument('password', help='Password for the database',   default='' ),
+    Argument('user',     help='User you want to connect as', default='' ),
+    Argument('table',    help='Which table to connect to'               ),
 )
 
 for arg in ARGS:
@@ -189,6 +189,11 @@ class MainGui(QtGui.QMainWindow):
         self.gui.tableWidget.setHorizontalHeaderLabels(self.headings)
 
         self.clear_table()
+
+        # Create an instance of the threaded RowInserter and disconnect
+        # troublesome signals. If these signals are connected, the very
+        # action of inserting a row programmatically will execute some
+        # other code. We don't want that.
         self.rowInserter = RowInserter(len(self.queryset), self)
         self.gui.tableWidget.blockSignals(True)
         self.gui.tableWidget.setSortingEnabled(False)
@@ -198,8 +203,9 @@ class MainGui(QtGui.QMainWindow):
         self.connect(
             self.rowInserter, QtCore.SIGNAL("addrow(int)"), self.insertNewRow
             )
+        # Start the RowInserter's async'd method. This will in-turn
+        # start another async thread to insert the real data.
         self.rowInserter.start()
-        # close the connection
         self.database.close()
         self.populated = True
 
@@ -464,6 +470,15 @@ class MainGui(QtGui.QMainWindow):
         """
         self.delegator.createUIForm(self)
 
+    def delete_rows(self):
+        row_ids = []
+        for row in self.gui.tableWidget.selectionModel().selectedRows():
+            row_ids.append(self.gui.tableWidget.item(row.row(), 0).text())
+        if len(row_ids) == 0:
+            return
+
+        self.database.delete_rows(map(str, row_ids))
+
     def refresh(self):
         self.populate_table()
 
@@ -502,8 +517,9 @@ class MainGui(QtGui.QMainWindow):
         """
 
         actions = {
-            QtCore.Qt.Key_F5: self.populate_table,
-            QtCore.Qt.Key_Insert: self.insert_row
+            QtCore.Qt.Key_F5:     self.populate_table,
+            QtCore.Qt.Key_Insert: self.insert_row,
+            QtCore.Qt.Key_Delete: self.delete_rows
         }
 
         action = actions.get(event.key())

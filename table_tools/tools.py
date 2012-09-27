@@ -136,11 +136,13 @@ class Database(object):
         self.table = table
         self._connection = None
         self.connected = False
-        self.base_url = SERVERURL
-        self.param_url = self.base_url + "getdb/"
-        self.login_url = self.base_url + "login/"
-        self.update_url = self.base_url + "update/"
-        self.insert_url = self.base_url + "insert/"
+
+        self.base_url    = SERVERURL
+        self.param_url   = self.base_url + "getdb/"
+        self.login_url   = self.base_url + "login/"
+        self.update_url  = self.base_url + "update/"
+        self.insert_url  = self.base_url + "insert/"
+        self.delete_url  = self.base_url + "delete/"
 
         self.parent = parent
         if not self.parent:
@@ -288,7 +290,6 @@ class Database(object):
                 "DATABASE": self.using_db
         })
         http_post = urllib2.Request(
-            # string interpolation
             self.insert_url,
             json_payload
             )
@@ -297,6 +298,32 @@ class Database(object):
 
         if json.get("Success"):
             self.parent.show_message("Data has been saved to the database.")
+            self.parent.populate_table()
+            return True
+        else:
+            self.parent.show_error(
+                "Data could not be saved to the database: %s" % mysqlerr(json.get("Code"))
+                )
+            return False
+
+    def delete_rows(self, rows):
+        """
+        Deletes a set of rows from the database
+        """
+
+        json_payload = simplejson.dumps({
+                "DATA": rows,
+                "TABLE": self.table,
+                "DATABASE": self.using_db
+        })
+        http_post = urllib2.Request(
+            self.delete_url,
+            json_payload
+            )
+
+        json = simplejson.loads(urllib2.urlopen(http_post).read())
+        if json.get("Success"):
+            self.parent.show_message("Selected rows removed")
             self.parent.populate_table()
             return True
         else:

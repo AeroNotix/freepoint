@@ -35,6 +35,15 @@ type InsertData struct {
 	Database string   `json:"DATABASE"`
 }
 
+// When deleting rows of data we have a very strong idea about what the
+// data should look like. Therefore we put the data into a struct which
+// has very specific fields.
+type DeleteData struct {
+	Data     []string `json:"DATA"`
+	Table    string   `json:"TABLE"`
+	Database string   `json:"DATABASE"`
+}
+
 // HeadingData is composed of strings to interfaces
 type HeadingData map[string]interface{}
 
@@ -92,9 +101,9 @@ func SendJSONError(w http.ResponseWriter, message error) {
 	}
 
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"Error": message.Error(),
+		"Error":   message.Error(),
 		"Success": false,
-		"Code": code,
+		"Code":    code,
 	})
 }
 

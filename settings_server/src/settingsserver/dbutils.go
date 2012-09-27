@@ -44,6 +44,13 @@ type AsyncInsert struct {
 	ReturnPath chan error
 }
 
+// AsyncDelete holds the data for deleting rows from an existing
+// table.
+type AsyncDelete struct {
+	DeleteData
+	ReturnPath chan error
+}
+
 // Using the Request form values we create a job and return it.
 // We do it like this so that the error channel doesn't have to
 // be create by the user and they just pass the request form to
@@ -119,6 +126,23 @@ func NewAsyncInsert(req *http.Request) (insert AsyncInsert, err error) {
 		make(chan error),
 	}
 	return insert, err
+}
+
+func NewAsyncDelete(req *http.Request) (del AsyncDelete, err error) {
+	js := json.NewDecoder(req.Body)
+	indata := new(DeleteData)
+
+	err = js.Decode(&indata)
+	if err != nil {
+		log.Println(err)
+		return del, err
+	}
+
+	del = AsyncDelete{
+		*indata,
+		make(chan error),
+	}
+	return del, err
 }
 
 // Function which takes a row of the incoming json data from a create request
@@ -310,6 +334,16 @@ func AsyncInserter(jobqueue chan AsyncInsert) {
 	}
 }
 
+// AsyncInserter monitors a channel of type AsyncDelete and blocks until it receives
+// on it. Once it has received a job, it will process by calling DeleteRows on the
+// job and sending it's return value down the ReturnPath associated with the job.
+func AsyncDeleter(jobqueue chan AsyncDelete) {
+	for {
+		job := <-jobqueue
+		job.ReturnPath <- DeleteRows(job)
+	}
+}
+
 // ChangeData is a function which connects to the database and makes an update to a
 // table column using the data inside the AsyncUpdate instance. This shouldn't be
 // called directly because we have an asynchronous queue which is looking for jobs
@@ -402,6 +436,28 @@ func InsertRow(job AsyncInsert) error {
 	// merely the error status.
 	_, _, err = db.Query(sqlStr)
 	return err
+}
+
+func DeleteRows(job AsyncDelete) error {
+	db, err := CreateConnection(job.Database)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	stmt, err := db.Prepare(
+		fmt.Sprintf("DELETE FROM %s WHERE `id`=?", job.Table),
+	)
+	if err != nil {
+		return err
+	}
+	for _, rowid := range job.Data {
+		_, err := stmt.Run(rowid)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+	}
+	return nil
 }
 
 // This function will execute a create table string.

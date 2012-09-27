@@ -59,7 +59,7 @@ func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 	return nil
 }
 
-// InsertData servers as the back-end for handling data insertion into existing tables.
+// InsertData server as the back-end for handling data insertion into existing tables.
 // The request holds all the relevent data encoded into rows.
 func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
@@ -73,6 +73,23 @@ func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) er
 	if err != nil {
 		ss.SendJSONError(w, err)
 		return err
+	}
+
+	ss.SendJSON(w, true)
+	return nil
+}
+
+// deleteRows handles the deletion of a group of rows from a table.
+func deleteRows(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
+
+	job, err := ss.NewAsyncDelete(req)
+	if err != nil {
+		ss.SendJSONError(w, err)
+		return err
+	}
+	err = self.DeleteEntries(job)
+	if err != nil {
+		ss.SendJSONError(w, err)
 	}
 
 	ss.SendJSON(w, true)
@@ -232,6 +249,11 @@ func main() {
 				regexp.MustCompile("^/insert/$"),
 				insertData,
 				"Inserting data",
+			),
+			ss.NewRoute(
+				regexp.MustCompile("^/delete/$"),
+				deleteRows,
+				"Deleting data",
 			),
 		},
 	)
