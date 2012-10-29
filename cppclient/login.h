@@ -2,31 +2,35 @@
 #define LOGIN_H
 
 #include <QtGui>
+#include <QtNetwork/QNetworkReply>
+
 #include "mainwindow.h"
 #include "ui_loginbox.h"
-
-// fwd decl
-class QNetworkReply;
 
 namespace login {
     class Login : public QDialog {
 
-	Q_OBJECT
+		Q_OBJECT
 
     public:
-	explicit Login(MainWindow *parent = 0);
-	virtual void accept(void);
-	virtual void reject(void);
-    public slots:
-	void networkRequestFinished(QNetworkReply*);
+		explicit Login(MainWindow *parent = 0);
+        virtual ~Login() {
+			delete ui;
+        }
+		virtual void accept(void);
+		virtual void reject(void);
+	public slots:
+		void networkRequestFinished(QNetworkReply*);
+		void handleNetworkError(QNetworkReply::NetworkError);
     private:
-	void login(QString username, QString password);
-	const char* generateLoginString(QString username, QString password);
-	MainWindow *parent;
-	Ui_frm_login *ui;
-	QString storedUser;
-	QString storedPass;
-	bool networkRequestPending;
+		void errorCleanup();
+		void login(QString username, QString password);
+		const char* generateLoginString(QString username, QString password);
+		MainWindow *parent;
+		Ui_frm_login *ui;
+		QString storedUser;
+		QString storedPass;
+		bool networkRequestPending;
     };
 };
 #endif
