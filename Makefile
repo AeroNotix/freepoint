@@ -1,5 +1,9 @@
+all:
+	make pull
+	make build
+
 setup:
-	python setup.py py2exe
+	python2 setup.py py2exe
 
 push:
 	git push origin master
@@ -10,5 +14,4 @@ bigpush:
 	git commit -m "Big push"
 	git push origin master
 build:
-	cd settings_server
-	go build settings_server.go
+	cd settings_server; go build settings_server.go
