@@ -30,8 +30,8 @@ from qtsqlviewer.table_tools.delegates import Delegator
 # get used but there are side-effects when importing this module
 # which hook into Qt's internal resource management methods.
 from qtsqlviewer.ui import resource_rc
-from qtsqlviewer.ui.createDatabase import CreateNewTable
 
+from qtsqlviewer.ui.createDatabase import CreateNewTable
 from qtsqlviewer.settings import module_path
 
 ## Argument creation
