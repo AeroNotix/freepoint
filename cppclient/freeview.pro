@@ -13,10 +13,6 @@ HEADERS  += login.h \
 mainwindow.h \
          database.h \
 
-
-
-FORMS    += mainwindow.ui \
-
 win32 {
     FORMS += \
     ..\ui\add_new_row.ui \
