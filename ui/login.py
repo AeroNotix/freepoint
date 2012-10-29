@@ -27,8 +27,6 @@ class Login(QtGui.QDialog):
         self.gui = Ui_frm_login()
         self.gui.setupUi(self)
         self.parent = parent
-        # this is hardcoded we should/could put this in a local
-        # config. But how to make that config the first time?
         self.login_url = SERVERURL + "login/"
 
     def accept(self):
@@ -38,7 +36,7 @@ class Login(QtGui.QDialog):
         the form so that the action that instantiated us can carry
         on. Otherwise, loop back and offer the dialog box again.
         """
-        while not self.login():
+        if not self.login():
             self.parent.show_error("Login Failure!")
             return
         self.parent.username = self.gui.txt_username.text()
