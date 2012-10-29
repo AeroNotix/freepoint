@@ -1,5 +1,7 @@
-#include "database.h"
 #include <QtGui>
+
+#include "database.h"
+#include "settings.h"
 
 Database::Database
 (QWidget *parent, QString user, QString passwd,QString using_db, QString table, QString URL) {
