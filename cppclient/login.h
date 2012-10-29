@@ -21,10 +21,11 @@ namespace login {
 	void networkRequestFinished(QNetworkReply*);
     private:
 	void login(QString username, QString password);
+	const char* generateLoginString(QString username, QString password);
 	MainWindow *parent;
 	Ui_frm_login *ui;
-	QString username;
-	QString password;
+	QString storedUser;
+	QString storedPass;
 	bool networkRequestPending;
     };
 };

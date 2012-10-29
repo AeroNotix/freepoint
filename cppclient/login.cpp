@@ -30,9 +30,24 @@ void login::Login::login(QString username, QString password) {
     nam = new QNetworkAccessManager(this);
     QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
 		     this, SLOT(networkRequestFinished(QNetworkReply*)));
-
     QUrl url(LOGINURL);
-    QNetworkReply* reply = nam->get(QNetworkRequest(url));
+    QByteArray data(generateLoginString(username, password));
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+    nam->post(req,data);
+}
+
+const char* login::Login::generateLoginString(QString username, QString password) {
+
+    // refactor this shit.... use a string buffer.
+    std::string user = username.toStdString();
+    std::string pass = password.toStdString();
+    std::string out = "{\"USER\":\"";
+    out.append(user);
+    out.append("\",\"PASSWORD\":\"");
+    out.append(pass);
+    out.append("\"}");
+    return out.c_str();
 }
 
 /*
@@ -43,22 +58,30 @@ void login::Login::login(QString username, QString password) {
 */
 void login::Login::networkRequestFinished(QNetworkReply *reply) {
 
-    /*
-      Here we would need to check the incoming reply for the auth
-      status with something like the below:
-
-      QJson::Parser parser;
-      bool ok;
-      QVariant result = parser.parse(json, &ok);
-
-      This also needs to set the members on the parent object. i.e.
-      username/password.
-    */
-
-    // for now we just pretend we've authenticated.
     networkRequestPending = false;
-    parent->ShowMessage("Logged in", 1000);
-    QDialog::accept();
+    QString text = reply->readAll();
+    QByteArray json(text.toStdString().c_str());
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap result = parser.parse(json, &ok).toMap();
+
+    if (!ok) {
+	parent->ShowError("Malformed data received from server. Contact Administrator.");
+    }
+
+    bool loginStatus = result["Success"].toBool();
+    if (loginStatus) {
+	networkRequestPending = false;
+	parent->SetUsername(storedUser);
+	parent->SetPassword(storedPass);
+	parent->ShowMessage("Logged in", 1000);
+	QDialog::accept();
+	return;
+    }
+
+    storedUser = QString("");
+    storedPass = QString("");
+    parent->ShowError("Login failure! Try again.");
 }
 
 /*
@@ -68,9 +91,9 @@ void login::Login::networkRequestFinished(QNetworkReply *reply) {
   the setter methods.
 */
 void login::Login::accept(void) {
-    QString username = ui->txt_username->text();
-    QString password = ui->txt_password->text();
-    login(username, password);
+    QString storedUser = ui->txt_username->text();
+    QString storedPass = ui->txt_password->text();
+    login(storedUser, storedPass);
 }
 
 /*
