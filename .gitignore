@@ -11,3 +11,4 @@
 *.out
 freeview
 settings_server
+moc_*
