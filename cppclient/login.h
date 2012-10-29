@@ -13,7 +13,10 @@ namespace login {
     public:
 	explicit Login(MainWindow *parent = 0);
 	virtual void accept(void);
+	virtual void reject(void);
     private:
+
+	bool login(QString username, QString password) const;
 	MainWindow *parent;
 	Ui_frm_login *ui;
     };
