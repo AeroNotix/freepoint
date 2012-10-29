@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 TARGET = freeview
 TEMPLATE = app
@@ -10,8 +10,9 @@ SOURCES += main.cpp\
         login.cpp
 
 HEADERS  += login.h \
-mainwindow.h \
+         mainwindow.h \
          database.h \
+         settings.h
 
 unix {
     FORMS += \
