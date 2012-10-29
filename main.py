@@ -450,6 +450,7 @@ class MainGui(QtGui.QMainWindow):
         This should be in a separate thread because if the dataset is large
         then we will end up overloading the main thread.
         """
+
         try:
             fout = open(fname, "wb")
         except IOError:
@@ -457,12 +458,26 @@ class MainGui(QtGui.QMainWindow):
             return
         csvout = csv.writer(fout)
         csvout.writerow(self.database.get_headings())
-        for row in range(self.gui.tableWidget.rowCount()):
-            thisrow = list()
-            for col in range(self.gui.tableWidget.columnCount()):
-                thisrow.append(self.gui.tableWidget.item(row, col).text())
-                csvout.writerow(thisrow)
+        rows = self.gui.tableWidget.rowCount()
+        cols = self.gui.tableWidget.columnCount()
+        for row in range(rows):
+            thisrow = [self.safeGetCell(row,col) for col in range(cols)]
+            csvout.writerow(thisrow)
         fout.close()
+
+    def safeGetCell(self, row, col):
+        """
+        safeGetCell wraps a call to the tableWidget.item(x,y) method so
+        that we can wrap it in a try:except block due to the above method
+        returning None when called with co-ords which is a blank item
+        in the table. The None item indicates an empty cell, so we
+        return a blank string instead.
+        """
+
+        try:
+            return self.gui.tableWidget.item(row, col).text()
+        except AttributeError:
+            return ""
 
     def insert_row(self):
         """
