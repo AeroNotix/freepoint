@@ -1,46 +1,43 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "database.h"
-
 #include <iostream>
+#include "login.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow),
+      // this needs to be changed to pull it from the form, remember.
+      db(new Database(this, "aero", "passwd", "db", "table", "localhost:6060"))
 {
-  Database db(this, "aero", "passwd", "db", "table", "localhost:6060");
-  ui->setupUi(this);
-  setStatusBar(ui->statusbar);
-  Login();
-  ShowMessage(db.BaseURL, 1000);
+    ui->setupUi(this);
+    setStatusBar(ui->statusbar);
+    Login();
+    ShowMessage(db->BaseURL, 1000);
 }
 
-MainWindow::~MainWindow()
-{
-  delete ui;
+MainWindow::~MainWindow() {
+    delete ui;
+    delete db;
 }
 
-void MainWindow::PopulateTable()
-{
-  ShowMessage("Populating table",1000);
+void MainWindow::PopulateTable() {
+    ShowMessage("Populating table",1000);
 }
 
-void MainWindow::ShowMessage(const QString &text, int t)
-{
-  ui->statusbar->showMessage(text, t);
+void MainWindow::ShowMessage(const QString &text, int t) {
+    ui->statusbar->showMessage(text, t);
+}
+ 
+void MainWindow::ShowError(const QString &text) {
+    ShowMessage(text, 1000);
 }
 
-void MainWindow::ShowError(const QString &text)
-{
-  ShowMessage(text, 1000);
+void MainWindow::Login() {
+    login::Login l(this);
+    l.exec();
 }
 
-void MainWindow::Login()
-{
-  ShowMessage("Logging in....", 1000);
-}
-
-void MainWindow::RevertCellData(int x, int y)
-{
-  ShowMessage("RevertingCellData", 1000);
+void MainWindow::RevertCellData(int x, int y) {
+    if (x && y) {} // nop
+    ShowMessage("RevertingCellData", 1000);
 }

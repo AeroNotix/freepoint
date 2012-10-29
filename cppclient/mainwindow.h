@@ -2,9 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "database.h"
 
 namespace Ui {
-class MainWindow;
+  class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -18,7 +19,6 @@ public:
     void ShowError(const QString &text);
 
 private:
-    Ui::MainWindow *ui;
     void PopulateTable       ();
     void ChangeTable         (int x, int y);
     void InsertData          (std::string json);
@@ -30,7 +30,11 @@ private:
     void Login               ();
     void OpenConnectionDialog();
     void CreateAction        ();
+
+    Ui::MainWindow *ui;
     QAction *newAction;
+    Database *db;
+    bool populating;
 };
 
 #endif // MAINWINDOW_H
