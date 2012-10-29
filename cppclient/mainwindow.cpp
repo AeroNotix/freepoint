@@ -41,3 +41,19 @@ void MainWindow::RevertCellData(int x, int y) {
     if (x && y) {} // nop
     ShowMessage("RevertingCellData", 1000);
 }
+
+void MainWindow::SetUsername(const QString &text) {
+    username = text;
+}
+
+const QString MainWindow::GetUsername(void) const {
+    return username;
+}
+
+void MainWindow::SetPassword(const QString &text) {
+    password = text;
+}
+
+const QString MainWindow::GetPassword(void) const {
+    return password;
+}

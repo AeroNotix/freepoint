@@ -17,6 +17,10 @@ public:
     ~MainWindow();
     void ShowMessage(const QString &text, int t);
     void ShowError(const QString &text);
+    void SetUsername(const QString &test);
+    const QString GetUsername(void) const;
+    void SetPassword(const QString &test);
+    const QString GetPassword(void) const;
 
 private:
     void PopulateTable       ();
@@ -35,6 +39,8 @@ private:
     QAction *newAction;
     Database *db;
     bool populating;
+    QString username;
+    QString password;
 };
 
 #endif // MAINWINDOW_H
