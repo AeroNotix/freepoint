@@ -2,7 +2,6 @@ all:
 	make pull
 	make build
 	cd cppclient; qmake -o Makefile freeview.pro
-	cd cppclient; rm freeview
 	cd cppclient; make -f ./Makefile
 	cd cppclient; rm *.o; rm ui_*; rm moc_*
 
