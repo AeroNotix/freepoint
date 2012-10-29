@@ -64,6 +64,8 @@ const char* login::Login::generateLoginString(QString username, QString password
 }
 
 /*
+  SLOT:-
+
   This method should not be called directly.
 
   This method is asynchronously called via the QNetworkAccessManager
