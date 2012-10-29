@@ -5,6 +5,9 @@
 #include "mainwindow.h"
 #include "ui_loginbox.h"
 
+// fwd decl
+class QNetworkReply;
+
 namespace login {
     class Login : public QDialog {
 
@@ -14,11 +17,15 @@ namespace login {
 	explicit Login(MainWindow *parent = 0);
 	virtual void accept(void);
 	virtual void reject(void);
+    public slots:
+	void networkRequestFinished(QNetworkReply*);
     private:
-
-	bool login(QString username, QString password) const;
+	void login(QString username, QString password);
 	MainWindow *parent;
 	Ui_frm_login *ui;
+	QString username;
+	QString password;
+	bool networkRequestPending;
     };
 };
 #endif
