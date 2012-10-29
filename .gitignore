@@ -12,3 +12,4 @@
 freeview
 settings_server
 moc_*
+*.pro.user
