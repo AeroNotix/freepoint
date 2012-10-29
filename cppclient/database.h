@@ -1,3 +1,6 @@
+#ifndef DATABASE_H
+#define DATABASE_H
+
 #include <vector>
 #include <QtCore/QString>
 #include <QtGui>
@@ -29,3 +32,4 @@ private:
     void ChangeTable(int x, int y);
 };
 
+#endif // DATABASE_H
