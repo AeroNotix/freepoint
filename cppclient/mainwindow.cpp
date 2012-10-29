@@ -29,6 +29,9 @@ void MainWindow::ShowMessage(const QString &text, int t) {
 }
  
 void MainWindow::ShowError(const QString &text) {
+    QMessageBox msgBox;
+    msgBox.setText(text);
+    msgBox.exec();
     ShowMessage(text, 1000);
 }
 
