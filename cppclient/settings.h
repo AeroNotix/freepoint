@@ -7,4 +7,4 @@
 #define UPDATEURL "http://16.55.133.115:12345/update/"
 #define INSERTURL "http://16.55.133.115:12345/insert/"
 
-#endif // SETTINGS_H
+#endif

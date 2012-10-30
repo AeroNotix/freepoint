@@ -12,9 +12,15 @@
 #include "qjson/parser.h"
 #include "settings.h"
 
-login::Login::Login(MainWindow *parent)
-	: QDialog(parent), parent(parent), ui(new Ui_frm_login), networkRequestPending(false) {
-	ui->setupUi(this);
+
+using namespace login;
+
+Login::Login(MainWindow *parent)
+    : QDialog(parent), parent(parent),
+      ui(new Ui_frm_login), networkRequestPending(false),
+      currentNam(nullptr)
+{
+    ui->setupUi(this);
 };
 
 /*
@@ -22,29 +28,24 @@ login::Login::Login(MainWindow *parent)
   server and handles the connection of signals so we can handle the out
   -come of that request.
 */
-void login::Login::login(QString username, QString password) {
-	/*
-	  Here we need to encode the username/password into the JSON string.
-	*/
+void Login::login() {
+    // We only have a single request pending at a time.
+    if (networkRequestPending) {
+        return;
+    }
+    networkRequestPending = true;
 
-	// make it so we only have a single request pending at a time.
-	if (networkRequestPending) {
-		return;
-	}
-	networkRequestPending = true;
+    currentNam = new QNetworkAccessManager(this);
+    QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(networkRequestFinished(QNetworkReply*)));
 
-	QNetworkAccessManager* nam;
-	nam = new QNetworkAccessManager(this);
-	QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
-					 this, SLOT(networkRequestFinished(QNetworkReply*)));
-
-	QByteArray data(generateLoginString(username, password));
-	QUrl url(LOGINURL);
-	QNetworkRequest req(url);
-	req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
-	QNetworkReply *reply = nam->post(req, data);
-	QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
-					 this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+    QByteArray data(generateLoginString());
+    QUrl url(LOGINURL);
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+    QNetworkReply *reply = currentNam->post(req, data);
+    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                     this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
 }
 
 /*
@@ -52,15 +53,15 @@ void login::Login::login(QString username, QString password) {
   the JSON representation of those objects.
 
   Output is a char* because will use it for HTTP Post data.
- */
-const char* login::Login::generateLoginString(QString username, QString password) {
+*/
+const char* Login::generateLoginString() {
 
-	std::string dq = "\"";
-	std::stringstream s(std::stringstream::in | std::stringstream::out);
-	s << "{" << dq << "USER" << dq << ":" << dq << username.toStdString()
-	  << dq << ",PASSWORD" << dq << ":" << dq << password.toStdString()
-	  << dq << "}";
-	return s.str().c_str();
+    std::string dq = "\"";
+    std::stringstream s(std::stringstream::in | std::stringstream::out);
+    s << "{" << dq << "USER" << dq << ":" << dq << storedUser.toStdString()
+      << dq << "," << dq << "PASSWORD" << dq << ":" << dq << storedPass.toStdString()
+      << dq << "}";
+    return s.str().c_str();
 }
 
 /*
@@ -71,29 +72,28 @@ const char* login::Login::generateLoginString(QString username, QString password
   This method is asynchronously called via the QNetworkAccessManager
   class.
 */
-void login::Login::networkRequestFinished(QNetworkReply *reply) {
+void Login::networkRequestFinished(QNetworkReply *reply) {
 
-	networkRequestPending = false;
-	QString text = reply->readAll();
-	QByteArray json(text.toStdString().c_str());
-	QJson::Parser parser;
-	bool ok;
-	QVariantMap result = parser.parse(json, &ok).toMap();
+    networkRequestPending = false;
+    QString text = reply->readAll();
+    QByteArray json(text.toStdString().c_str());
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap result = parser.parse(json, &ok).toMap();
 
-	if (!ok) {
-		parent->ShowError("Malformed data received from server. Contact Administrator.");
-	}
+    if (!ok) {
+        parent->ShowError("Malformed data received from server. Contact Administrator.");
+    }
 
-	bool loginStatus = result["Success"].toBool();
-	if (loginStatus) {
-		networkRequestPending = false;
-		parent->SetUsername(storedUser);
-		parent->SetPassword(storedPass);
-		parent->ShowMessage("Logged in", 1000);
-		QDialog::accept();
-		return;
-	}
-	errorCleanup();
+    bool loginStatus = result["Success"].toBool();
+    if (loginStatus) {
+        parent->SetUsername(storedUser);
+        parent->SetPassword(storedPass);
+        parent->ShowMessage("Logged in", 1000);
+        QDialog::accept();
+        return;
+    }
+    errorCleanup();
 }
 
 /*
@@ -102,8 +102,8 @@ void login::Login::networkRequestFinished(QNetworkReply *reply) {
   We attach a signal to this slot so we can asynchronously cleanup members
   that won't be used because the NetworkRequests fail.
 */
-void login::Login::handleNetworkError(QNetworkReply::NetworkError error) {
-	errorCleanup();
+void Login::handleNetworkError(QNetworkReply::NetworkError error) {
+    errorCleanup();
 }
 
 /*
@@ -112,10 +112,10 @@ void login::Login::handleNetworkError(QNetworkReply::NetworkError error) {
   This method mutates the parent's Username and Password members via
   the setter methods.
 */
-void login::Login::accept(void) {
-	QString storedUser = ui->txt_username->text();
-	QString storedPass = ui->txt_password->text();
-	login(storedUser, storedPass);
+void Login::accept(void) {
+    storedUser = ui->txt_username->text();
+    storedPass = ui->txt_password->text();
+    login();
 }
 
 /*
@@ -123,16 +123,16 @@ void login::Login::accept(void) {
   as the person shouldn't be able to access the next screen without
   first logging in.
 */
-void login::Login::reject(void) {
-	QDialog::reject();
-	exit(-1);
+void Login::reject(void) {
+    QDialog::reject();
+    exit(-1);
 }
 
 /*
   Simple method where we can put any and all cleanup into
 */
-void login::Login::errorCleanup() {
-	storedUser = QString("");
-	storedPass = QString("");
-	parent->ShowError("Login failure! Try again.");
+void Login::errorCleanup() {
+    storedUser = QString("");
+    storedPass = QString("");
+    parent->ShowError("Login failure! Try again.");
 }

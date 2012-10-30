@@ -2,34 +2,45 @@
 #define DATABASE_H
 
 #include <vector>
+
 #include <QtCore/QString>
 #include <QtGui>
+#include <QNetworkReply>
+#include <QtNetwork/QNetworkAccessManager>
 
-class Database {
+#include "settings.h"
+
+class Database :
+    public QObject {
 public:
     Database(QWidget *parent, QString user, QString passwd,
-	     QString using_db, QString table, QString URL);
-    ~Database();
+             QString using_db, QString table);
+    ~Database() {
+        delete currentNam;
+    }
+
     void Connect();
     void Close();
-    void Query();
     void Update();
     void Insert();
-    QString BaseURL;
-    std::vector<QString> GetHeadings();
+    void Query();
+    QList<QString> GetHeadings();
+
+public slots:
+    void handleNetworkError(QNetworkReply::NetworkError);
 
 private:
-    QWidget *Parent;
-    QString ParamURL;
-    QString LoginURL;
-    QString UpdateURL;
-    QString InsertURL;
-    QString TableName;
-    QString UsingDB;
-    QString Password;
+    const char* generateQueryString(void);
+    QWidget *parent;
     QString User;
+    QString Password;
+    QString UsingDB;
+    QString TableName;
     bool Connected;
     void ChangeTable(int x, int y);
+    QList<QList<QString> > queryset;
+    QList<QString> headings;
+    QNetworkAccessManager *currentNam;
 };
 
 #endif // DATABASE_H
