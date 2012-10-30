@@ -19,6 +19,10 @@ void Database::Close() {
 }
 
 QList<QList<QString> > Database::Query() {
+    // Mock data until I write the json/db interface.
+    //
+    // the db->gui interface is working, it's just the server->db
+    // interface I need to write.
     headings = {"ID", "TEST"};
     queryset = {
         {"1", "DATAZ"},

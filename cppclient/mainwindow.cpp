@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {
+    ClearTable();
     delete ui;
     delete db;
 }
@@ -55,12 +56,22 @@ void MainWindow::PopulateTable(void) {
     ui->tableWidget->setHorizontalHeaderLabels(headings);
 
     ClearTable();
-    ui->tableWidget->insertRow(0);
-    ui->tableWidget->setItem(0, 0, new QTableWidgetItem(QString("sup" )));
+    for (int x = 0; x < queryset.size(); ++x) {
+        ui->tableWidget->insertRow(x);
+        for (int z = 0; z < queryset[x].size(); ++z) {
+            // items deleted in dtor using the ClearTable method
+            ui->tableWidget->setItem(x, z, new QTableWidgetItem(queryset[x][z]));
+        }
+    }
 }
 
 void MainWindow::ClearTable() {
-    return;
+    int rows = ui->tableWidget->rowCount();
+    int cols = ui->tableWidget->columnCount();
+
+    for (int x = 0; x < rows; ++x)
+        for (int z = 0; z < cols; ++z)
+            delete ui->tableWidget->itemAt(x, z);
 }
 
 void MainWindow::ShowMessage(const QString &text, int t) {
