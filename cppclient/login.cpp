@@ -28,7 +28,7 @@ Login::Login(MainWindow *parent)
   server and handles the connection of signals so we can handle the out
   -come of that request.
 */
-void Login::login(QString username, QString password) {
+void Login::login() {
     // We only have a single request pending at a time.
     if (networkRequestPending) {
         return;
@@ -39,7 +39,7 @@ void Login::login(QString username, QString password) {
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(networkRequestFinished(QNetworkReply*)));
 
-    QByteArray data(generateLoginString(username, password));
+    QByteArray data(generateLoginString());
     QUrl url(LOGINURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
@@ -54,12 +54,12 @@ void Login::login(QString username, QString password) {
 
   Output is a char* because will use it for HTTP Post data.
 */
-const char* Login::generateLoginString(QString username, QString password) {
+const char* Login::generateLoginString() {
 
     std::string dq = "\"";
     std::stringstream s(std::stringstream::in | std::stringstream::out);
-    s << "{" << dq << "USER" << dq << ":" << dq << username.toStdString()
-      << dq << "," << dq << "PASSWORD" << dq << ":" << dq << password.toStdString()
+    s << "{" << dq << "USER" << dq << ":" << dq << storedUser.toStdString()
+      << dq << "," << dq << "PASSWORD" << dq << ":" << dq << storedPass.toStdString()
       << dq << "}";
     return s.str().c_str();
 }
@@ -111,9 +111,9 @@ void Login::handleNetworkError(QNetworkReply::NetworkError error) {
   the setter methods.
 */
 void Login::accept(void) {
-    QString storedUser = ui->txt_username->text();
-    QString storedPass = ui->txt_password->text();
-    login(storedUser, storedPass);
+    storedUser = ui->txt_username->text();
+    storedPass = ui->txt_password->text();
+    login();
 }
 
 /*

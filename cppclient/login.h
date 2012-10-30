@@ -32,8 +32,8 @@ namespace login {
 
     private:
         void errorCleanup();
-        void login(QString username, QString password);
-        const char* generateLoginString(QString username, QString password);
+        void login();
+        const char* generateLoginString();
         MainWindow *parent;
         Ui_frm_login *ui;
         QString storedUser;
