@@ -23,7 +23,11 @@ public:
     void SetPassword(const QString &test);
     const QString GetPassword(void) const;
 
+public slots:
+    void InsertData(QNetworkReply *reply);
+
 private:
+    void insertRowData(QList<QStringList>);
     void PopulateTable();
     void ChangeTable(int x, int y);
     void InsertData(std::string json);
@@ -42,8 +46,8 @@ private:
     bool populating;
     QString username;
     QString password;
-    QList<QString> headings;
-    QList<QList<QString> > queryset;
+    QStringList headings;
+    QList<QStringList> queryset;
 };
 
 #endif // MAINWINDOW_H
