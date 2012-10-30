@@ -9,7 +9,11 @@
 
 #include "login.h"
 #include "ui_loginbox.h"
-#include "qjson/parser.h"
+#ifdef _WIN32
+    #include "QJson/Parser"
+#elif defined __unix__
+    #include "qjson/parser.h"
+#endif
 #include "settings.h"
 
 

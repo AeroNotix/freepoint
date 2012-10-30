@@ -1,7 +1,11 @@
 #include <vector>
 #include <iostream>
 
-#include "qjson/parser.h"
+#ifdef _WIN32
+    #include "QJson/Parser"
+#elif defined __unix__
+    #include "qjson/parser.h"
+#endif
 
 #include "login.h"
 #include "mainwindow.h"
@@ -50,8 +54,9 @@ void MainWindow::InsertData(QNetworkReply *reply) {
     ui->tableWidget->setHorizontalHeaderLabels(headings);
 
     QList<QStringList> rows;
-    for (auto row : rawrows_initial) {
-        rows.append(row.toStringList());
+
+    for (int x = 0; x < rawrows_initial.size(); ++x) {
+        rows.append(rawrows_initial[x].toStringList());
     }
 
     insertRowData(rows);
