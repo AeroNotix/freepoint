@@ -12,8 +12,14 @@
 #include "qjson/parser.h"
 #include "settings.h"
 
-login::Login::Login(MainWindow *parent)
-	: QDialog(parent), parent(parent), ui(new Ui_frm_login), networkRequestPending(false) {
+
+using namespace login;
+
+Login::Login(MainWindow *parent)
+	: QDialog(parent), parent(parent),
+      ui(new Ui_frm_login), networkRequestPending(false),
+      currentNam(nullptr)
+{
 	ui->setupUi(this);
 };
 
@@ -22,27 +28,22 @@ login::Login::Login(MainWindow *parent)
   server and handles the connection of signals so we can handle the out
   -come of that request.
 */
-void login::Login::login(QString username, QString password) {
-	/*
-	  Here we need to encode the username/password into the JSON string.
-	*/
-
-	// make it so we only have a single request pending at a time.
+void Login::login(QString username, QString password) {
+	// We only have a single request pending at a time.
 	if (networkRequestPending) {
 		return;
 	}
 	networkRequestPending = true;
 
-	QNetworkAccessManager* nam;
-	nam = new QNetworkAccessManager(this);
-	QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
+    currentNam = new QNetworkAccessManager(this);
+	QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
 					 this, SLOT(networkRequestFinished(QNetworkReply*)));
 
 	QByteArray data(generateLoginString(username, password));
 	QUrl url(LOGINURL);
 	QNetworkRequest req(url);
 	req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
-	QNetworkReply *reply = nam->post(req, data);
+	QNetworkReply *reply = currentNam->post(req, data);
 	QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
 					 this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
 }
@@ -53,13 +54,14 @@ void login::Login::login(QString username, QString password) {
 
   Output is a char* because will use it for HTTP Post data.
  */
-const char* login::Login::generateLoginString(QString username, QString password) {
+const char* Login::generateLoginString(QString username, QString password) {
 
 	std::string dq = "\"";
 	std::stringstream s(std::stringstream::in | std::stringstream::out);
 	s << "{" << dq << "USER" << dq << ":" << dq << username.toStdString()
-	  << dq << ",PASSWORD" << dq << ":" << dq << password.toStdString()
+	  << dq << "," << dq << "PASSWORD" << dq << ":" << dq << password.toStdString()
 	  << dq << "}";
+    std::cout << s.str() << std::endl;
 	return s.str().c_str();
 }
 
@@ -69,7 +71,7 @@ const char* login::Login::generateLoginString(QString username, QString password
   This method is asynchronously called via the QNetworkAccessManager
   class.
 */
-void login::Login::networkRequestFinished(QNetworkReply *reply) {
+void Login::networkRequestFinished(QNetworkReply *reply) {
 
 	networkRequestPending = false;
 	QString text = reply->readAll();
@@ -100,7 +102,7 @@ void login::Login::networkRequestFinished(QNetworkReply *reply) {
   We attach a signal to this slot so we can asynchronously cleanup members
   that won't be used because the NetworkRequests fail.
 */
-void login::Login::handleNetworkError(QNetworkReply::NetworkError error) {
+void Login::handleNetworkError(QNetworkReply::NetworkError error) {
 	errorCleanup();
 }
 
@@ -110,7 +112,7 @@ void login::Login::handleNetworkError(QNetworkReply::NetworkError error) {
   This method mutates the parent's Username and Password members via
   the setter methods.
 */
-void login::Login::accept(void) {
+void Login::accept(void) {
 	QString storedUser = ui->txt_username->text();
 	QString storedPass = ui->txt_password->text();
 	login(storedUser, storedPass);
@@ -121,7 +123,7 @@ void login::Login::accept(void) {
   as the person shouldn't be able to access the next screen without
   first logging in.
 */
-void login::Login::reject(void) {
+void Login::reject(void) {
 	QDialog::reject();
 	exit(-1);
 }
@@ -129,7 +131,7 @@ void login::Login::reject(void) {
 /*
   Simple method where we can put any and all cleanup into
 */
-void login::Login::errorCleanup() {
+void Login::errorCleanup() {
 	storedUser = QString("");
 	storedPass = QString("");
 	parent->ShowError("Login failure! Try again.");
