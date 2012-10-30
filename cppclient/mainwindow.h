@@ -22,18 +22,23 @@ public:
     void SetPassword(const QString &test);
     const QString GetPassword(void) const;
 
+public slots:
+	void openConnectionDialog();
+    void openManageDialog();
+    void storeCell(int x, int y);
+	void storeCell();
+	void changeTable();
+
 private:
-    void PopulateTable       ();
-    void ChangeTable         (int x, int y);
-    void InsertData          (std::string json);
-    void StoreCell           (int x, int y);
-    void RevertCellData      (int x, int y);
-    void ClearTable          ();
-    void ChangeConnection    (int connection_number);
-    void AddMenuActions      ();
-    void Login               ();
-    void OpenConnectionDialog();
-    void CreateAction        ();
+    void PopulateTable();
+	void ChangeTable(int x, int y);
+	void InsertData(std::string json);
+	void RevertCellData(int x, int y);
+	void ClearTable();
+	void ChangeConnection(int connection_number);
+	void AddMenuActions();
+	void Login();
+	void CreateAction();
 
     Ui::MainWindow *ui;
     QAction *newAction;

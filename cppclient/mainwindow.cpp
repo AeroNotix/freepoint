@@ -60,3 +60,9 @@ void MainWindow::SetPassword(const QString &text) {
 const QString MainWindow::GetPassword(void) const {
     return password;
 }
+
+void MainWindow::openConnectionDialog() {}
+void MainWindow::storeCell(int x, int y) {}
+void MainWindow::storeCell() {}
+void MainWindow::openManageDialog() {}
+void MainWindow::changeTable() {}
