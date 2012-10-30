@@ -1,5 +1,8 @@
 QT       += core gui network
-QMAKE_CXXFLAGS += -std=c++11
+
+unix {
+    QMAKE_CXXFLAGS += -std=c++11
+}
 
 TARGET = freeview
 TEMPLATE = app
@@ -27,6 +30,10 @@ unix {
 
 unix:INCLUDEPATH += "/usr/include/"
 unix:LIBS += "-lqjson"
+
+win32:INCLUDEPATH += C:\include\qjson\include
+win32:INCLUDEPATH += C:\include\qjson\src
+win32:LIBS += -LC:\include\qjson\lib -lqjson0
 
 win32 {
     FORMS += \
