@@ -23,8 +23,8 @@ QList<QList<QString> > Database::Query() {
     queryset = {
         {"1", "DATAZ"},
         {"2", "OVA DATAZ"}
-            };
-return queryset;
+    };
+    return queryset;
 }
 
 QList<QString> Database::GetHeadings() {
