@@ -1,5 +1,7 @@
 QT       += core gui network
-QMAKE_CXXFLAGS += -std=c++11
+unix {
+    QMAKE_CXXFLAGS += -std=c++11
+}
 
 TARGET = freeview
 TEMPLATE = app
