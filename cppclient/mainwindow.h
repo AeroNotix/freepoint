@@ -24,6 +24,7 @@ public:
     const QString GetPassword(void) const;
 
 public slots:
+    void InsertData(QNetworkReply *reply);
 	void openConnectionDialog();
     void openManageDialog();
     void storeCell(int x, int y);
