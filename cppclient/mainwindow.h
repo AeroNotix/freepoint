@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+
 #include "database.h"
 
 namespace Ui {
@@ -23,17 +24,17 @@ public:
     const QString GetPassword(void) const;
 
 private:
-    void PopulateTable       ();
-    void ChangeTable         (int x, int y);
-    void InsertData          (std::string json);
-    void StoreCell           (int x, int y);
-    void RevertCellData      (int x, int y);
-    void ClearTable          ();
-    void ChangeConnection    (int connection_number);
-    void AddMenuActions      ();
-    void Login               ();
+    void PopulateTable();
+    void ChangeTable(int x, int y);
+    void InsertData(std::string json);
+    void StoreCell(int x, int y);
+    void RevertCellData(int x, int y);
+    void ClearTable();
+    void ChangeConnection(int connection_number);
+    void AddMenuActions();
+    void Login();
     void OpenConnectionDialog();
-    void CreateAction        ();
+    void CreateAction();
 
     Ui::MainWindow *ui;
     QAction *newAction;
@@ -41,6 +42,8 @@ private:
     bool populating;
     QString username;
     QString password;
+    QList<QString> headings;
+    QList<QList<QString> > queryset;
 };
 
 #endif // MAINWINDOW_H
