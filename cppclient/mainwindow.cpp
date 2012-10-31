@@ -43,8 +43,10 @@ void MainWindow::PopulateTable(void) {
     ClearTable();
     if (db != nullptr)
         db->Query();
-    else
-        ShowError("Database has not been initialized!");
+    else {                  // THIS IS TEST DATA
+        db = new Database(this, "aero", "passwd", "db_freepoint", "buchungsdatei");
+        db->Query();
+    }
 }
 
 /*
