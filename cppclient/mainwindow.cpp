@@ -19,6 +19,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "database.h"
+#include "table_tools.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -29,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     setStatusBar(ui->statusbar);
     SetCurrentTable();
     Login();
+    PopulateToolbar();
     PopulateTable();
 }
 
@@ -176,6 +178,14 @@ void MainWindow::ShowError(const QString &text) {
 void MainWindow::Login() {
     login::Login l(this);
     l.exec();
+}
+
+void MainWindow::PopulateToolbar() {
+    create_action(this, 
+                  QString("Refresh"),
+                  QString("Refreshes the table and it's data"),
+                  QString(":/view-refresh"),
+                  RefreshTable);
 }
 
 void MainWindow::RevertCellData(int x, int y) {

@@ -10,12 +10,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
         database.cpp \
-        login.cpp
+        login.cpp \
+        table_tools.cpp
 
 HEADERS  += login.h \
          mainwindow.h \
          database.h \
-         settings.h
+         settings.h \
+         table_tools.h
 
 unix:INCLUDEPATH += "/usr/include/"
 unix:LIBS += "-lqjson"

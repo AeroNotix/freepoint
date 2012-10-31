@@ -47,6 +47,7 @@ private:
     void Login();
     void OpenConnectionDialog();
     void CreateAction();
+    void PopulateToolbar();
 
     Ui::MainWindow *ui;
     QAction *newAction;
