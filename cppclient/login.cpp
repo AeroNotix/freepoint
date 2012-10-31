@@ -9,7 +9,11 @@
 
 #include "login.h"
 #include "ui_loginbox.h"
-#include "qjson/parser.h"
+#ifdef _WIN32
+    #include "QJson/Parser"
+#elif defined __unix__
+    #include "qjson/parser.h"
+#endif
 #include "settings.h"
 
 
@@ -65,6 +69,8 @@ const char* Login::generateLoginString() {
 }
 
 /*
+  SLOT:-
+
   This method should not be called directly.
 
   This method is asynchronously called via the QNetworkAccessManager

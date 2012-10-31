@@ -13,6 +13,9 @@
 #include "database.h"
 
 
+#include "database.h"
+#include "settings.h"
+
 Database::Database
 (QWidget *parent, QString user, QString passwd, QString using_db, QString table)
     : parent(parent), User(user), Password(passwd), UsingDB(using_db),
