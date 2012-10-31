@@ -1,0 +1,14 @@
+{
+    "version": "0.1",
+    "connections" : ["connection-1", "connection-2"],
+    "connection-1": {
+        "server": "http://16.55.133.115:12345/",
+        "database": "db_freepoint",
+        "table": "buchungsdatei"
+    },
+    "connection-2": {
+        "server": "http://16.55.133.115:12345/",
+        "database": "db_freepoint",
+        "table": "buchungsdatei"
+    }
+}
