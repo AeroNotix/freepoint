@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <Qt>
 #include <QMainWindow>
+#include <QKeyEvent>
 
 #include "database.h"
 
@@ -29,16 +31,17 @@ public slots:
     void openManageDialog();
     void storeCell(int x, int y);
 	void storeCell();
-	void changeTable();
 
 private:
-    void insertRowData(QList<QStringList>);
     void PopulateTable();
-    void ChangeTable(int x, int y);
+    bool SetCurrentTable();
+    void RefreshTable();
+    void ClearTable();
     void InsertData(std::string json);
+    void insertRowData(QList<QStringList>);
+    void keyPressEvent(QKeyEvent * event);
     void StoreCell(int x, int y);
     void RevertCellData(int x, int y);
-    void ClearTable();
     void ChangeConnection(int connection_number);
     void AddMenuActions();
     void Login();
@@ -53,6 +56,8 @@ private:
     QString password;
     QStringList headings;
     QList<QStringList> queryset;
+    QList<QVariantMap> connections;
+    bool networkRequestPending;
 };
 
 #endif // MAINWINDOW_H
