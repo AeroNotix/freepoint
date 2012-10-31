@@ -9,7 +9,7 @@
 .ropeproject
 *.dll
 *.out
-freeview
+freepoint
 settings_server
 moc_*
 *.pro.user
