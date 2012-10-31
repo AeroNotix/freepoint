@@ -43,7 +43,7 @@ void Login::login() {
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(networkRequestFinished(QNetworkReply*)));
 
-    QByteArray data(generateLoginString());
+    QByteArray data(generateLoginString().c_str());
     QUrl url(LOGINURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
@@ -58,14 +58,14 @@ void Login::login() {
 
   Output is a char* because will use it for HTTP Post data.
 */
-const char* Login::generateLoginString() {
+std::string Login::generateLoginString() {
 
     std::string dq = "\"";
     std::stringstream s(std::stringstream::in | std::stringstream::out);
     s << "{" << dq << "USER" << dq << ":" << dq << storedUser.toStdString()
       << dq << "," << dq << "PASSWORD" << dq << ":" << dq << storedPass.toStdString()
       << dq << "}";
-    return s.str().c_str();
+    return s.str();
 }
 
 /*

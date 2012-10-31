@@ -2,6 +2,7 @@
 #define LOGIN_H
 
 #include <iostream>
+#include <string>
 
 #include <QtGui>
 #include <QtNetwork/QNetworkReply>
@@ -33,7 +34,7 @@ namespace login {
     private:
         void errorCleanup();
         void login();
-        const char* generateLoginString();
+        std::string generateLoginString();
         MainWindow *parent;
         Ui_frm_login *ui;
         QString storedUser;

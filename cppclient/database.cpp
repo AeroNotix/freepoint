@@ -30,7 +30,7 @@ void Database::Query() {
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(InsertData(QNetworkReply*)));
 
-    QByteArray data(generateQueryString());
+    QByteArray data(generateQueryString().c_str());
     QUrl url(PARAMURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
@@ -39,13 +39,13 @@ void Database::Query() {
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
 }
 
-const char* Database::generateQueryString() {
+std::string Database::generateQueryString() {
     std::stringstream s;
     std::string dq = "\"";
     s << "{" << dq << "DATABASE" << dq << ":" << dq << UsingDB.toStdString()
       << dq << "," << dq << "TABLE" << dq << ":" << dq << TableName.toStdString()
       << dq << "}";
-    return s.str().c_str();
+    return s.str();
 }
 
 QList<QString> Database::GetHeadings() {

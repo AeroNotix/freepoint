@@ -2,6 +2,7 @@
 #define DATABASE_H
 
 #include <vector>
+#include <string>
 
 #include <QtCore/QString>
 #include <QtGui>
@@ -30,7 +31,7 @@ public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
 
 private:
-    const char* generateQueryString(void);
+    std::string generateQueryString(void);
     QWidget *parent;
     QString User;
     QString Password;
