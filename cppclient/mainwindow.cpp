@@ -1,4 +1,8 @@
-#include <unistd.h>
+#ifdef _WIN32
+    #include <direct.h>
+#elif defined __unix__
+    #include <unistd.h>
+#endif
 
 #include <vector>
 #include <iostream>
