@@ -1,9 +1,3 @@
-#ifdef _WIN32
-    #include <direct.h>
-#elif defined __unix__
-    #include <unistd.h>
-#endif
-
 #include <vector>
 #include <iostream>
 #include <stdexcept>
@@ -56,21 +50,8 @@ void MainWindow::PopulateTable(void) {
 */
 bool MainWindow::SetCurrentTable() {
 
-    // possibly move this into a Util library
-    //
-    // Check if this compiles on windows.
-    char cwd[256];
-    if (getcwd(cwd, sizeof(cwd)) == NULL) {
-        ShowError("Error finding CWD. Contact Administrator.");
-        exit(-1);
-    }
-
-    // Get a filepath lib
-    std::string cwds(cwd);
-    cwds.append("/");
-    cwds.append("config.json");
-
-    std::ifstream fs(cwds);
+	QDir config_path = append(sgetcwd(), "/config.json");
+    std::ifstream fs(config_path.path().toStdString().c_str());
     std::string fcontent, s;
     while (fs.good()) {
         std::getline(fs, s);
