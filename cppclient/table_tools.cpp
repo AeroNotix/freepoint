@@ -24,10 +24,7 @@ QAction* create_action(MainWindow *obj, QString text, QString tip, QString fname
         action->setToolTip(tip);
         action->setStatusTip(tip);
     }
-    if (slot != nullptr)
-        obj->connect(action, SIGNAL(triggered()), SLOT(slot));
-
-    QAction::connect(action, SIGNAL(hovered()), obj, SLOT(ShowMessage(text)));
+	bool ok = obj->connect(action, SIGNAL(triggered()), obj, slot);
     return action;
 }
 
