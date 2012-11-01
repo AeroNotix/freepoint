@@ -7,18 +7,21 @@ unix {
 TARGET = freepoint
 TEMPLATE = app
 
-SOURCES += main.cpp\
+SOURCES += \
+        table_tools.cpp \
+        main.cpp\
         mainwindow.cpp \
         database.cpp \
-        login.cpp \
-        table_tools.cpp
+        login.cpp
 
-HEADERS  += login.h \
+HEADERS  += \
+         table_tools.h \
+         login.h \
          mainwindow.h \
          database.h \
          settings.h \
-         table_tools.h
 
+unix:RESOURCES += "../resources/resource.qrc"
 unix:INCLUDEPATH += "/usr/include/"
 unix:LIBS += "-lqjson"
 unix {
@@ -31,6 +34,7 @@ unix {
     ../ui/sql_setup.ui
 }
 
+win32:RESOURCES += "..\resources\resource.qrc"
 win32:INCLUDEPATH += C:\include\qjson\include
 win32:INCLUDEPATH += C:\include\qjson\src
 win32:LIBS += -LC:\include\qjson\lib -lqjson0

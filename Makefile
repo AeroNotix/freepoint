@@ -1,6 +1,7 @@
 all:
 	make pull
 	make build
+	cd resources; rcc resource.qrc -o resource.rcc
 	cd cppclient; qmake -o Makefile freepoint.pro
 	cd cppclient; make -f ./Makefile
 	cd cppclient; rm *.o; rm ui_*; rm moc_*
