@@ -83,6 +83,22 @@ void MainWindow::RefreshTable() {
 	PopulateTable();
 }
 
+void MainWindow::openConnectionDialog() {
+	throw std::runtime_error("Not implemented!");
+}
+
+void MainWindow::openManageDialog() {
+	throw std::runtime_error("Not implemented!");
+}
+
+void MainWindow::storeCell(int, int) {
+	throw std::runtime_error("Not implemented!");
+}
+
+void MainWindow::storeCell() {
+	throw std::runtime_error("Not implemented!");
+}
+
 void MainWindow::InsertRow() {
 	throw std::runtime_error("Not implemented!");
 }
@@ -263,7 +279,3 @@ const QString MainWindow::GetPassword(void) const {
 	return password;
 }
 
-void MainWindow::openConnectionDialog() {}
-void MainWindow::storeCell(int x, int y) {}
-void MainWindow::storeCell() {}
-void MainWindow::openManageDialog() {}
