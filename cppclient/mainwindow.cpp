@@ -103,7 +103,7 @@ void MainWindow::InsertRow() {
 	throw std::runtime_error("Not implemented!");
 }
 
-void MainWindow::changeTable(int, int) {
+void MainWindow::changeTable() {
 	throw std::runtime_error("Not implemented!");
 }
 

@@ -34,7 +34,7 @@ private slots:
 	void storeCell();
     void RefreshTable();
 	void InsertRow();
-	void changeTable(int, int);
+	void changeTable();
 	void ExportAsCSV();
 	void CreateNewTable();
 	void PreviousTable();
