@@ -179,14 +179,14 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
 
 void MainWindow::insertRowData(QList<QStringList> rows) {
 
-	unsigned int rowno = rows.size();
+	int rowno = rows.size();
 
 	// add required rows
-	for (unsigned int  x = 0; x < rowno; ++x)
+	for (int  x = 0; x < rowno; ++x)
 		ui->tableWidget->insertRow(x);
 
-	for (unsigned int x = 0; x < rowno; ++x) {
-		for (unsigned int y = 0; y < rows[x].size(); ++y) {
+	for (int x = 0; x < rowno; ++x) {
+		for (int y = 0; y < rows[x].size(); ++y) {
 			ui->tableWidget->setItem(x, y, new QTableWidgetItem(rows[x][y]));
 		}
 	}
@@ -254,7 +254,7 @@ void MainWindow::PopulateToolbar() {
 			SLOT(Exit())),
 	};
 
-	for (unsigned int x = 0; x < Actions.size(); ++x)
+	for (int x = 0; x < Actions.size(); ++x)
 		toolbar->addAction(Actions[x]);
 }
 
