@@ -14,10 +14,9 @@
 
 #include "mainwindow.h"
 
-QAction* create_action(MainWindow *obj, QString text, QString tip, QString fname, const char *slot )
+QAction* create_action(MainWindow *obj, QString text, QString tip, QString fname, const char *slot)
 {
     QAction *action = new QAction(text, obj);
-
     QString empty("");
     if (fname != empty)
         action->setIcon(QIcon(fname));
