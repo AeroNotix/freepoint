@@ -13,3 +13,7 @@ freepoint
 settings_server
 moc_*
 *.pro.user
+*.o
+cppclient/ui_*
+*.rcc
+qrc*
