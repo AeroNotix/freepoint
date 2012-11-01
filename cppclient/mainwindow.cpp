@@ -24,7 +24,7 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
-      db(nullptr), connections(QList<QVariantMap>())
+      db(nullptr), connections(QList<QVariantMap>()), toolbar(addToolBar("toolbar"))
 {
     ui->setupUi(this);
     setStatusBar(ui->statusbar);
@@ -181,11 +181,18 @@ void MainWindow::Login() {
 }
 
 void MainWindow::PopulateToolbar() {
-    create_action(this, 
-                  QString("Refresh"),
-                  QString("Refreshes the table and it's data"),
-                  QString(":/view-refresh"),
-                  RefreshTable);
+
+	QList<QAction*> Actions = {
+		create_action(
+			this,
+			QString("Refresh"),
+			QString("Refreshes the table and it's data"),
+			QString(":/view-refresh"),
+			"RefreshTable"),
+	};
+
+	for (unsigned int x = 0; x < Actions.size(); ++x)
+		toolbar->addAction(Actions[x]);
 }
 
 void MainWindow::RevertCellData(int x, int y) {

@@ -4,6 +4,7 @@
 #include <Qt>
 #include <QMainWindow>
 #include <QKeyEvent>
+#include <QToolBar>
 
 #include "database.h"
 
@@ -59,6 +60,7 @@ private:
     QList<QStringList> queryset;
     QList<QVariantMap> connections;
     bool networkRequestPending;
+	QToolBar* toolbar;
 };
 
 #endif // MAINWINDOW_H

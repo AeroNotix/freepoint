@@ -5,6 +5,4 @@
 
 #include "mainwindow.h"
 
-QAction* create_action(
-    MainWindow *obj, QString text, QString tip, QString fname, std::function<void(void)> f
-    );
+QAction* create_action(MainWindow *obj, QString text, QString tip, QString fname, const char*);
