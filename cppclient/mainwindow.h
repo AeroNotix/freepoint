@@ -26,19 +26,25 @@ public:
     void SetPassword(const QString &test);
     const QString GetPassword(void) const;
 
-public slots:
+private slots:
     void InsertData(QNetworkReply *reply);
 	void openConnectionDialog();
     void openManageDialog();
     void storeCell(int x, int y);
 	void storeCell();
+    void RefreshTable();
+	void InsertRow();
+	void changeTable(int, int);
+	void ExportAsCSV();
+	void CreateNewTable();
+	void PreviousTable();
+	void NextTable();
+	void Exit();
 
 private:
     void PopulateTable();
     bool SetCurrentTable();
-    void RefreshTable();
     void ClearTable();
-    void InsertData(std::string json);
     void insertRowData(QList<QStringList>);
     void keyPressEvent(QKeyEvent * event);
     void StoreCell(int x, int y);
