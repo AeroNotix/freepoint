@@ -15,6 +15,7 @@ SOURCES += \
         login.cpp
 
 HEADERS  += \
+         jsonpackets.h \
          table_tools.h \
          login.h \
          mainwindow.h \

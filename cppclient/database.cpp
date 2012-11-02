@@ -12,6 +12,7 @@
 
 #include "database.h"
 #include "settings.h"
+#include "jsonpackets.h"
 
 Database::Database
 (QWidget *parent, QString user, QString passwd, QString using_db, QString table)

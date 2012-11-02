@@ -177,7 +177,7 @@ qmake:  FORCE
 
 dist: 
 	@$(CHK_DIR_EXISTS) .tmp/freepoint1.0.0 || $(MKDIR) .tmp/freepoint1.0.0 
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents table_tools.h login.h mainwindow.h database.h settings.h .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../resources/resource.qrc .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents table_tools.cpp main.cpp mainwindow.cpp database.cpp login.cpp .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../ui/add_new_row.ui ../ui/connections.ui ../ui/create_new_table.ui ../ui/loginbox.ui ../ui/mainwindow.ui ../ui/sql_setup.ui .tmp/freepoint1.0.0/ && (cd `dirname .tmp/freepoint1.0.0` && $(TAR) freepoint1.0.0.tar freepoint1.0.0 && $(COMPRESS) freepoint1.0.0.tar) && $(MOVE) `dirname .tmp/freepoint1.0.0`/freepoint1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/freepoint1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents jsonpackets.h table_tools.h login.h mainwindow.h database.h settings.h .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../resources/resource.qrc .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents table_tools.cpp main.cpp mainwindow.cpp database.cpp login.cpp .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../ui/add_new_row.ui ../ui/connections.ui ../ui/create_new_table.ui ../ui/loginbox.ui ../ui/mainwindow.ui ../ui/sql_setup.ui .tmp/freepoint1.0.0/ && (cd `dirname .tmp/freepoint1.0.0` && $(TAR) freepoint1.0.0.tar freepoint1.0.0 && $(COMPRESS) freepoint1.0.0.tar) && $(MOVE) `dirname .tmp/freepoint1.0.0`/freepoint1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/freepoint1.0.0
 
 
 clean:compiler_clean 
@@ -347,7 +347,8 @@ mainwindow.o: mainwindow.cpp login.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 database.o: database.cpp database.h \
-		settings.h
+		settings.h \
+		jsonpackets.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o database.o database.cpp
 
 login.o: login.cpp login.h \
