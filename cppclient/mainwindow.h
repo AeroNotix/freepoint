@@ -31,7 +31,6 @@ private slots:
 	void openConnectionDialog();
     void openManageDialog();
     void storeCell(int x, int y);
-	void storeCell();
     void RefreshTable();
 	void InsertRow();
 	void changeTable(int, int);
@@ -66,7 +65,8 @@ private:
     QList<QStringList> queryset;
     QList<QVariantMap> connections;
     bool networkRequestPending;
-	QToolBar* toolbar;
+	QToolBar *toolbar;
+    QTableWidgetItem *storeditem;
 };
 
 #endif // MAINWINDOW_H

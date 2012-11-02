@@ -130,7 +130,7 @@
    <sender>tableWidget</sender>
    <signal>cellDoubleClicked(int,int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>storeCell()</slot>
+   <slot>storeCell(int,int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>453</x>
@@ -146,7 +146,7 @@
    <sender>tableWidget</sender>
    <signal>cellEntered(int,int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>storeCell()</slot>
+   <slot>storeCell(int,int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>398</x>
@@ -197,5 +197,6 @@
   <slot>storeCell()</slot>
   <slot>openManageDialog()</slot>
   <slot>changeTable(int,int)</slot>
+  <slot>storeCell(int,int)</slot>
  </slots>
 </ui>

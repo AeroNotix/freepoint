@@ -91,12 +91,8 @@ void MainWindow::openManageDialog() {
 	throw std::runtime_error("Not implemented! openManageDialog");
 }
 
-void MainWindow::storeCell(int, int) {
-	throw std::runtime_error("Not implemented! storeCell(int, int)");
-}
-
-void MainWindow::storeCell() {
-	throw std::runtime_error("Not implemented! storeCell");
+void MainWindow::storeCell(int x, int y) {
+    storeditem = ui->tableWidget->itemAt(x, y);
 }
 
 void MainWindow::InsertRow() {
