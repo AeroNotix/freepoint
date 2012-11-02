@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->setupUi(this);
 	setStatusBar(ui->statusbar);
 	SetCurrentTable();
-//    Login();
+    Login();
 	PopulateToolbar();
 	PopulateTable();
 }
