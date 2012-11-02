@@ -105,6 +105,12 @@ void MainWindow::changeTable(int x, int y) {
 
     if (y == 0)
         return RevertCellData(x, y);
+
+    db->ChangeTable(
+        ui->tableWidget->item(x, y)->text(),
+        headings[y],
+        ui->tableWidget->item(x,0)->text()
+        );
 }
 
 void MainWindow::ExportAsCSV() {

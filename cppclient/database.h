@@ -25,8 +25,7 @@ public:
     void Update();
     void Insert();
     void Query();
-    QList<QString> GetHeadings();
-    void ChangeTable(QTableWidgetItem*);
+    void ChangeTable(QString newdata, QString col, QString id);
 
 public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
