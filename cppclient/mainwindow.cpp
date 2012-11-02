@@ -100,7 +100,11 @@ void MainWindow::InsertRow() {
 }
 
 void MainWindow::changeTable(int x, int y) {
-    db->ChangeTable(ui->tableWidget->itemAt(x, y));
+    if (x < 0 || y < 0)
+        return;
+
+    if (y == 0)
+        return RevertCellData(x, y);
 }
 
 void MainWindow::ExportAsCSV() {
