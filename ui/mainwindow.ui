@@ -95,22 +95,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>tableWidget</sender>
-   <signal>cellChanged(int,int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>changeTable()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>182</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1068</x>
-     <y>622</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionConnection_details</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -190,11 +174,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tableWidget</sender>
+   <signal>cellChanged(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>changeTable(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>481</x>
+     <y>410</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-51</x>
+     <y>433</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeTable()</slot>
   <slot>openConnectionDialog()</slot>
   <slot>storeCell()</slot>
   <slot>openManageDialog()</slot>
+  <slot>changeTable(int,int)</slot>
  </slots>
 </ui>
