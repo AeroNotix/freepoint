@@ -5,7 +5,7 @@ widgets for different kinds of data.
 
 from PyQt4 import QtGui
 
-from qtsqlviewer.ui import add_new_row_UI
+from freepoint.ui import add_new_row_UI
 
 class ComboDelegate(QtGui.QItemDelegate):
     """

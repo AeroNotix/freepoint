@@ -14,25 +14,25 @@ import csv
 
 from PyQt4 import QtGui, QtCore
 
-from qtsqlviewer.ui.mainwindow_UI import Ui_MainWindow
-from qtsqlviewer.ui.dlg_sql_connection import SQLDisplaySetup
-from qtsqlviewer.ui.connection_dialog import ConnectionDialog
-from qtsqlviewer.ui.login import Login
+from freepoint.ui.mainwindow_UI import Ui_MainWindow
+from freepoint.ui.dlg_sql_connection import SQLDisplaySetup
+from freepoint.ui.connection_dialog import ConnectionDialog
+from freepoint.ui.login import Login
 
-from qtsqlviewer.table_tools.tools import (
+from freepoint.table_tools.tools import (
     table_wrapper, Database, create_action
 )
-from qtsqlviewer.table_tools.argument import Argument
-from qtsqlviewer.table_tools.delegates import Delegator
+from freepoint.table_tools.argument import Argument
+from freepoint.table_tools.delegates import Delegator
 
 # this is strange because it gets used implicitly when using the
 # Qt syntax for QResource objects. It may seem that this doesn't
 # get used but there are side-effects when importing this module
 # which hook into Qt's internal resource management methods.
-from qtsqlviewer.ui import resource_rc
+from freepoint.ui import resource_rc
 
-from qtsqlviewer.ui.createDatabase import CreateNewTable
-from qtsqlviewer.settings import module_path
+from freepoint.ui.createDatabase import CreateNewTable
+from freepoint.settings import module_path
 
 ## Argument creation
 PARSER = argparse.ArgumentParser()

@@ -10,8 +10,8 @@ import urllib2
 import simplejson
 
 from PyQt4 import QtGui
-from qtsqlviewer.ui.login_UI import Ui_frm_login
-from qtsqlviewer.settings import SERVERURL
+from freepoint.ui.login_UI import Ui_frm_login
+from freepoint.settings import SERVERURL
 
 class Login(QtGui.QDialog):
     """

@@ -10,8 +10,8 @@ import simplejson
 from simplejson.decoder import JSONDecodeError
 from PyQt4 import QtCore, QtGui
 
-from qtsqlviewer.settings import SERVERURL
-from qtsqlviewer.table_tools.mysql_error_codes import mysqlerr
+from freepoint.settings import SERVERURL
+from freepoint.table_tools.mysql_error_codes import mysqlerr
 
 def create_action(obj,
                   text, fname=None,  slot=None, shortcut=None,

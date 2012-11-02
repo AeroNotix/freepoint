@@ -1,8 +1,8 @@
 from PyQt4 import QtGui
 from PyQt4.QtCore import QString
 
-from qtsqlviewer.ui.sql_setup_UI import Ui_frm_sql_data_entry
-from qtsqlviewer.table_tools.tools import to_unicode, Database
+from freepoint.ui.sql_setup_UI import Ui_frm_sql_data_entry
+from freepoint.table_tools.tools import to_unicode, Database
 
 class SQLDisplaySetup(QtGui.QDialog):
     """

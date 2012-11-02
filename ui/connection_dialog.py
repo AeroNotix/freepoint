@@ -1,6 +1,6 @@
 from PyQt4 import QtGui, QtCore
 
-from qtsqlviewer.ui.connections_UI import Ui_Dialog
+from freepoint.ui.connections_UI import Ui_Dialog
 
 
 class ConnectionDialog(QtGui.QDialog):

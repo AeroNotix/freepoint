@@ -2,8 +2,8 @@ import simplejson
 import urllib2, urllib
 
 from PyQt4 import QtGui
-from qtsqlviewer.ui.create_new_table_UI import Ui_Dialog
-from qtsqlviewer.settings import SERVERURL
+from freepoint.ui.create_new_table_UI import Ui_Dialog
+from freepoint.settings import SERVERURL
 
 class CreateNewTable(QtGui.QDialog):
     """
