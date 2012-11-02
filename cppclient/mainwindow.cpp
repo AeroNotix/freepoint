@@ -84,43 +84,43 @@ void MainWindow::RefreshTable() {
 }
 
 void MainWindow::openConnectionDialog() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! openConnectionDialog");
 }
 
 void MainWindow::openManageDialog() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! openManageDialog");
 }
 
 void MainWindow::storeCell(int, int) {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! storeCell(int, int)");
 }
 
 void MainWindow::storeCell() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! storeCell");
 }
 
 void MainWindow::InsertRow() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! InsertRow");
 }
 
-void MainWindow::changeTable() {
-	throw std::runtime_error("Not implemented!");
+void MainWindow::changeTable(int, int) {
+	throw std::runtime_error("Not implemented! changeTable");
 }
 
 void MainWindow::ExportAsCSV() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! ExportAsCSV");
 }
 
 void MainWindow::CreateNewTable() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! CreateNewTable");
 }
 
 void MainWindow::PreviousTable() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! PreviousTable");
 }
 
 void MainWindow::NextTable() {
-	throw std::runtime_error("Not implemented!");
+	throw std::runtime_error("Not implemented! NextTable");
 }
 
 void MainWindow::Exit() {
