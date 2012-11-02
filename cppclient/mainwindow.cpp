@@ -16,7 +16,7 @@
 #include "ui_mainwindow.h"
 #include "database.h"
 #include "table_tools.h"
-
+#include "delegates.h"
 
 MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent), ui(new Ui::MainWindow),

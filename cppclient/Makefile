@@ -43,18 +43,22 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = table_tools.cpp \
+SOURCES       = delegates.cpp \
+		table_tools.cpp \
 		main.cpp \
 		mainwindow.cpp \
 		database.cpp \
-		login.cpp moc_login.cpp \
+		login.cpp moc_delegates.cpp \
+		moc_login.cpp \
 		moc_mainwindow.cpp \
 		qrc_resource.cpp
-OBJECTS       = table_tools.o \
+OBJECTS       = delegates.o \
+		table_tools.o \
 		main.o \
 		mainwindow.o \
 		database.o \
 		login.o \
+		moc_delegates.o \
 		moc_login.o \
 		moc_mainwindow.o \
 		qrc_resource.o
@@ -177,7 +181,7 @@ qmake:  FORCE
 
 dist: 
 	@$(CHK_DIR_EXISTS) .tmp/freepoint1.0.0 || $(MKDIR) .tmp/freepoint1.0.0 
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents jsonpackets.h table_tools.h login.h mainwindow.h database.h settings.h .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../resources/resource.qrc .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents table_tools.cpp main.cpp mainwindow.cpp database.cpp login.cpp .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../ui/add_new_row.ui ../ui/connections.ui ../ui/create_new_table.ui ../ui/loginbox.ui ../ui/mainwindow.ui ../ui/sql_setup.ui .tmp/freepoint1.0.0/ && (cd `dirname .tmp/freepoint1.0.0` && $(TAR) freepoint1.0.0.tar freepoint1.0.0 && $(COMPRESS) freepoint1.0.0.tar) && $(MOVE) `dirname .tmp/freepoint1.0.0`/freepoint1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/freepoint1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents delegates.h jsonpackets.h table_tools.h login.h mainwindow.h database.h settings.h .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../resources/resource.qrc .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents delegates.cpp table_tools.cpp main.cpp mainwindow.cpp database.cpp login.cpp .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../ui/add_new_row.ui ../ui/connections.ui ../ui/create_new_table.ui ../ui/loginbox.ui ../ui/mainwindow.ui ../ui/sql_setup.ui .tmp/freepoint1.0.0/ && (cd `dirname .tmp/freepoint1.0.0` && $(TAR) freepoint1.0.0.tar freepoint1.0.0 && $(COMPRESS) freepoint1.0.0.tar) && $(MOVE) `dirname .tmp/freepoint1.0.0`/freepoint1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/freepoint1.0.0
 
 
 clean:compiler_clean 
@@ -198,9 +202,12 @@ mocclean: compiler_moc_header_clean compiler_moc_source_clean
 
 mocables: compiler_moc_header_make_all compiler_moc_source_make_all
 
-compiler_moc_header_make_all: moc_login.cpp moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_login.cpp moc_mainwindow.cpp
+	-$(DEL_FILE) moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp
+moc_delegates.cpp: delegates.h
+	/usr/bin/moc $(DEFINES) $(INCPATH) delegates.h -o moc_delegates.cpp
+
 moc_login.cpp: mainwindow.h \
 		database.h \
 		settings.h \
@@ -326,6 +333,9 @@ compiler_clean: compiler_moc_header_clean compiler_rcc_clean compiler_uic_clean
 
 ####### Compile
 
+delegates.o: delegates.cpp delegates.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o delegates.o delegates.cpp
+
 table_tools.o: table_tools.cpp mainwindow.h \
 		database.h \
 		settings.h
@@ -357,6 +367,9 @@ login.o: login.cpp login.h \
 		settings.h \
 		ui_loginbox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o login.o login.cpp
+
+moc_delegates.o: moc_delegates.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_delegates.o moc_delegates.cpp
 
 moc_login.o: moc_login.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_login.o moc_login.cpp
