@@ -38,7 +38,6 @@ private:
     QString TableName;
     bool Connected;
     QList<QList<QString> > queryset;
-    QList<QString> headings;
     QNetworkAccessManager *currentNam;
 };
 
