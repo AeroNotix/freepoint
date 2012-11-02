@@ -24,7 +24,7 @@ QAction* create_action(MainWindow *obj, QString text, QString tip, QString fname
         action->setToolTip(tip);
         action->setStatusTip(tip);
     }
-	bool ok = obj->connect(action, SIGNAL(triggered()), obj, slot);
+    obj->connect(action, SIGNAL(triggered()), obj, slot);
     return action;
 }
 
