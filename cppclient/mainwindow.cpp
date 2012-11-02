@@ -139,7 +139,6 @@ void MainWindow::ClearTable() {
 }
 
 void MainWindow::InsertData(QNetworkReply *reply) {
-	blockSignals(true);
 	QString text = reply->readAll();
 	QByteArray json(text.toStdString().c_str());
 	QJson::Parser parser;
@@ -156,13 +155,11 @@ void MainWindow::InsertData(QNetworkReply *reply) {
 	ui->tableWidget->setHorizontalHeaderLabels(headings);
 
 	QList<QStringList> rows;
-
 	for (int x = 0; x < rawrows_initial.size(); ++x) {
 		rows.append(rawrows_initial[x].toStringList());
 	}
 
 	insertRowData(rows);
-	blockSignals(true);
 	networkRequestPending = false;
 }
 
@@ -174,7 +171,7 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
 }
 
 void MainWindow::insertRowData(QList<QStringList> rows) {
-
+    ui->tableWidget->blockSignals(true);
 	int rowno = rows.size();
 
 	// add required rows
@@ -186,6 +183,7 @@ void MainWindow::insertRowData(QList<QStringList> rows) {
 			ui->tableWidget->setItem(x, y, new QTableWidgetItem(rows[x][y]));
 		}
 	}
+    ui->tableWidget->blockSignals(false);
 }
 
 void MainWindow::ShowMessage(const QString &text, int t) {
