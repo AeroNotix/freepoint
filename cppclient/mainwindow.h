@@ -66,7 +66,7 @@ private:
     QList<QVariantMap> connections;
     bool networkRequestPending;
 	QToolBar *toolbar;
-    QTableWidgetItem *storeditem;
+    QString storeditem;
 };
 
 #endif // MAINWINDOW_H

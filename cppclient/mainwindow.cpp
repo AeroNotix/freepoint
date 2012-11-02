@@ -92,7 +92,7 @@ void MainWindow::openManageDialog() {
 }
 
 void MainWindow::storeCell(int x, int y) {
-    storeditem = ui->tableWidget->itemAt(x, y);
+    storeditem = ui->tableWidget->item(x, y)->text();
 }
 
 void MainWindow::InsertRow() {
@@ -253,8 +253,8 @@ void MainWindow::PopulateToolbar() {
 }
 
 void MainWindow::RevertCellData(int x, int y) {
-	if (x && y) {} // nop
-	ShowMessage("RevertingCellData", 1000);
+    ui->tableWidget->item(x, y)->setText(storeditem);
+	ShowMessage("Reverting cell data", 3000);
 }
 
 void MainWindow::SetUsername(const QString &text) {
