@@ -12,7 +12,6 @@ public:
     explicit ComboDelegate(QStringList data, QMainWindow *parent = 0)
         : QItemDelegate(parent), data(data) {};
     QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
-    void setModelData(QWidget*, QAbstractItemModel*, const QModelIndex&) const;
 
 protected:
     QStringList data;

@@ -10,7 +10,3 @@ QWidget* ComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
     return choiceEdit;
 }
 
-void ComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index ) const
-{
-    model->setData(index, ((QComboBox*) editor)->currentText());
-}
