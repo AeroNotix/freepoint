@@ -39,8 +39,11 @@ void Database::Query() {
 }
 
 void Database::ChangeTable(QString newdata, QString col, QString id) {
+    currentNam = new QNetworkAccessManager(this);
+    QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+                     parent, SLOT(InsertData(QNetworkReply*)));
+
     UpdateQuery uq = UpdateQuery(UsingDB, TableName, newdata, col, id);
-    std::cout << uq.QueryString().toStdString() << std::endl;
 }
 
 void Database::handleNetworkError(QNetworkReply::NetworkError error) {}
