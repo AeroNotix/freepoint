@@ -39,6 +39,14 @@ MainWindow::~MainWindow() {
 void MainWindow::PopulateTable(void) {
 	networkRequestPending = true;
 	ClearTable();
+
+    QStringList items = {
+        "Something",
+        "somethingelse"
+    };
+
+    ui->tableWidget->setItemDelegate(new ComboDelegate(items, this));
+
 	if (db != nullptr)
 		db->Query();
 	else {                  // THIS IS TEST DATA
