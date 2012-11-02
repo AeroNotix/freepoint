@@ -32,7 +32,6 @@ public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
 
 private:
-    std::string generateQueryString(void);
     QWidget *parent;
     QString User;
     QString Password;
