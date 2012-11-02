@@ -99,8 +99,8 @@ void MainWindow::InsertRow() {
 	throw std::runtime_error("Not implemented! InsertRow");
 }
 
-void MainWindow::changeTable(int, int) {
-	throw std::runtime_error("Not implemented! changeTable");
+void MainWindow::changeTable(int x, int y) {
+    db->ChangeTable(ui->tableWidget->itemAt(x, y));
 }
 
 void MainWindow::ExportAsCSV() {

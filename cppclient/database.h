@@ -26,6 +26,7 @@ public:
     void Insert();
     void Query();
     QList<QString> GetHeadings();
+    void ChangeTable(QTableWidgetItem*);
 
 public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
@@ -38,7 +39,6 @@ private:
     QString UsingDB;
     QString TableName;
     bool Connected;
-    void ChangeTable(int x, int y);
     QList<QList<QString> > queryset;
     QList<QString> headings;
     QNetworkAccessManager *currentNam;

@@ -52,4 +52,9 @@ QList<QString> Database::GetHeadings() {
     return headings;
 }
 
+void Database::ChangeTable(QTableWidgetItem *item) {
+    if (item)
+        std::cout << item->text().toStdString() << std::endl;
+}
+
 void Database::handleNetworkError(QNetworkReply::NetworkError error) {}
