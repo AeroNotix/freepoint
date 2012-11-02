@@ -11,9 +11,6 @@
 #include <QtNetwork/QNetworkProxy>
 
 #include "database.h"
-
-
-#include "database.h"
 #include "settings.h"
 
 Database::Database
