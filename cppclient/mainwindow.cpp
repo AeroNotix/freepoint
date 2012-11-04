@@ -45,8 +45,6 @@ void MainWindow::PopulateTable(void) {
         "somethingelse"
     };
 
-    ui->tableWidget->setItemDelegate(new ComboDelegate(items, this));
-
 	if (db != nullptr)
 		db->Query();
 	else {                  // THIS IS TEST DATA
@@ -172,6 +170,9 @@ void MainWindow::InsertData(QNetworkReply *reply) {
 	ui->tableWidget->setColumnCount(headings.size());
 	ui->tableWidget->setHorizontalHeaderLabels(headings);
 
+	if (db->ParseMetadata(result))
+		setDelegates(db->GetMetadata());
+
 	QList<QStringList> rows;
 	for (int x = 0; x < rawrows_initial.size(); ++x) {
 		rows.append(rawrows_initial[x].toStringList());
@@ -202,6 +203,14 @@ void MainWindow::insertRowData(QList<QStringList> rows) {
 		}
 	}
     ui->tableWidget->blockSignals(false);
+}
+
+void MainWindow::setDelegates(QMetadata metadata) {
+	for (int x = 0; x < headings.size(); ++x) {
+		QString rowtype = metadata[headings[x]].toMap()["ROWDATA"].toMap()["TYPE"].toString();
+		qDebug() << rowtype << "\n";
+		ui->tableWidget->setItemDelegateForColumn(x, SelectDelegate(rowtype));
+	}
 }
 
 void MainWindow::ShowMessage(const QString &text, int t) {
