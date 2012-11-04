@@ -12,7 +12,7 @@ class ComboDelegate : public QItemDelegate
     Q_OBJECT
 
 public:
-    explicit ComboDelegate(QStringList data, QMainWindow *parent = 0)
+    explicit ComboDelegate(QStringList data, QMainWindow *parent = nullptr)
         : QItemDelegate(parent), data(data) {};
     QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
 
@@ -37,7 +37,7 @@ class ChoiceDelegate :
     Q_OBJECT
 
 public:
-    explicit ChoiceDelegate(QStringList data, QMainWindow *parent = 0)
+    explicit ChoiceDelegate(QStringList data, QMainWindow *parent = nullptr)
         : ComboDelegate(data, parent) {};
 };
 
@@ -46,7 +46,8 @@ class TimeDelegate :
 
     Q_OBJECT
 
-    explicit TimeDelegate(QMainWindow *parent = 0)
+public:
+    explicit TimeDelegate(QMainWindow *parent = nullptr)
         : QItemDelegate(parent) {};
 };
 
@@ -55,7 +56,8 @@ class DateDelegate :
 
     Q_OBJECT
 
-    DateDelegate(QMainWindow *parent = 0)
+public:
+    explicit DateDelegate(QMainWindow *parent = nullptr)
         : QItemDelegate(parent) {};
 };
 
