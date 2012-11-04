@@ -4,7 +4,7 @@
 
 #include "delegates.h"
 
-QItemDelegate* SelectDelegate(QString choice, QMainWindow *parent) {
+QItemDelegate* SelectDelegate(QString choice, QStringList choices, QMainWindow *parent) {
 
 	static QMap<QString, int> choiceMap;
 	choiceMap.insert("BOOL", 0);
@@ -17,7 +17,7 @@ QItemDelegate* SelectDelegate(QString choice, QMainWindow *parent) {
 	switch (val) {
 	case 0:      // BOOL
 	case 1:      // CHOICE
-		return new ComboDelegate(QStringList({"Yes","No"}), parent);
+		return new ComboDelegate(choices, parent);
 	case 2:      // TIME
 		return new TimeDelegate(parent);
 	case 3:      // DATE

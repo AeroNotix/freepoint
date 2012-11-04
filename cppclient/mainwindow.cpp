@@ -208,8 +208,13 @@ void MainWindow::insertRowData(QList<QStringList> rows) {
 void MainWindow::setDelegates(QMetadata metadata) {
 	for (int x = 0; x < headings.size(); ++x) {
 		QString rowtype = metadata[headings[x]].toMap()["ROWDATA"].toMap()["TYPE"].toString();
-		qDebug() << rowtype << "\n";
-		ui->tableWidget->setItemDelegateForColumn(x, SelectDelegate(rowtype));
+
+		QStringList choices;
+		if (rowtype == QString("BOOL") ||
+			rowtype == QString("CHOICE")) {
+			choices = metadata[headings[x]].toMap()["ROWDATA"].toMap()["CHOICES"].toStringList();
+		}
+		ui->tableWidget->setItemDelegateForColumn(x, SelectDelegate(rowtype, choices, this));
 	}
 }
 

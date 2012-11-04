@@ -42,5 +42,5 @@ public:
     QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
 };
 
-QItemDelegate* SelectDelegate(QString choice, QMainWindow *parent = nullptr);
+QItemDelegate* SelectDelegate(QString choice, QStringList choices, QMainWindow *parent = nullptr);
 #endif // DELEGATES_H
