@@ -1,4 +1,6 @@
 #include <QComboBox>
+#include <QString>
+#include <QDateEdit>
 
 #include "delegates.h"
 
