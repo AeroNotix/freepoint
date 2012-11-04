@@ -353,7 +353,8 @@ mainwindow.o: mainwindow.cpp login.h \
 		settings.h \
 		ui_loginbox.h \
 		ui_mainwindow.h \
-		table_tools.h
+		table_tools.h \
+		delegates.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 database.o: database.cpp database.h \
