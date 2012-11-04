@@ -8,6 +8,9 @@
 
 #include "database.h"
 
+// forward decl
+class QItemDelegate;
+
 namespace Ui {
   class MainWindow;
 }
@@ -68,6 +71,7 @@ private:
     bool networkRequestPending;
 	QToolBar *toolbar;
     QString storeditem;
+	QList<QItemDelegate*> delegates;
 };
 
 #endif // MAINWINDOW_H
