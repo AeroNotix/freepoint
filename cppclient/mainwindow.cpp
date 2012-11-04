@@ -171,7 +171,7 @@ void MainWindow::InsertData(QNetworkReply *reply) {
 	ui->tableWidget->setHorizontalHeaderLabels(headings);
 
 	if (db->ParseMetadata(result))
-		setDelegates(db->GetMetadata());
+		SetDelegates(db->GetMetadata());
 
 	QList<QStringList> rows;
 	for (int x = 0; x < rawrows_initial.size(); ++x) {
@@ -205,11 +205,7 @@ void MainWindow::insertRowData(QList<QStringList> rows) {
     ui->tableWidget->blockSignals(false);
 }
 
-void MainWindow::setDelegates(QMetadata metadata) {
-
-	for (int x = 0; x < delegates.size(); ++x)
-		delete delegates[x];
-	delegates.clear();
+void MainWindow::SetDelegates(QMetadata metadata) {
 
 	for (int x = 0; x < headings.size(); ++x) {
 		QString rowtype = metadata[headings[x]].toMap()["ROWDATA"].toMap()["TYPE"].toString();

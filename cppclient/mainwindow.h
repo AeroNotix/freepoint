@@ -48,7 +48,8 @@ private:
     bool SetCurrentTable();
     void ClearTable();
     void insertRowData(QList<QStringList>);
-	void setDelegates(QMetadata);
+	void SetDelegates(QMetadata);
+	void ClearDelegates();
     void keyPressEvent(QKeyEvent * event);
     void StoreCell(int x, int y);
     void RevertCellData(int x, int y);
