@@ -28,11 +28,11 @@ QItemDelegate* SelectDelegate(QString choice, QMainWindow *parent) {
 }
 
 QWidget* ComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                                         const QModelIndex &index) const
+									 const QModelIndex &index) const
 {
-    QComboBox *choiceEdit = new QComboBox(parent);
-    choiceEdit->addItems(data);
-    return choiceEdit;
+	QComboBox *choiceEdit = new QComboBox(parent);
+	choiceEdit->addItems(data);
+	return choiceEdit;
 }
 
 QWidget* DateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
