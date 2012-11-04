@@ -1,7 +1,14 @@
+#ifndef JSONPACKETS_H
+#define JSONPACKETS_H
+
 #include <string>
 #include <sstream>
+#include <stdexcept>
+#include <iostream>
 
 #include <QtCore/QString>
+#include <QFile>
+#include <QByteArray>
 
 static const char* dq = "\"";
 
@@ -85,3 +92,7 @@ class InsertQuery :
 class CreateQuery :
     public BaseQuery {
 };
+
+QVariantMap ReadJSONFromFile(QString filename);
+
+#endif //JSONPACKETS_H

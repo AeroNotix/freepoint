@@ -30,7 +30,7 @@ void Database::Query() {
 
     GetQuery gq = GetQuery(UsingDB, TableName);
     QByteArray data(gq.QueryString().toStdString().c_str());
-    QUrl url(PARAMURL);
+    QUrl url(Settings::PARAMURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
     QNetworkReply *reply = currentNam->post(req, data);

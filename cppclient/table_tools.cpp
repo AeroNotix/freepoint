@@ -35,7 +35,10 @@ QDir sgetcwd() {
 	return QDir(QString(cwd));
 }
 
-QDir appendDir(QDir base, const char *path) {
-	std::string rawpath(base.path().toStdString().append(path));
-	return QDir(rawpath.c_str());
+QDir appendDir(QDir base, std::string path) {
+	QString base_path = base.path();
+	QChar last = base_path[base_path.size() - 1];
+	if (QString(last) != QString(path[path.size() - 1]))
+		base_path.append(base.separator());
+	return QDir(base_path.append(QString(path.c_str())));
 }

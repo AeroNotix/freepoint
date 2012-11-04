@@ -1,10 +1,18 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#define SERVERURL "http://16.55.133.115:12345/"
-#define LOGINURL "http://16.55.133.115:12345/login/"
-#define PARAMURL "http://16.55.133.115:12345/getdb/"
-#define UPDATEURL "http://16.55.133.115:12345/update/"
-#define INSERTURL "http://16.55.133.115:12345/insert/"
+#include <QString>
 
-#endif
+class Settings {
+public:
+	Settings(QString filename);
+	void OpenSettings(QString filename);
+	static QString SERVERURL;
+	static QString LOGINURL;
+	static QString PARAMURL;
+	static QString UPDATEURL;
+	static QString INSERTURL;
+};
+
+#endif // SETTINGS_H
+

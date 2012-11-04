@@ -5,10 +5,13 @@
 
 #include "mainwindow.h"
 #include "table_tools.h"
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
-	QDir resource = appendDir(sgetcwd(), "resources/resource.rcc");
+	QDir cwd = sgetcwd();
+	Settings settings(appendDir(cwd, "server.json").path());
+	QDir resource = appendDir(cwd, "resources/resource.rcc");
 	QResource::registerResource(resource.path());
     QApplication a(argc, argv);
     MainWindow w;

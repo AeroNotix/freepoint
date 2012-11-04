@@ -44,7 +44,7 @@ void Login::login() {
                      this, SLOT(networkRequestFinished(QNetworkReply*)));
 
     QByteArray data(generateLoginString().c_str());
-    QUrl url(LOGINURL);
+    QUrl url(Settings::LOGINURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
     QNetworkReply *reply = currentNam->post(req, data);
