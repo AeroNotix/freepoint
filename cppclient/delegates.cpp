@@ -10,3 +10,9 @@ QWidget* ComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem
     return choiceEdit;
 }
 
+QWidget* DateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+									const QModelIndex &index) const {
+	QDateEdit *d = new QDateEdit(parent);
+	d->setCalendarPopup(true);
+	return d;
+}

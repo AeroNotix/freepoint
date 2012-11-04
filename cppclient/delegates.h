@@ -49,6 +49,7 @@ class DateDelegate :
 public:
     explicit DateDelegate(QMainWindow *parent = nullptr)
         : QItemDelegate(parent) {};
+    QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
 };
 
 QItemDelegate* SelectDelegate(QString choice, QMainWindow *parent = nullptr);
