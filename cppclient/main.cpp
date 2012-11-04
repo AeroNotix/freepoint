@@ -8,7 +8,7 @@
 
 int main(int argc, char *argv[])
 {
-	QDir resource = append(sgetcwd(), "resources/resource.rcc");
+	QDir resource = appendDir(sgetcwd(), "resources/resource.rcc");
 	QResource::registerResource(resource.path());
     QApplication a(argc, argv);
     MainWindow w;
