@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 MainWindow::~MainWindow() {
+	ClearDelegates();
 	ClearTable();
 	delete ui;
 	delete db;
@@ -219,6 +220,12 @@ void MainWindow::SetDelegates(QMetadata metadata) {
 		delegates.append(newdelegate);
 		ui->tableWidget->setItemDelegateForColumn(x, newdelegate);
 	}
+}
+
+void MainWindow::ClearDelegates() {
+	for (int x = 0; x < delegates.size(); ++x)
+		delete delegates[x];
+	delegates.clear();
 }
 
 void MainWindow::ShowMessage(const QString &text, int t) {
