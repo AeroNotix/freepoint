@@ -1,6 +1,4 @@
 all:
-	make pull
-	make build
 	cd resources; rcc resource.qrc -o resource.rcc
 	cd cppclient; qmake -o Makefile freepoint.pro
 	cd cppclient; make -f ./Makefile
@@ -17,3 +15,4 @@ pull:
 
 build:
 	cd settings_server; go build settings_server.go
+	make all
