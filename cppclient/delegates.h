@@ -21,16 +21,6 @@ protected:
 
 };
 
-class BooleanDelegate :
-    public ComboDelegate {
-
-    Q_OBJECT
-
-public:
-explicit BooleanDelegate(QStringList data, QMainWindow *parent = 0)
-        : ComboDelegate(data, parent) {};
-};
-
 class ChoiceDelegate :
     public ComboDelegate {
 
