@@ -8,6 +8,8 @@ TARGET = freepoint
 TEMPLATE = app
 
 SOURCES += \
+        jsonpackets.cpp \
+        settings.cpp \
         delegates.cpp \
         table_tools.cpp \
         main.cpp\
