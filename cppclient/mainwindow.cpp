@@ -49,7 +49,7 @@ void MainWindow::PopulateTable(void) {
 	if (db != nullptr)
 		db->Query();
 	else {                  // THIS IS TEST DATA
-		db = new Database(this, "aero", "passwd", "db_freepoint", "buchungsdatei");
+		db = new Database(this, "aero", "passwd", "db_freepoint", "testdb");
 		db->Query();
 	}
 }
