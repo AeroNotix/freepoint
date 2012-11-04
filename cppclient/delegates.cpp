@@ -27,16 +27,24 @@ QItemDelegate* SelectDelegate(QString choice, QStringList choices, QMainWindow *
 	}
 }
 
-QWidget* ComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-									 const QModelIndex &index) const
+QWidget* ComboDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem&,
+									 const QModelIndex&) const
 {
 	QComboBox *choiceEdit = new QComboBox(parent);
 	choiceEdit->addItems(data);
 	return choiceEdit;
 }
 
-QWidget* DateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-									const QModelIndex &index) const {
+QWidget* TimeDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem&,
+									 const QModelIndex&) const
+{
+	QTimeEdit *t = new QTimeEdit(parent);
+	return t;
+}
+
+QWidget* DateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem&,
+									 const QModelIndex&) const
+{
 	QDateEdit *d = new QDateEdit(parent);
 	d->setCalendarPopup(true);
 	return d;

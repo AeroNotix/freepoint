@@ -29,6 +29,7 @@ class TimeDelegate :
 public:
     explicit TimeDelegate(QMainWindow *parent = nullptr)
         : QItemDelegate(parent) {};
+	QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
 };
 
 class DateDelegate :
