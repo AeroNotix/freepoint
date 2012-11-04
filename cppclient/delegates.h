@@ -21,16 +21,6 @@ protected:
 
 };
 
-class ChoiceDelegate :
-    public ComboDelegate {
-
-    Q_OBJECT
-
-public:
-    explicit ChoiceDelegate(QStringList data, QMainWindow *parent = nullptr)
-        : ComboDelegate(data, parent) {};
-};
-
 class TimeDelegate :
     public QItemDelegate {
 
