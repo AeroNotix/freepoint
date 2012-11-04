@@ -1,0 +1,9 @@
+{
+	"CONNECTION_DETAILS" : {
+		"SERVERURL": "http://192.168.0.5:12345/",
+		"LOGINURL": "http://192.168.0.5:12345/login/",
+		"PARAMURL": "http://192.168.0.5:12345/getdb/",
+		"UPDATEURL": "http://192.168.0.5:12345/update/",
+		"INSERTURL": "http://192.168.0.5:12345/insert/"
+	}
+}
