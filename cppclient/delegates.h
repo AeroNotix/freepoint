@@ -1,3 +1,6 @@
+#ifndef DELEGATES_H
+#define DELEGATES_H
+
 #include <QtGui>
 #include <QItemDelegate>
 #include <QStringList>
@@ -56,11 +59,5 @@ class DateDelegate :
         : QItemDelegate(parent) {};
 };
 
-class Delegator :
-    public QItemDelegate {
-
-    Q_OBJECT
-
-    Delegator(QMainWindow *parent = 0)
-        : QItemDelegate(parent) {};
-};
+QItemDelegate* SelectDelegate(QString choice, QMainWindow *parent = nullptr);
+#endif // DELEGATES_H
