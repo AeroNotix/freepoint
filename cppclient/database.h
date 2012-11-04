@@ -4,12 +4,15 @@
 #include <vector>
 #include <string>
 
-#include <QtCore/QString>
 #include <QtGui>
+#include <QtCore/QString>
+#include <QMap>
 #include <QNetworkReply>
 #include <QtNetwork/QNetworkAccessManager>
 
 #include "settings.h"
+
+typedef QMap<QString, QVariant> QMetadata;
 
 class Database :
     public QObject {
@@ -26,6 +29,10 @@ public:
     void Insert();
     void Query();
     void ChangeTable(QString newdata, QString col, QString id);
+	bool ParseMetadata(QMap<QString, QVariant>);
+	QMetadata GetMetadata() {
+		return metadata;
+	};
 
 public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
@@ -39,6 +46,7 @@ private:
     bool Connected;
     QList<QList<QString> > queryset;
     QNetworkAccessManager *currentNam;
+	QMetadata metadata;
 };
 
 #endif // DATABASE_H
