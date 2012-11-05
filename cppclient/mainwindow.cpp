@@ -59,7 +59,7 @@ void MainWindow::PopulateTable(void) {
 */
 bool MainWindow::SetCurrentTable() {
 
-	QDir config_path = appendDir(sgetcwd(), "/config.json");
+	QDir config_path = appendDir(sgetcwd(), "config.json");
 	std::ifstream fs(config_path.path().toStdString().c_str());
 	std::string fcontent, s;
 	while (fs.good()) {
