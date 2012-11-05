@@ -28,6 +28,8 @@ public:
     const QString GetUsername(void) const;
     void SetPassword(const QString &test);
     const QString GetPassword(void) const;
+    const QString GetTable(void) const;
+    const QString GetDatabase(void) const;
 
 private slots:
     void InsertData(QNetworkReply *reply);
@@ -45,7 +47,8 @@ private slots:
 
 private:
     void PopulateTable();
-    bool SetCurrentTable();
+    void ParseTableConfig();
+    void SetCurrentTable();
     void ClearTable();
     void insertRowData(QList<QStringList>);
 	void SetDelegates(QMetadata);
@@ -73,6 +76,10 @@ private:
 	QToolBar *toolbar;
     QString storeditem;
 	QList<QItemDelegate*> delegates;
+    QStringList connection_names;
+    QVariantMap connection_map;
+    int current_connection_index;
+
 };
 
 #endif // MAINWINDOW_H

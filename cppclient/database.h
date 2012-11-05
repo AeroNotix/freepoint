@@ -19,6 +19,8 @@ class Database :
 public:
     Database(QWidget *parent, QString user, QString passwd,
              QString using_db, QString table);
+    Database(QWidget *parent) :
+        parent(parent) {};
     ~Database() {
         delete currentNam;
     }
@@ -33,6 +35,25 @@ public:
 	QMetadata GetMetadata() {
 		return metadata;
 	};
+
+    void SetUsername(const QString &Username) {
+        User = Username;
+    }
+    const QString GetUsername(void) const {
+        return User;
+    }
+    void SetPassword(const QString &Pass) {
+        Password = Pass;
+    }
+    const QString GetPassword(void) const {
+        return Password;
+    }
+    void SetTable(const QString &Table) {
+        TableName = Table;
+    }
+    void SetDatabase(const QString &Database) {
+        UsingDB = Database;
+    }
 
 public slots:
     void handleNetworkError(QNetworkReply::NetworkError);

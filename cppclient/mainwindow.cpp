@@ -17,66 +17,51 @@
 #include "database.h"
 #include "table_tools.h"
 #include "delegates.h"
+#include "jsonpackets.h"
 
 MainWindow::MainWindow(QWidget *parent)
-	: QMainWindow(parent), ui(new Ui::MainWindow),
-	  db(nullptr), connections(QList<QVariantMap>()), toolbar(addToolBar("toolbar"))
+    : QMainWindow(parent), ui(new Ui::MainWindow),
+      db(nullptr), connections(QList<QVariantMap>()),
+      toolbar(addToolBar("toolbar")), current_connection_index(0)
 {
-	ui->setupUi(this);
-	setStatusBar(ui->statusbar);
-	SetCurrentTable();
+    ui->setupUi(this);
+    setStatusBar(ui->statusbar);
+    ParseTableConfig();
     Login();
-	PopulateToolbar();
-	PopulateTable();
+    SetCurrentTable();
+    PopulateToolbar();
 }
 
 MainWindow::~MainWindow() {
-	ClearDelegates();
-	ClearTable();
-	delete ui;
-	delete db;
+    ClearDelegates();
+    ClearTable();
+    delete ui;
+    delete db;
 }
 
 void MainWindow::PopulateTable(void) {
-	networkRequestPending = true;
-	ClearTable();
-
-    QStringList items = {
-        "Something",
-        "somethingelse"
-    };
-
-	if (db != nullptr)
-		db->Query();
-	else {                  // THIS IS TEST DATA
-		db = new Database(this, "aero", "passwd", "db_freepoint", "testdb");
-		db->Query();
-	}
+    networkRequestPending = true;
+    ClearTable();
+    db->Query();
 }
 
 /*
-  SetCurrentTable
+  ParseTableConfig
 */
-bool MainWindow::SetCurrentTable() {
+void MainWindow::ParseTableConfig() {
+    connection_map = ReadJSONFromFile(appendDir(sgetcwd(), "config.json").path());
+    connection_names = connection_map["connections"].toStringList();
+}
 
-	QDir config_path = appendDir(sgetcwd(), "config.json");
-	std::ifstream fs(config_path.path().toStdString().c_str());
-	std::string fcontent, s;
-	while (fs.good()) {
-		std::getline(fs, s);
-		fcontent.append(s);
-	}
-	QByteArray json(fcontent.c_str());
-	QJson::Parser parser;
-	bool ok;
-	QVariantMap result = parser.parse(json, &ok).toMap();
-	if (!ok)
-		return false;
-	QStringList connlist = result["connections"].toStringList();
-	for (int x = 0; x < connlist.size(); ++x) {
-		connections.append(result[connlist[x]].toMap());
-	}
-	return true;
+void MainWindow::SetCurrentTable() {
+    if (db == nullptr)
+        db = new Database(this);
+
+    db->SetUsername(GetUsername());
+    db->SetPassword(GetPassword());
+    db->SetTable(GetTable());
+    db->SetDatabase(GetDatabase());
+    PopulateTable();
 }
 
 /*
@@ -129,11 +114,15 @@ void MainWindow::CreateNewTable() {
 }
 
 void MainWindow::PreviousTable() {
-	throw std::runtime_error("Not implemented! PreviousTable");
+    if ((current_connection_index - 1) < 0)
+        current_connection_index = connection_names.size() - 1;
+    SetCurrentTable();
 }
 
 void MainWindow::NextTable() {
-	throw std::runtime_error("Not implemented! NextTable");
+    if ((current_connection_index + 1) > connection_names.size() - 1)
+        current_connection_index = 0;
+    SetCurrentTable();
 }
 
 void MainWindow::Exit() {
@@ -317,3 +306,10 @@ const QString MainWindow::GetPassword(void) const {
 	return password;
 }
 
+const QString MainWindow::GetTable(void) const {
+    return connection_map[connection_names[current_connection_index]].toMap()["table"].toString();
+}
+
+const QString MainWindow::GetDatabase(void) const {
+    return connection_map[connection_names[current_connection_index]].toMap()["database"].toString();
+}
