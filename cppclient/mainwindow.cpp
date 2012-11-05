@@ -39,6 +39,10 @@ MainWindow::~MainWindow() {
     delete db;
 }
 
+/*
+  PopulateTable clears the current data in the table and then requests
+  that the database send back a queryset.
+*/
 void MainWindow::PopulateTable(void) {
     networkRequestPending = true;
     ClearTable();
@@ -46,7 +50,8 @@ void MainWindow::PopulateTable(void) {
 }
 
 /*
-  ParseTableConfig
+  ParseTableConfig takes references to the connection map details and
+  the list of connections.
 */
 void MainWindow::ParseTableConfig() {
     connection_map = ReadJSONFromFile(appendDir(sgetcwd(), "config.json").path());
@@ -83,6 +88,13 @@ void MainWindow::openManageDialog() {
     throw std::runtime_error("Not implemented! openManageDialog");
 }
 
+/*
+  When a cell is entered, the User is able to change the data in that
+  cell to whatever they like (within the confines of the widget), however
+  it's a possibility that the data that they enter will not end up in
+  the database so we need to be able to revert the cell to it's previous
+  contents. This is what we are doing here.
+*/
 void MainWindow::storeCell(int x, int y) {
     QTableWidgetItem* cell = ui->tableWidget->item(x, y);
     if (!cell)

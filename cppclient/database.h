@@ -14,6 +14,12 @@
 
 typedef QMap<QString, QVariant> QMetadata;
 
+/*
+  Class Database encapsulates the communication with the database.
+
+  The idea behind this is that we could, and should be able to substi-
+  tute another conforming class for this one.
+*/
 class Database :
     public QObject {
 public:
