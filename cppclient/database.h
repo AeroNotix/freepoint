@@ -34,7 +34,7 @@ public:
     void Connect();
     void Close();
     void Update();
-    void Insert();
+    void Insert(QStringList newrowdata);
     void Query();
     void ChangeTable(QString newdata, QString col, QString id);
 	bool ParseMetadata(QMap<QString, QVariant>);

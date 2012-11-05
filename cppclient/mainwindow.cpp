@@ -18,6 +18,7 @@
 #include "table_tools.h"
 #include "delegates.h"
 #include "jsonpackets.h"
+#include "add_new_row.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -105,7 +106,12 @@ void MainWindow::storeCell(int x, int y) {
 }
 
 void MainWindow::InsertRow() {
-    throw std::runtime_error("Not implemented! InsertRow");
+    AddNewRow a(headings, delegates, this);
+    a.exec();
+}
+
+void MainWindow::InsertRow(QStringList newrowdata) {
+    db->Insert(newrowdata);
 }
 
 void MainWindow::changeTable(int x, int y) {

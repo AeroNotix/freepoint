@@ -30,6 +30,7 @@ public:
     const QString GetPassword(void) const;
     const QString GetTable(void) const;
     const QString GetDatabase(void) const;
+    void InsertRow(QStringList newrowdata);
 
 private slots:
     void InsertData(QNetworkReply *reply);

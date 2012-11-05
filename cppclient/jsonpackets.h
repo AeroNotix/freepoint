@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include <QtCore/QString>
+#include <QStringList>
 #include <QFile>
 #include <QByteArray>
 
@@ -87,7 +88,26 @@ private:
 
 class InsertQuery :
     public BaseQuery {
+public:
+    InsertQuery(QString database, QString table, QStringList newrowdata)
+        : BaseQuery(database, table), newrowdata(newrowdata) {};
+
+    QString QueryString() {
+        std::stringstream s;
+        s << "{" << BaseQuery::QueryString().toStdString() << ","
+          << quote("DATA") << ": [";
+        for (int x = 0; x < newrowdata.size(); ++x) {
+            s << quote(newrowdata[x].toStdString().c_str());
+            if (x != (newrowdata.size() - 1))
+                s << ",";
+        }
+        s << "]}";
+        return QString(s.str().c_str());
+    }
+private:
+    QStringList newrowdata;
 };
+
 
 class CreateQuery :
     public BaseQuery {

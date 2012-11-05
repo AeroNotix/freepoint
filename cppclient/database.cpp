@@ -23,6 +23,21 @@ void Database::Close() {
     return;
 }
 
+void Database::Insert(QStringList newrowdata) {
+    currentNam = new QNetworkAccessManager(this);
+    QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+                     parent, SLOT(InsertedRow(QNetworkReply*)));
+
+    InsertQuery iq = InsertQuery(UsingDB, TableName, newrowdata);
+    QByteArray data(iq.QueryString().toStdString().c_str());
+    QUrl url(Settings::INSERTURL);
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+    QNetworkReply *reply = currentNam->post(req, data);
+    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                     this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+}
+
 void Database::Query() {
     currentNam = new QNetworkAccessManager(this);
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
