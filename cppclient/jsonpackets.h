@@ -1,3 +1,17 @@
+/*
+
+  jsonpackets.h defines some helper classes which provide simple methods
+  of retrieving the commonly creating JSON querystrings by just instant-
+  iating a class.
+
+  The hierarchy is simple:
+
+  All <XXX>Query classes inherit BaseQuery simply because they all will
+  end up using the DATABASE/TABLE fields and thus should inherit them.
+
+  As for the free functions, they allow us to create key:value pairs
+  along with quoting single and double fields.
+*/
 #ifndef JSONPACKETS_H
 #define JSONPACKETS_H
 
