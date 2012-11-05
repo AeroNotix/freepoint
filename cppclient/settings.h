@@ -14,5 +14,7 @@ public:
 	static QString INSERTURL;
 };
 
+bool InitializeSettings(QDir filename);
+
 #endif // SETTINGS_H
 

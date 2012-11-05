@@ -20,7 +20,9 @@ int main(int argc, char *argv[])
 {
 	// we need the cwd for two things, might as well store it.
 	QDir cwd = sgetcwd();
-	Settings settings(appendDir(cwd, "server.json").path());
+	if (!InitializeSettings(appendDir(cwd, "server.json"))) {
+		// Where we'll open the manage connection dialog etc.
+	}
 	QDir resource = appendDir(cwd, "resources/resource.rcc");
 	QResource::registerResource(resource.path());
     QApplication a(argc, argv);

@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 
+#include <QDir>
 #include <QMap>
 #include <QString>
 #include <QVariant>
@@ -25,4 +26,13 @@ Settings::Settings(QString filename) {
 	PARAMURL = settings["PARAMURL"].toString();
 	UPDATEURL = settings["UPDATEURL"].toString();
 	INSERTURL = settings["INSERTURL"].toString();
+}
+
+bool InitializeSettings(QDir filename) {
+	try {
+		Settings settings(filename.path());
+		return true;
+	} catch (JSONError jerror) {
+		return false;
+	}
 }
