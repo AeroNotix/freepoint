@@ -162,8 +162,10 @@ void MainWindow::InsertData(QNetworkReply *reply) {
 	bool ok;
 	QVariantMap result = parser.parse(json, &ok).toMap();
 
-	if (!ok) {
-		ShowError("Malformed data received from server. Contact Administrator.");
+    if (!ok || json.size() == 0) {
+		ShowError("Malformed data received from server. Contact Administrator.\n\nPossibly the database connection details are incorrect.");
+        networkRequestPending = false;
+        return;
 	}
 
 	QList<QVariant> rawrows_initial = result["Rows"].toList();
