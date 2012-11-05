@@ -1,0 +1,14 @@
+{
+    "version": "0.1",
+    "connections" : ["connection-0", "connection-1"],
+    "connection-0": {
+        "server": "http://URL:PORT/",
+        "database": "database-name",
+        "table": "table-name"
+    },
+    "connection-1": {
+        "server": "http://URL:PORT/",
+        "database": "database-name",
+        "table": "table-name"
+    }
+}
