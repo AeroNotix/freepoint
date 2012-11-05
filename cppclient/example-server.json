@@ -1,0 +1,9 @@
+{
+	"CONNECTION_DETAILS" : {
+		"SERVERURL": "http://URL:PORT/",
+		"LOGINURL": "http://URL:PORT/login/",
+		"PARAMURL": "http://URL:PORT/getdb/",
+		"UPDATEURL": "http://URL:PORT/update/",
+		"INSERTURL": "http://URL:PORT/insert/"
+	}
+}
