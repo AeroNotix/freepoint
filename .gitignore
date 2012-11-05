@@ -18,3 +18,4 @@ cppclient/ui_*
 *.rcc
 qrc*
 server.json
+config.json
