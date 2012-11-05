@@ -49,3 +49,7 @@ QWidget* DateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem&
 	d->setCalendarPopup(true);
 	return d;
 }
+
+void DateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+	model->setData(index, ((QDateEdit*) editor)->date());
+}

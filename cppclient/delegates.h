@@ -41,6 +41,7 @@ public:
     explicit DateDelegate(QMainWindow *parent = nullptr)
         : QItemDelegate(parent) {};
     QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 };
 
 QItemDelegate* SelectDelegate(QString choice, QStringList choices, QMainWindow *parent = nullptr);
