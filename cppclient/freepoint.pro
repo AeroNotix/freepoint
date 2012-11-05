@@ -8,6 +8,7 @@ TARGET = freepoint
 TEMPLATE = app
 
 SOURCES += \
+        add_new_row.cpp \
         jsonpackets.cpp \
         settings.cpp \
         delegates.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
         login.cpp
 
 HEADERS  += \
+         add_new_row.h \
          delegates.h \
          jsonpackets.h \
          table_tools.h \
