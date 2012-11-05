@@ -9,8 +9,6 @@
   values which should be  ble to be changed at runtime hence not using
   #defines.
  */
-#include <string>
-
 #include <QtGui/QApplication>
 #include <QDir>
 
