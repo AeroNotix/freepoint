@@ -33,6 +33,7 @@ public:
 
 private slots:
     void InsertData(QNetworkReply *reply);
+    void UpdatedData(QNetworkReply *reply);
 	void openConnectionDialog();
     void openManageDialog();
     void storeCell(int x, int y);
@@ -55,7 +56,7 @@ private:
 	void ClearDelegates();
     void keyPressEvent(QKeyEvent * event);
     void StoreCell(int x, int y);
-    void RevertCellData(int x, int y);
+    void RevertCellData();
     void ChangeConnection(int connection_number);
     void AddMenuActions();
     void Login();
@@ -75,6 +76,7 @@ private:
     bool networkRequestPending;
 	QToolBar *toolbar;
     QString storeditem;
+    std::pair<int, int> storedcoords;
 	QList<QItemDelegate*> delegates;
     QStringList connection_names;
     QVariantMap connection_map;

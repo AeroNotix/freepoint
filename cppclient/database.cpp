@@ -41,9 +41,17 @@ void Database::Query() {
 void Database::ChangeTable(QString newdata, QString col, QString id) {
     currentNam = new QNetworkAccessManager(this);
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
-                     parent, SLOT(InsertData(QNetworkReply*)));
+                     parent, SLOT(UpdatedData(QNetworkReply*)));
 
     UpdateQuery uq = UpdateQuery(UsingDB, TableName, newdata, col, id);
+    QByteArray data(uq.QueryString().toStdString().c_str());
+    QUrl url(Settings::UPDATEURL);
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+    QNetworkReply *reply = currentNam->post(req, data);
+    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                     this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+
 }
 
 bool Database::ParseMetadata(QMap<QString, QVariant> rawmeta) {

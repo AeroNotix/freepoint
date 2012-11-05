@@ -97,6 +97,7 @@ void MainWindow::openManageDialog() {
 */
 void MainWindow::storeCell(int x, int y) {
     QTableWidgetItem* cell = ui->tableWidget->item(x, y);
+    storedcoords = std::pair<int, int>(x, y);
     if (!cell)
         storeditem = QString("");
     else
@@ -112,7 +113,7 @@ void MainWindow::changeTable(int x, int y) {
         return;
 
     if (y == 0)
-        return RevertCellData(x, y);
+        return RevertCellData();
 
     db->ChangeTable(
         ui->tableWidget->item(x, y)->text(),
@@ -188,6 +189,23 @@ void MainWindow::InsertData(QNetworkReply *reply) {
 
     insertRowData(rows);
     networkRequestPending = false;
+}
+
+void MainWindow::UpdatedData(QNetworkReply *reply) {
+    QString text = reply->readAll();
+    QByteArray json(text.toStdString().c_str());
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap result = parser.parse(json, &ok).toMap();
+
+    if (!ok || json.size() == 0) {
+        RevertCellData();
+        return;
+    }
+    if (!result["Success"].toBool())
+        RevertCellData();
+    else
+        ShowMessage("Database updated successfully", 3000);
 }
 
 void MainWindow::keyPressEvent(QKeyEvent * event) {
@@ -301,7 +319,9 @@ void MainWindow::PopulateToolbar() {
         toolbar->addAction(Actions[x]);
 }
 
-void MainWindow::RevertCellData(int x, int y) {
+void MainWindow::RevertCellData() {
+    int x = storedcoords.first;
+    int y = storedcoords.second;
     ui->tableWidget->item(x, y)->setText(storeditem);
     ShowMessage("Reverting cell data", 3000);
 }
