@@ -27,6 +27,11 @@
 
 static const char* dq = "\"";
 
+/*
+  T should be std::string or char*
+
+  Returns "T"
+*/
 template <typename T>
 static std::string quote(T toQuote) {
     std::stringstream s;
@@ -34,6 +39,11 @@ static std::string quote(T toQuote) {
     return s.str();
 }
 
+/*
+  T should be std::string or char*
+
+  Returns "key":"value"
+*/
 template <typename T>
 static std::string quote(std::string key, T value) {
     std::stringstream s;
@@ -41,6 +51,10 @@ static std::string quote(std::string key, T value) {
     return s.str();
 }
 
+/*
+  BaseQuery is used as the base class for all Queries because all Queries
+  have the DATABASE/TABLE fields.
+*/
 class BaseQuery {
 
 public:
@@ -48,6 +62,9 @@ public:
         database(database.toStdString()), table(table.toStdString()) {};
     virtual ~BaseQuery() {};
 
+	/*
+	  Returns "DATABASE": <database>, "TABLE": <table>"
+	*/
     virtual QString QueryString() {
         std::stringstream s;
         s << quote("DATABASE", database) << "," 
@@ -60,6 +77,10 @@ protected:
     std::string table;
 };
 
+/*
+  GetQuery is a little twist on the BaseQuery, since this is used by
+  client code we need to wrap the QueryString method in { and }.
+*/
 class GetQuery :
     public BaseQuery {
 
@@ -74,6 +95,10 @@ public:
     }
 };
 
+/*
+  UpdateQuery is used when we need to send a message to the server
+  about a row which needs to be updated.
+*/
 class UpdateQuery :
     public BaseQuery {
 
@@ -84,6 +109,14 @@ public:
         newdata(newdata.toStdString()),
         id(id.toStdString()) {};
 
+	/*
+	  Returns:
+	  {
+	      "COLUMN": <column>,
+		  "DATA": <data>,
+		  "ID": <id>
+	  }
+	*/
     QString QueryString() {
         std::stringstream s;
         s << "{" << BaseQuery::QueryString().toStdString() << "," 
@@ -100,12 +133,24 @@ private:
     std::string id;
 };
 
+/*
+  InsertQuery is used when we need to create a whole row.
+*/
 class InsertQuery :
     public BaseQuery {
 public:
     InsertQuery(QString database, QString table, QStringList newrowdata)
         : BaseQuery(database, table), newrowdata(newrowdata) {};
 
+	/*
+	  Returns:
+
+	  {
+	      "DATABASE": <database>,
+		  "TABLE": <table>,
+		  "DATA": [array, of, strings],
+      }
+	*/
     QString QueryString() {
         std::stringstream s;
         s << "{" << BaseQuery::QueryString().toStdString() << ","
@@ -122,12 +167,20 @@ private:
     QStringList newrowdata;
 };
 
-
+// not implemented yet.
 class CreateQuery :
     public BaseQuery {
 };
 
 QVariantMap ReadJSONFromFile(QString filename);
+
+
+/*
+
+  A few Exception classes to throw when various fail states happen in
+  using the classes/functions in this module
+
+*/
 
 class JSONError
 	: public std::runtime_error {
