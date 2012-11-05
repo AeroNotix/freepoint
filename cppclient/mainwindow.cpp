@@ -84,7 +84,11 @@ void MainWindow::openManageDialog() {
 }
 
 void MainWindow::storeCell(int x, int y) {
-    storeditem = ui->tableWidget->item(x, y)->text();
+    QTableWidgetItem* cell = ui->tableWidget->item(x, y);
+    if (!cell)
+        storeditem = QString("");
+    else
+        storeditem = ui->tableWidget->item(x, y)->text();
 }
 
 void MainWindow::InsertRow() {
