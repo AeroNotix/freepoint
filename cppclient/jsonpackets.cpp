@@ -20,7 +20,7 @@ QVariantMap ReadJSONFromFile(QString filename) {
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QString s = "Failure to open: ";
 		s.append(filename);
-		throw std::runtime_error(s.toStdString());	
+		throw JSONOpenError(s.toStdString());	
 	}
 
 	while (!file.atEnd()) {
@@ -33,7 +33,7 @@ QVariantMap ReadJSONFromFile(QString filename) {
  	if (!ok) {
 		QString s = "Failure to parse: ";
 		s.append(filename);
-		throw std::runtime_error(s.toStdString());
+		throw JSONParseError(s.toStdString());
 	}
 
 	return results;

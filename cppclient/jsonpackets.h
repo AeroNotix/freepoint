@@ -115,4 +115,25 @@ class CreateQuery :
 
 QVariantMap ReadJSONFromFile(QString filename);
 
+class JSONError
+	: public std::runtime_error {
+public:
+	JSONError(std::string s)
+		: std::runtime_error(s) {};
+};
+
+class JSONParseError 
+	: public JSONError {
+public:
+	JSONParseError(std::string s)
+		: JSONError(s) {};
+};
+
+class JSONOpenError 
+	: public JSONError {
+public:
+	JSONOpenError(std::string s)
+		: JSONError(s) {};
+};
+
 #endif //JSONPACKETS_H
