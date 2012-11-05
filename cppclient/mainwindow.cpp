@@ -236,50 +236,50 @@ void MainWindow::Login() {
 }
 
 void MainWindow::PopulateToolbar() {
-    QList<QAction*> Actions = {
-        create_action(
-            this,
-            "Refresh",
-            "Refreshes the table and it's data.",
-            ":/view-refresh",
-            SLOT(RefreshTable())),
-        create_action(
-            this,
-            "Add Row",
-            "Opens the add row dialog so you can insert a now row into the table.",
-            ":/list-add",
-            SLOT(InsertRow())),
-        create_action(
-            this,
-            "Export as CSV",
-            "Click here to export the current table to CSV file.",
-            ":/document-save-as",
-            SLOT(ExportAsCSV())),
-        create_action(
-            this,
-            "Create new table",
-            "Click here to enter the create new table dialog.",
-            ":/bookmark-new",
-            SLOT(CreateNewTable())),
-        create_action(
-            this,
-            "Prev Table",
-            "Click here to go to the previous table.",
-            ":/go-previous",
-            SLOT(PreviousTable())),
-        create_action(
-            this,
-            "Next Table",
-            "Click here to go to the next table.",
-            ":/go-next",
-            SLOT(NextTable())),
-        create_action(
-            this,
-            "Quit",
-            "Click here to quit.",
-            ":/system-log-out",
-            SLOT(Exit())),
-    };
+    QList<QAction*> Actions;
+    Actions.reserve(7);
+    Actions.append(create_action(
+                       this,
+                       "Refresh",
+                       "Refreshes the table and it's data.",
+                       ":/view-refresh",
+                       SLOT(RefreshTable())));
+    Actions.append(create_action(
+                      this,
+                      "Add Row",
+                      "Opens the add row dialog so you can insert a now row into the table.",
+                      ":/list-add",
+                      SLOT(InsertRow())));
+    Actions.append(create_action(
+                      this,
+                      "Export as CSV",
+                      "Click here to export the current table to CSV file.",
+                      ":/document-save-as",
+                      SLOT(ExportAsCSV())));
+    Actions.append(create_action(
+                       this,
+                       "Create new table",
+                       "Click here to enter the create new table dialog.",
+                       ":/bookmark-new",
+                       SLOT(CreateNewTable())));
+    Actions.append(create_action(
+                      this,
+                      "Prev Table",
+                      "Click here to go to the previous table.",
+                      ":/go-previous",
+                      SLOT(PreviousTable())));
+    Actions.append(create_action(
+                      this,
+                      "Next Table",
+                      "Click here to go to the next table.",
+                      ":/go-next",
+                      SLOT(NextTable())));
+    Actions.append(create_action(
+                      this,
+                      "Quit",
+                      "Click here to quit.",
+                      ":/system-log-out",
+                      SLOT(Exit())));
 
     for (int x = 0; x < Actions.size(); ++x)
         toolbar->addAction(Actions[x]);
