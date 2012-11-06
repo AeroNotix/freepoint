@@ -43,31 +43,35 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = cxn_setup.cpp \
+SOURCES       = threading.cpp \
+		cxn_setup.cpp \
 		add_new_row.cpp \
 		jsonpackets.cpp \
 		settings.cpp \
 		delegates.cpp \
 		table_tools.cpp \
-		main.cpp \
 		mainwindow.cpp \
 		database.cpp \
-		login.cpp moc_cxn_setup.cpp \
+		login.cpp \
+		main.cpp moc_threading.cpp \
+		moc_cxn_setup.cpp \
 		moc_add_new_row.cpp \
 		moc_delegates.cpp \
 		moc_login.cpp \
 		moc_mainwindow.cpp \
 		qrc_resource.cpp
-OBJECTS       = cxn_setup.o \
+OBJECTS       = threading.o \
+		cxn_setup.o \
 		add_new_row.o \
 		jsonpackets.o \
 		settings.o \
 		delegates.o \
 		table_tools.o \
-		main.o \
 		mainwindow.o \
 		database.o \
 		login.o \
+		main.o \
+		moc_threading.o \
 		moc_cxn_setup.o \
 		moc_add_new_row.o \
 		moc_delegates.o \
@@ -193,7 +197,7 @@ qmake:  FORCE
 
 dist: 
 	@$(CHK_DIR_EXISTS) .tmp/freepoint1.0.0 || $(MKDIR) .tmp/freepoint1.0.0 
-	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents cxn_setup.h add_new_row.h delegates.h jsonpackets.h table_tools.h login.h mainwindow.h database.h settings.h .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../resources/resource.qrc .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents cxn_setup.cpp add_new_row.cpp jsonpackets.cpp settings.cpp delegates.cpp table_tools.cpp main.cpp mainwindow.cpp database.cpp login.cpp .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../ui/add_new_row.ui ../ui/connections.ui ../ui/create_new_table.ui ../ui/loginbox.ui ../ui/mainwindow.ui ../ui/cxn_setup.ui .tmp/freepoint1.0.0/ && (cd `dirname .tmp/freepoint1.0.0` && $(TAR) freepoint1.0.0.tar freepoint1.0.0 && $(COMPRESS) freepoint1.0.0.tar) && $(MOVE) `dirname .tmp/freepoint1.0.0`/freepoint1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/freepoint1.0.0
+	$(COPY_FILE) --parents $(SOURCES) $(DIST) .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents threading.h cxn_setup.h add_new_row.h delegates.h jsonpackets.h table_tools.h login.h mainwindow.h database.h settings.h .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../resources/resource.qrc .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents threading.cpp cxn_setup.cpp add_new_row.cpp jsonpackets.cpp settings.cpp delegates.cpp table_tools.cpp mainwindow.cpp database.cpp login.cpp main.cpp .tmp/freepoint1.0.0/ && $(COPY_FILE) --parents ../ui/add_new_row.ui ../ui/connections.ui ../ui/create_new_table.ui ../ui/loginbox.ui ../ui/mainwindow.ui ../ui/cxn_setup.ui .tmp/freepoint1.0.0/ && (cd `dirname .tmp/freepoint1.0.0` && $(TAR) freepoint1.0.0.tar freepoint1.0.0 && $(COMPRESS) freepoint1.0.0.tar) && $(MOVE) `dirname .tmp/freepoint1.0.0`/freepoint1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/freepoint1.0.0
 
 
 clean:compiler_clean 
@@ -214,9 +218,15 @@ mocclean: compiler_moc_header_clean compiler_moc_source_clean
 
 mocables: compiler_moc_header_make_all compiler_moc_source_make_all
 
-compiler_moc_header_make_all: moc_cxn_setup.cpp moc_add_new_row.cpp moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_threading.cpp moc_cxn_setup.cpp moc_add_new_row.cpp moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_cxn_setup.cpp moc_add_new_row.cpp moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp
+	-$(DEL_FILE) moc_threading.cpp moc_cxn_setup.cpp moc_add_new_row.cpp moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp
+moc_threading.cpp: mainwindow.h \
+		database.h \
+		settings.h \
+		threading.h
+	/usr/bin/moc $(DEFINES) $(INCPATH) threading.h -o moc_threading.cpp
+
 moc_cxn_setup.cpp: mainwindow.h \
 		database.h \
 		settings.h \
@@ -359,6 +369,12 @@ compiler_clean: compiler_moc_header_clean compiler_rcc_clean compiler_uic_clean
 
 ####### Compile
 
+threading.o: threading.cpp threading.h \
+		mainwindow.h \
+		database.h \
+		settings.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o threading.o threading.cpp
+
 cxn_setup.o: cxn_setup.cpp cxn_setup.h \
 		mainwindow.h \
 		database.h \
@@ -391,12 +407,6 @@ table_tools.o: table_tools.cpp mainwindow.h \
 		settings.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o table_tools.o table_tools.cpp
 
-main.o: main.cpp mainwindow.h \
-		database.h \
-		settings.h \
-		table_tools.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
-
 mainwindow.o: mainwindow.cpp login.h \
 		mainwindow.h \
 		database.h \
@@ -423,6 +433,15 @@ login.o: login.cpp login.h \
 		settings.h \
 		ui_loginbox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o login.o login.cpp
+
+main.o: main.cpp mainwindow.h \
+		database.h \
+		settings.h \
+		table_tools.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
+
+moc_threading.o: moc_threading.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_threading.o moc_threading.cpp
 
 moc_cxn_setup.o: moc_cxn_setup.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_cxn_setup.o moc_cxn_setup.cpp
