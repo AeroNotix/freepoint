@@ -22,6 +22,9 @@ public:
         delete ui;
     }
 
+    void accept();
+    void reject();
+
 private:
     MainWindow *parent;
     Ui_CXNSetup *ui;

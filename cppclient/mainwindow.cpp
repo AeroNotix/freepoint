@@ -124,8 +124,8 @@ void MainWindow::InsertRow() {
     a.exec();
 }
 
-void MainWindow::AddNewConnection() {
-    std::cout << "adding new connection" << std::endl;
+void MainWindow::AddNewConnection(QString database, QString table) {
+    qDebug() << database << " : " << table << "\n";
 }
 
 void MainWindow::InsertRow(QStringList newrowdata) {

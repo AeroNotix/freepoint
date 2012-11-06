@@ -31,7 +31,7 @@ public:
     const QString GetTable(void) const;
     const QString GetDatabase(void) const;
     void InsertRow(QStringList newrowdata);
-    void AddNewConnection();
+    void AddNewConnection(QString database, QString table);
 
 private slots:
     void InsertData(QNetworkReply *reply);
