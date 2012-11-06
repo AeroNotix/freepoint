@@ -173,7 +173,8 @@ class CreateQuery :
 };
 
 QVariantMap ReadJSONFromFile(QString filename);
-
+bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_map, QString filename, QString database = 0, QString table = 0);
+std::string cxnstring(int num);
 
 /*
 

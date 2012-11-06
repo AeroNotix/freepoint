@@ -95,7 +95,8 @@ void MainWindow::RefreshTable() {
 }
 
 void MainWindow::openConnectionDialog() {
-    throw std::runtime_error("Not implemented! openConnectionDialog");
+    CXNSetup cxn(this);
+    cxn.exec();
 }
 
 void MainWindow::openManageDialog() {
@@ -124,7 +125,9 @@ void MainWindow::InsertRow() {
 }
 
 void MainWindow::AddNewConnection(QString database, QString table) {
-    qDebug() << database << " : " << table << "\n";
+    QString fname = appendDir(sgetcwd(), "config.json").path();
+    if (!WriteJSONConfigFile(connection_names, connection_map, fname, database, table))
+        ShowError("Error writing new config file! Contact Administrator.");
 }
 
 void MainWindow::InsertRow(QStringList newrowdata) {

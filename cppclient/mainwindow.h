@@ -65,6 +65,7 @@ private:
     void OpenConnectionDialog();
     void CreateAction();
     void PopulateToolbar();
+    std::string cxnstring(int);
 
     Ui::MainWindow *ui;
     QAction *newAction;
