@@ -10,6 +10,7 @@
 #endif
 
 #include <QCoreApplication>
+#include <QDebug>
 
 #include "login.h"
 #include "mainwindow.h"
