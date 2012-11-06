@@ -8,19 +8,19 @@ TARGET = freepoint
 TEMPLATE = app
 
 SOURCES += \
-        cxn_setup.cpp \
-        add_new_row.cpp \
-        jsonpackets.cpp \
-        settings.cpp \
-        delegates.cpp \
-        table_tools.cpp \
-        main.cpp\
-        mainwindow.cpp \
-        database.cpp \
-        login.cpp
+         cxn_setup.cpp \
+         add_new_row.cpp \
+         jsonpackets.cpp \
+         settings.cpp \
+         delegates.cpp \
+         table_tools.cpp \
+         main.cpp\
+         mainwindow.cpp \
+         database.cpp \
+         login.cpp
 
 HEADERS  += \
-         cxn_setup.h \
+	     cxn_setup.h \
          add_new_row.h \
          delegates.h \
          jsonpackets.h \
