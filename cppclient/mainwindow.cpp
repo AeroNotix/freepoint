@@ -31,8 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(this, SIGNAL(NewRowSIG(int, int, QTableWidgetItem*)),
                      this, SLOT(NewRow(int, int, QTableWidgetItem*)));
     QObject::connect(this, SIGNAL(InsertRowSIG(int)), this, SLOT(InsertRow(int)));
-    QObject::connect(this, SIGNAL(DeleteItemSIG(int, int)), this, SLOT(DeleteItem(int, int)));
     QObject::connect(this, SIGNAL(DeleteRowSIG(int)), this, SLOT(DeleteRow(int)));
+    QObject::connect(this, SIGNAL(DeleteItemSIG(int)), this, SLOT(DeleteItem(int, int)));
 
     ui->setupUi(this);
     setStatusBar(ui->statusbar);

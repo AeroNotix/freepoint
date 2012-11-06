@@ -1,34 +1,43 @@
 #ifndef THREADING_H
 #define THREADING_H
 
+#include <QRunnable>
+#include <QObject>
 #include <QThread>
-
 #include "mainwindow.h"
 
-class RowDeleter
-    : public QThread {
+class RowDeleter : public QThread
+{
+    Q_OBJECT
+
 public:
-    RowDeleter(MainWindow *parent, int rows);
+    explicit RowDeleter(QWidget *parent, int rows, int cols);
     void run();
+
 private:
-    MainWindow *parent;
+    QWidget *parent;
     int rows;
+    int cols;
+
+signals:
+    void DeleteItemSIG(int, int);
+    void DeleteRowSIG(int);
 };
 
 class RowInserter
-    : public QThread {
+    : public QRunnable {
 public:
     void run();
 };
 
 class ItemDeleter
-    : public QThread {
+    : public QRunnable {
 public:
     void run();
 };
 
 class ItemInserter
-    : public QThread {
+    : public QRunnable {
 public:
     void run();
 };
