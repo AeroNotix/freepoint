@@ -8,6 +8,7 @@ TARGET = freepoint
 TEMPLATE = app
 
 SOURCES += \
+        cxn_setup.cpp \
         add_new_row.cpp \
         jsonpackets.cpp \
         settings.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
         login.cpp
 
 HEADERS  += \
+         cxn_setup.h \
          add_new_row.h \
          delegates.h \
          jsonpackets.h \
@@ -38,7 +40,7 @@ unix {
     ../ui/create_new_table.ui \
     ../ui/loginbox.ui \
     ../ui/mainwindow.ui \
-    ../ui/sql_setup.ui
+    ../ui/cxn_setup.ui
 }
 
 win32:RESOURCES += "..\resources\resource.qrc"
@@ -52,5 +54,5 @@ win32 {
     ..\ui\create_new_table.ui \
     ..\ui\loginbox.ui \
     ..\ui\mainwindow.ui \
-    ..\ui\sql_setup.ui
+    ..\ui\cxn_setup.ui
 }
