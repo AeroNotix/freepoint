@@ -19,6 +19,7 @@
 #include "delegates.h"
 #include "jsonpackets.h"
 #include "add_new_row.h"
+#include "cxn_setup.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -27,8 +28,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setStatusBar(ui->statusbar);
-    ParseTableConfig();
     Login();
+    if (!ParseTableConfig()) {
+        CXNSetup cxn(this);
+        cxn.exec();
+    }
     SetCurrentTable();
     PopulateToolbar();
 }
@@ -54,9 +58,19 @@ void MainWindow::PopulateTable(void) {
   ParseTableConfig takes references to the connection map details and
   the list of connections.
 */
-void MainWindow::ParseTableConfig() {
-    connection_map = ReadJSONFromFile(appendDir(sgetcwd(), "config.json").path());
+bool MainWindow::ParseTableConfig() {
+    try {
+        connection_map = ReadJSONFromFile(appendDir(sgetcwd(), "config.json").path());
+    }
+    catch (JSONParseError jerror) {
+        throw;
+    }
+    catch (JSONOpenError jerror) {
+        return false;
+    }
+
     connection_names = connection_map["connections"].toStringList();
+    return true;
 }
 
 void MainWindow::SetCurrentTable() {
@@ -108,6 +122,10 @@ void MainWindow::storeCell(int x, int y) {
 void MainWindow::InsertRow() {
     AddNewRow a(headings, delegates, this);
     a.exec();
+}
+
+void MainWindow::AddNewConnection() {
+    std::cout << "adding new connection" << std::endl;
 }
 
 void MainWindow::InsertRow(QStringList newrowdata) {
