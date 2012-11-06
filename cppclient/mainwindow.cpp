@@ -39,7 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
     ClearDelegates();
-    ClearTable();
     delete ui;
     delete db;
 }
