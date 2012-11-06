@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>frm_sql_data_entry</class>
- <widget class="QWidget" name="frm_sql_data_entry">
+ <class>CXNSetup</class>
+ <widget class="QWidget" name="CXNSetup">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -62,7 +62,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>frm_sql_data_entry</receiver>
+   <receiver>CXNSetup</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -78,7 +78,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>frm_sql_data_entry</receiver>
+   <receiver>CXNSetup</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
