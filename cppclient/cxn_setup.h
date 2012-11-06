@@ -17,7 +17,7 @@ class CXNSetup :
     Q_OBJECT
 
 public:
-    explicit CXNSetup(MainWindow *parent = 0) {};
+    explicit CXNSetup(MainWindow *parent = 0);
     virtual ~CXNSetup() {
         delete ui;
     }
