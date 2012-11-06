@@ -140,6 +140,24 @@ in any UI that will be used. This is obviously not enforced on the database leve
 is a must. Having choices also sets the database column type to VARCHAR with a maximum length to the maximum
 length of all the strings in the choices.
 
+Inserting a row
+---------------
+
+Inserting a row should happen with a full row of data, the results are undefined if supplied data
+is partial or does not contain all the fields for the table. The first element of the data array
+should be NULL. This is because each table has an ID column which we want to automatically increment.
+
+A typical insert request looks like this:
+
+.. code-block:: javascript
+
+    json = {
+        "DATABASE": <database>,
+        "TABLE": <table>,
+        "DATA": [NULL, array, of, strings]
+    }
+
+
 Editing tabledata
 -----------------
 
