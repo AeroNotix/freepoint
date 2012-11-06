@@ -26,6 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
       db(nullptr), connections(QList<QVariantMap>()),
       toolbar(addToolBar("toolbar")), current_connection_index(0)
 {
+
+    QObject::connect(this, SIGNAL(NewRowSIG(int, int, QTableWidgetItem*)),
+                     this, SLOT(NewRow(int, int, QTableWidgetItem*)));
+    QObject::connect(this, SIGNAL(InsertRowSIG(int)), this, SLOT(InsertRow(int)));
+    QObject::connect(this, SIGNAL(DeleteItemSIG(int, int)), this, SLOT(DeleteItem(int, int)));
+    QObject::connect(this, SIGNAL(DeleteRowSIG(int)), this, SLOT(DeleteRow(int)));
+
     ui->setupUi(this);
     setStatusBar(ui->statusbar);
     Login();
@@ -124,6 +131,10 @@ void MainWindow::InsertRow() {
     a.exec();
 }
 
+void MainWindow::InsertRow(int x) {
+    ui->tableWidget->insertRow(x);
+}
+
 void MainWindow::AddNewConnection(QString database, QString table) {
     QString fname = appendDir(sgetcwd(), "config.json").path();
     if (!WriteJSONConfigFile(connection_names, connection_map, fname, database, table))
@@ -180,11 +191,19 @@ void MainWindow::ClearTable() {
     int cols = ui->tableWidget->columnCount();
 
     for (int x = 0; x < rows+1; ++x) {
-        for (int z = 0; z < cols; ++z) {
-            delete ui->tableWidget->itemAt(x, z);
+        for (int y = 0; y < cols; ++y) {
+            emit DeleteItemSIG(x, y);
         }
-        ui->tableWidget->removeRow(rows - x);
+        emit DeleteRowSIG(rows - x);
     }
+}
+
+void MainWindow::DeleteItem(int x, int y) {
+    ui->tableWidget->itemAt(x, y);
+}
+
+void MainWindow::DeleteRow(int x) {
+    ui->tableWidget->removeRow(x);
 }
 
 void MainWindow::InsertData(QNetworkReply *reply) {
@@ -247,21 +266,24 @@ void MainWindow::insertRowData(QList<QStringList> rows) {
 
     // add required rows
     for (int  x = 0; x < rowno; ++x)
-        ui->tableWidget->insertRow(x);
+        emit InsertRowSIG(x);
 
     for (int x = 0; x < rowno; ++x) {
         for (int y = 0; y < rows[x].size(); ++y) {
-            ui->tableWidget->setItem(x, y, new QTableWidgetItem(rows[x][y]));
+            emit NewRowSIG(x, y, new QTableWidgetItem(rows[x][y]));
         }
     }
     ui->tableWidget->blockSignals(false);
+}
+
+void MainWindow::NewRow(int x, int y, QTableWidgetItem *newrow) {
+    ui->tableWidget->setItem(x, y, newrow);
 }
 
 void MainWindow::SetDelegates(QMetadata metadata) {
 
     for (int x = 0; x < headings.size(); ++x) {
         QString rowtype = metadata[headings[x]].toMap()["ROWDATA"].toMap()["TYPE"].toString();
-
         QStringList choices;
         if (rowtype == QString("BOOL") ||
             rowtype == QString("CHOICE")) {

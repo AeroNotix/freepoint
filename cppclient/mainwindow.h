@@ -47,6 +47,10 @@ private slots:
 	void PreviousTable();
 	void NextTable();
 	void Exit();
+    void NewRow(int x, int y, QTableWidgetItem* newrow);
+    void InsertRow(int x);
+    void DeleteItem(int x, int y);
+    void DeleteRow(int x);
 
 private:
     void PopulateTable();
@@ -84,6 +88,12 @@ private:
     QStringList connection_names;
     QVariantMap connection_map;
     int current_connection_index;
+
+signals:
+    void NewRowSIG(int x, int y, QTableWidgetItem* newrow);
+    void InsertRowSIG(int x);
+    void DeleteItemSIG(int x, int y);
+    void DeleteRowSIG(int x);
 
 };
 
