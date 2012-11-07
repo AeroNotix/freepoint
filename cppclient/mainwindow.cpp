@@ -171,12 +171,16 @@ void MainWindow::CreateNewTable() {
 void MainWindow::PreviousTable() {
     if ((current_connection_index - 1) < 0)
         current_connection_index = connection_names.size() - 1;
+    else
+        --current_connection_index;
     SetCurrentTable();
 }
 
 void MainWindow::NextTable() {
     if ((current_connection_index + 1) > connection_names.size() - 1)
         current_connection_index = 0;
+    else
+        ++current_connection_index;
     SetCurrentTable();
 }
 
