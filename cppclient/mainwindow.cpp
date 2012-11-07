@@ -150,6 +150,14 @@ void MainWindow::InsertRow(QStringList newrowdata) {
 }
 
 void MainWindow::InsertedRow(QNetworkReply *reply) {
+	return GenericHandleResponse(reply);
+}
+
+void MainWindow::DeletedData(QNetworkReply *reply) {
+	return GenericHandleResponse(reply);
+}
+
+void MainWindow::GenericHandleResponse(QNetworkReply *reply) {
     QString text = reply->readAll();
     QByteArray json(text.toStdString().c_str());
     QJson::Parser parser;

@@ -35,6 +35,7 @@ public:
 
 public slots:
 	void InsertedRow(QNetworkReply *reply);
+	void DeletedData(QNetworkReply *reply);
 
 private slots:
     void InsertData(QNetworkReply *reply);
@@ -74,6 +75,7 @@ private:
     void CreateAction();
     void PopulateToolbar();
     void DeleteRows();
+	void GenericHandleResponse(QNetworkReply *reply);
 
     Ui::MainWindow *ui;
     QAction *newAction;
