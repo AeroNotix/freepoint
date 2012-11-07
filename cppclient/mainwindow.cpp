@@ -403,7 +403,7 @@ void MainWindow::ClearTable() {
   pair of co-ords.
  */
 void MainWindow::DeleteItem(int x, int y) {
-    ui->tableWidget->itemAt(x, y);
+    delete ui->tableWidget->itemAt(x, y);
 }
 
 /*
