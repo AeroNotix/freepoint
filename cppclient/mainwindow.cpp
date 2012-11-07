@@ -11,6 +11,8 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QFileDialog>
+#include <QTextStream>
 
 #include "login.h"
 #include "mainwindow.h"
@@ -162,7 +164,37 @@ void MainWindow::changeTable(int x, int y) {
 }
 
 void MainWindow::ExportAsCSV() {
-    throw std::runtime_error("Not implemented! ExportAsCSV");
+    QFileDialog *savedialog = new QFileDialog();
+    savedialog->setAcceptMode(QFileDialog::AcceptSave);
+    savedialog->setDefaultSuffix("csv");
+    QObject::connect(savedialog, SIGNAL(fileSelected(QString)), this, SLOT(WriteCSV(QString)));
+    savedialog->exec();
+    delete savedialog;
+}
+
+void MainWindow::WriteCSV(QString csvfilename) {
+    QFile file(csvfilename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        ShowError("Error saving file.");
+        return;
+    }
+
+    QTextStream s(&file);
+
+    for (int x = 0; x < headings.size(); ++x)
+        s << headings[x] << ",";
+    s << "\r\n";
+
+    for (int x = 0; x < ui->tableWidget->rowCount(); ++x) {
+        for (int y = 0; y < ui->tableWidget->columnCount(); ++y) {
+            QTableWidgetItem* cell = ui->tableWidget->item(x, y);
+            if (!cell)
+                s << ",";
+            else
+                s << cell->text() << ",";
+        }
+        s << "\r\n";
+    }
 }
 
 void MainWindow::CreateNewTable() {

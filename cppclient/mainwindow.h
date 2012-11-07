@@ -51,6 +51,7 @@ private slots:
     void InsertRow(int x);
     void DeleteItem(int x, int y);
     void DeleteRow(int x);
+    void WriteCSV(QString);
 
 private:
     void PopulateTable();
