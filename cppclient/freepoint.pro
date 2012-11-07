@@ -8,6 +8,7 @@ TARGET = freepoint
 TEMPLATE = app
 
 SOURCES += \
+         database.cpp \
 	     threading.cpp \
          cxn_setup.cpp \
          add_new_row.cpp \
@@ -16,12 +17,12 @@ SOURCES += \
          delegates.cpp \
          table_tools.cpp \
          mainwindow.cpp \
-         database.cpp \
          login.cpp \
          server_setup.cpp \
          main.cpp
 
 HEADERS  += \
+         database.h \
 	     threading.h \
 	     cxn_setup.h \
          add_new_row.h \
@@ -30,7 +31,6 @@ HEADERS  += \
          table_tools.h \
          login.h \
          mainwindow.h \
-         database.h \
          server_setup.h \
          settings.h \
 

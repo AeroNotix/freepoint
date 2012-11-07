@@ -17,7 +17,7 @@
 
 Database::Database
 (QWidget *parent, QString user, QString passwd, QString using_db, QString table)
-    : parent(parent), User(user), Password(passwd), UsingDB(using_db),
+    : QObject(), parent(parent), User(user), Password(passwd), UsingDB(using_db),
       TableName(table), currentNam(nullptr) {};
 
 void Database::Close() {

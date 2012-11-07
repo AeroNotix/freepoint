@@ -106,7 +106,7 @@ void Login::networkRequestFinished(QNetworkReply *reply) {
   We attach a signal to this slot so we can asynchronously cleanup members
   that won't be used because the NetworkRequests fail.
 */
-void Login::handleNetworkError(QNetworkReply::NetworkError error) {
+void Login::handleNetworkError(QNetworkReply::NetworkError) {
     errorCleanup();
 }
 

@@ -23,6 +23,9 @@ typedef QMap<QString, QVariant> QMetadata;
 */
 class Database :
     public QObject {
+
+	Q_OBJECT
+
 public:
     Database(QWidget *parent, QString user, QString passwd,
              QString using_db, QString table);
