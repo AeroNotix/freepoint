@@ -32,7 +32,7 @@ bool InitializeSettings(QDir filename) {
 	try {
 		Settings settings(filename.path());
 		return true;
-	} catch (JSONError jerror) {
+	} catch (JSONError &jerror) {
 		return false;
 	}
 }
