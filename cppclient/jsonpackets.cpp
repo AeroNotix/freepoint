@@ -124,17 +124,20 @@ bool WriteJSONServerFile(
     QString create, QString filename)
 {
     std::stringstream s;
-    std::string le = ",\n\t\t";
+    std::string le = "/\",\n\t\t";
     std::string dq = "\"";
+    std::string qtdbase = ":\"";
+    qtdbase.append(base.toStdString());
+
     s << "{\n";
     s << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t";
-    s << quote("SERVERURL") << ":" << dq << base.toStdString() << dq << ",\n\t\t";
-    s << quote("LOGINURL") << ":" << dq << base.toStdString() << login.toStdString() << "/" << dq << le;
-    s << quote("PARAMURL") << ":" << dq << base.toStdString() << param.toStdString() << "/" << dq << le;
-    s << quote("UPDATEURL") << ":" << dq << base.toStdString() << update.toStdString() << "/" << dq << le;
-    s << quote("INSERTURL") << ":" << dq << base.toStdString() << insert.toStdString() << "/" << dq << le;
-    s << quote("DELETEURL") << ":" << dq << base.toStdString() << del.toStdString() << "/" << dq << le;
-    s << quote("CREATEURL") << ":" << dq << base.toStdString() << create.toStdString() << "/" << dq << "\n\t}\n}\n";
+    s << quote("SERVERURL") << qtdbase << dq << ",\n\t\t";
+    s << quote("LOGINURL") << qtdbase << login.toStdString() << le;
+    s << quote("PARAMURL") << qtdbase << param.toStdString() << le;
+    s << quote("UPDATEURL") << qtdbase << update.toStdString() << le;
+    s << quote("INSERTURL") << qtdbase << insert.toStdString() << le;
+    s << quote("DELETEURL") << qtdbase << del.toStdString() << le;
+    s << quote("CREATEURL") << qtdbase << create.toStdString() << "/" << dq << "\n\t}\n}\n";
     s.flush();
 
     QFile file(filename);
