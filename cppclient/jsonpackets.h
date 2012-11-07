@@ -192,7 +192,6 @@ public:
                 s << ",";
         }
         s << "]}";
-        std::cout << s.string()->toStdString() << std::endl;
         return *s.string();
    }
 private:
