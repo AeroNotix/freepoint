@@ -50,6 +50,8 @@ QWidget* DateDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem&
 	return d;
 }
 
+// We want to show the pure date i.e. "2012-11-02" rather than the default
+// "2012-11-02-08:00".
 void DateDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
 	model->setData(index, ((QDateEdit*) editor)->date());
 }
