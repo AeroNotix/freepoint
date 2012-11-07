@@ -18,6 +18,12 @@
 
 QVariantMap ReadJSONFromFile(QString filename) {
 	QFile file(filename);
+    if (!file.exists()) {
+		QString s = "File does not exist: ";
+		s.append(filename);
+        throw JSONOpenError(s.toStdString());
+    }
+
 	QByteArray rawstring;
 	
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
