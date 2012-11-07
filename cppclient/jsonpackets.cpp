@@ -117,6 +117,36 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     return true;
 }
 
+bool WriteJSONServerFile(
+    QString base, QString login,
+    QString param, QString update,
+    QString insert, QString del,
+    QString create, QString filename)
+{
+    std::stringstream s;
+    std::string le = ",\n\t\t";
+    std::string dq = "\"";
+    s << "{\n";
+    s << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t";
+    s << quote("SERVERURL") << ":" << dq << base.toStdString() << dq << ",\n\t\t";
+    s << quote("LOGINURL") << ":" << dq << base.toStdString() << login.toStdString() << "/" << dq << le;
+    s << quote("PARAMURL") << ":" << dq << base.toStdString() << param.toStdString() << "/" << dq << le;
+    s << quote("UPDATEURL") << ":" << dq << base.toStdString() << update.toStdString() << "/" << dq << le;
+    s << quote("INSERTURL") << ":" << dq << base.toStdString() << insert.toStdString() << "/" << dq << le;
+    s << quote("DELETEURL") << ":" << dq << base.toStdString() << del.toStdString() << "/" << dq << le;
+    s << quote("CREATEURL") << ":" << dq << base.toStdString() << create.toStdString() << "/" << dq << "\n\t}\n}\n";
+    s.flush();
+
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+
+    QTextStream out(&file);
+    out << QString(s.str().c_str());
+    out.flush();
+    return true;
+}
+
 std::string cxnstring(int num) {
     std::stringstream s;
     s << "connection-" << num;

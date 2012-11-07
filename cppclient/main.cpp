@@ -21,15 +21,16 @@
 
 int main(int argc, char *argv[])
 {
+    QApplication a(argc, argv);
 	// we need the cwd for two things, might as well store it.
 	QDir cwd = sgetcwd();
 	if (!InitializeSettings(appendDir(cwd, "server.json"))) {
-        // handle this here. For now we'll just quit
-        throw std::runtime_error("Cannot find/parse server configuration");
+        ServerSetup setup;
+        setup.exec();
+        InitializeSettings(appendDir(cwd, "server.json"));
     }
 	QDir resource = appendDir(cwd, "resources/resource.rcc");
 	QResource::registerResource(resource.path());
-    QApplication a(argc, argv);
     MainWindow w;
     w.show();
     return a.exec();
