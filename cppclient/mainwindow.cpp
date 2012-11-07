@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     if (!ParseTableConfig()) {
         CXNSetup cxn(this);
         cxn.exec();
+        ParseTableConfig();
     }
     SetCurrentTable();
     PopulateToolbar();
