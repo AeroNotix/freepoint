@@ -145,141 +145,18 @@ void MainWindow::AddNewConnection(QString database, QString table) {
         ShowError("Error writing new config file! Contact Administrator.");
 }
 
+/*
+  Pass-through method to the underlying database to insert a whole new
+  row into the currently active table.
+*/
 void MainWindow::InsertRow(QStringList newrowdata) {
     db->Insert(newrowdata);
 }
 
-void MainWindow::InsertedRow(QNetworkReply *reply) {
-	return GenericHandleResponse(reply);
-}
-
-void MainWindow::DeletedData(QNetworkReply *reply) {
-	return GenericHandleResponse(reply);
-}
-
-void MainWindow::GenericHandleResponse(QNetworkReply *reply) {
-    QString text = reply->readAll();
-    QByteArray json(text.toStdString().c_str());
-    QJson::Parser parser;
-    bool ok;
-    QVariantMap result = parser.parse(json, &ok).toMap();
-
-	if (!ok || json.size() == 0) {
-		ShowError("Malformed data from the server. Contact Administrator.");
-		return;
-	}
-
-	if (!result["Success"].toBool()) {
-		ShowError(result["error"].toString());
-		return;
-	}
-
-	RefreshTable();
-}
-
-void MainWindow::changeTable(int x, int y) {
-    if (x < 0 || y < 0)
-        return;
-
-    if (y == 0)
-        return RevertCellData();
-
-    db->ChangeTable(
-        ui->tableWidget->item(x, y)->text(),
-        headings[y],
-        ui->tableWidget->item(x,0)->text()
-        );
-}
-
-void MainWindow::ExportAsCSV() {
-    QFileDialog *savedialog = new QFileDialog();
-    savedialog->setAcceptMode(QFileDialog::AcceptSave);
-    savedialog->setDefaultSuffix("csv");
-    QObject::connect(savedialog, SIGNAL(fileSelected(QString)), this, SLOT(WriteCSV(QString)));
-    savedialog->exec();
-    delete savedialog;
-}
-
-void MainWindow::WriteCSV(QString csvfilename) {
-    QFile file(csvfilename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        ShowError("Error saving file.");
-        return;
-    }
-
-    QTextStream s(&file);
-
-    for (int x = 0; x < headings.size(); ++x)
-        s << headings[x] << ",";
-    s << "\r\n";
-
-    for (int x = 0; x < ui->tableWidget->rowCount(); ++x) {
-        for (int y = 0; y < ui->tableWidget->columnCount(); ++y) {
-            QTableWidgetItem* cell = ui->tableWidget->item(x, y);
-            if (!cell)
-                s << ",";
-            else
-                s << cell->text() << ",";
-        }
-        s << "\r\n";
-    }
-}
-
-void MainWindow::CreateNewTable() {
-    throw std::runtime_error("Not implemented! CreateNewTable");
-}
-
-void MainWindow::PreviousTable() {
-    if ((current_connection_index - 1) < 0)
-        current_connection_index = connection_names.size() - 1;
-    else
-        --current_connection_index;
-    SetCurrentTable();
-}
-
-void MainWindow::NextTable() {
-    if ((current_connection_index + 1) > connection_names.size() - 1)
-        current_connection_index = 0;
-    else
-        ++current_connection_index;
-    SetCurrentTable();
-}
-
-void MainWindow::Exit() {
-    QCoreApplication::quit();
-}
-
 /*
-  Delete items in the table by iterating through the table's items.
+  When the database returns from inserting a row, this method is invoked
+  so we can handle the insertion of multiple rows.
 */
-void MainWindow::ClearTable() {
-    int rows = ui->tableWidget->rowCount();
-    int cols = ui->tableWidget->columnCount();
-
-    for (int x = 0; x < rows+1; ++x) {
-        for (int y = 0; y < cols; ++y) {
-            emit DeleteItemSIG(x, y);
-        }
-        emit DeleteRowSIG(rows - x);
-    }
-}
-
-void MainWindow::DeleteItem(int x, int y) {
-    ui->tableWidget->itemAt(x, y);
-}
-
-void MainWindow::DeleteRow(int x) {
-    ui->tableWidget->removeRow(x);
-}
-
-void MainWindow::DeleteRows() {
-    QList<QString> deleters;
-    QList<QModelIndex> raw = ui->tableWidget->selectionModel()->selectedRows();
-    for (int x = 0; x < raw.size(); ++x)
-        deleters.append(ui->tableWidget->item(raw[x].row(), 0)->text());
-    db->Delete(deleters);
-}
-
 void MainWindow::InsertData(QNetworkReply *reply) {
     QString text = reply->readAll();
     QByteArray json(text.toStdString().c_str());
@@ -310,6 +187,97 @@ void MainWindow::InsertData(QNetworkReply *reply) {
     networkRequestPending = false;
 }
 
+/*
+  Convienience method which emits signals to the main event loop to
+  both insert new rows and assign data to them.
+*/
+void MainWindow::insertRowData(QList<QStringList> rows) {
+    ui->tableWidget->blockSignals(true);
+    int rowno = rows.size();
+
+    for (int x = 0; x < rowno; ++x) {
+		emit InsertRowSIG(x);
+        for (int y = 0; y < rows[x].size(); ++y) {
+            emit NewRowSIG(x, y, new QTableWidgetItem(rows[x][y]));
+        }
+    }
+    ui->tableWidget->blockSignals(false);
+}
+
+/*
+  When the database returns from inserting rows, this method will be
+  invoked to handle the response from the server.
+*/
+void MainWindow::InsertedRow(QNetworkReply *reply) {
+	return GenericHandleResponse(reply);
+}
+
+/*
+  When a whole row is selected and the backspace or the delete button
+  are pressed, we execute a delete on those rows.
+*/
+void MainWindow::DeleteRows() {
+    QList<QString> deleters;
+    QList<QModelIndex> raw = ui->tableWidget->selectionModel()->selectedRows();
+    for (int x = 0; x < raw.size(); ++x)
+        deleters.append(ui->tableWidget->item(raw[x].row(), 0)->text());
+    db->Delete(deleters);
+}
+
+/*
+  When the database returns from deleting rows, this method will be
+  invoked to handle the response from the server.
+*/
+void MainWindow::DeletedData(QNetworkReply *reply) {
+	return GenericHandleResponse(reply);
+}
+
+/*
+  Several replies are handled with the same code. This is a generic
+  handler for that.
+*/
+void MainWindow::GenericHandleResponse(QNetworkReply *reply) {
+    QString text = reply->readAll();
+    QByteArray json(text.toStdString().c_str());
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap result = parser.parse(json, &ok).toMap();
+
+	if (!ok || json.size() == 0) {
+		ShowError("Malformed data from the server. Contact Administrator.");
+		return;
+	}
+
+	if (!result["Success"].toBool()) {
+		ShowError(result["error"].toString());
+		return;
+	}
+
+	RefreshTable();
+}
+
+/*
+  When a cell is changed, this handler is invoked. This is invoked on a
+  per-cell basis.
+*/
+void MainWindow::changeTable(int x, int y) {
+    if (x < 0 || y < 0)
+        return;
+
+    if (y == 0)
+        return RevertCellData();
+
+    db->ChangeTable(
+        ui->tableWidget->item(x, y)->text(),
+        headings[y],
+        ui->tableWidget->item(x,0)->text()
+        );
+}
+
+/*
+  When the database returns from updating a single cell, this method
+  is invoked to handle the response.
+*/
 void MainWindow::UpdatedData(QNetworkReply *reply) {
     QString text = reply->readAll();
     QByteArray json(text.toStdString().c_str());
@@ -327,6 +295,128 @@ void MainWindow::UpdatedData(QNetworkReply *reply) {
         ShowMessage("Database updated successfully", 3000);
 }
 
+/*
+  If there is a problem either before a cell is sent to be updated
+  or after it, we need to be able to revert that cell back to how
+  it was before. This is the method which will do that.
+*/
+void MainWindow::RevertCellData() {
+    int x = storedcoords.first;
+    int y = storedcoords.second;
+    ui->tableWidget->item(x, y)->setText(storeditem);
+    ShowMessage("Reverting cell data", 3000);
+}
+
+/*
+  Pops open a file dialog and asks the user for a filename to export the
+  currently active table to a CSV file.
+*/
+void MainWindow::ExportAsCSV() {
+    QFileDialog *savedialog = new QFileDialog();
+    savedialog->setAcceptMode(QFileDialog::AcceptSave);
+    savedialog->setDefaultSuffix("csv");
+    QObject::connect(savedialog, SIGNAL(fileSelected(QString)), this, SLOT(WriteCSV(QString)));
+    savedialog->exec();
+    delete savedialog;
+}
+
+/*
+  When the ExportAsCSV creates a window, it's fileSelected(QString) is
+  attached to this method so we can handle if the user really wanted to
+  export the table to disk.
+*/
+void MainWindow::WriteCSV(QString csvfilename) {
+    QFile file(csvfilename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        ShowError("Error saving file.");
+        return;
+    }
+
+    QTextStream s(&file);
+
+    for (int x = 0; x < headings.size(); ++x)
+        s << headings[x] << ",";
+    s << "\r\n";
+
+    for (int x = 0; x < ui->tableWidget->rowCount(); ++x) {
+        for (int y = 0; y < ui->tableWidget->columnCount(); ++y) {
+            QTableWidgetItem* cell = ui->tableWidget->item(x, y);
+            if (!cell)
+                s << ",";
+            else
+                s << cell->text() << ",";
+        }
+        s << "\r\n";
+    }
+}
+
+void MainWindow::CreateNewTable() {
+    throw std::runtime_error("Not implemented! CreateNewTable");
+}
+
+/*
+  Goes back a table.
+*/
+void MainWindow::PreviousTable() {
+    if ((current_connection_index - 1) < 0)
+        current_connection_index = connection_names.size() - 1;
+    else
+        --current_connection_index;
+    SetCurrentTable();
+}
+
+/*
+  Goes forward a table.
+*/
+void MainWindow::NextTable() {
+    if ((current_connection_index + 1) > connection_names.size() - 1)
+        current_connection_index = 0;
+    else
+        ++current_connection_index;
+    SetCurrentTable();
+}
+
+/*
+  Quits the whole application.
+*/
+void MainWindow::Exit() {
+    QCoreApplication::quit();
+}
+
+/*
+  Delete items in the table by iterating through the table's items.
+*/
+void MainWindow::ClearTable() {
+    int rows = ui->tableWidget->rowCount();
+    int cols = ui->tableWidget->columnCount();
+
+    for (int x = 0; x < rows+1; ++x) {
+        for (int y = 0; y < cols; ++y) {
+            emit DeleteItemSIG(x, y);
+        }
+        emit DeleteRowSIG(rows - x);
+    }
+}
+
+/*
+  A convienience method to delete the QTableWidgetItem at a certain
+  pair of co-ords.
+ */
+void MainWindow::DeleteItem(int x, int y) {
+    ui->tableWidget->itemAt(x, y);
+}
+
+/*
+  A convienience method to delete the row at a certain co-ord.
+ */
+void MainWindow::DeleteRow(int x) {
+    ui->tableWidget->removeRow(x);
+}
+
+/*
+  An overriding of the base classes' keyPressEvent method so that we
+  may assign functions to certain keys.
+*/
 void MainWindow::keyPressEvent(QKeyEvent * event) {
     switch (event->key()) {
     case Qt::Key_F5:
@@ -341,26 +431,19 @@ void MainWindow::keyPressEvent(QKeyEvent * event) {
     QWidget::keyPressEvent(event);
 }
 
-void MainWindow::insertRowData(QList<QStringList> rows) {
-    ui->tableWidget->blockSignals(true);
-    int rowno = rows.size();
-
-    // add required rows
-    for (int  x = 0; x < rowno; ++x)
-        emit InsertRowSIG(x);
-
-    for (int x = 0; x < rowno; ++x) {
-        for (int y = 0; y < rows[x].size(); ++y) {
-            emit NewRowSIG(x, y, new QTableWidgetItem(rows[x][y]));
-        }
-    }
-    ui->tableWidget->blockSignals(false);
-}
-
+/*
+  This method will be invoked when we receive a signal containing the
+  co-ords and an item to insert into the table.
+*/
 void MainWindow::NewRow(int x, int y, QTableWidgetItem *newrow) {
     ui->tableWidget->setItem(x, y, newrow);
 }
 
+/*
+  When a new table is parsed for it's metadata, we need to tell the table
+  to use certain delegates for certain columns because this way we can
+  have much better editing widgets for certain columns.
+*/
 void MainWindow::SetDelegates(QMetadata metadata) {
 
     for (int x = 0; x < headings.size(); ++x) {
@@ -376,16 +459,26 @@ void MainWindow::SetDelegates(QMetadata metadata) {
     }
 }
 
+/*
+  Method to iterate through all the delegates currently active on the
+  current table and delete them.
+*/
 void MainWindow::ClearDelegates() {
     for (int x = 0; x < delegates.size(); ++x)
         delete delegates[x];
     delegates.clear();
 }
 
+/*
+  Shows a simple message on the StatusBar for the specified time.
+*/
 void MainWindow::ShowMessage(const QString &text, int t) {
     ui->statusbar->showMessage(text, t);
 }
 
+/*
+  Pops open an error dialog with a message and on the StatusBar.
+*/
 void MainWindow::ShowError(const QString &text) {
     QMessageBox msgBox;
     msgBox.setText(text);
@@ -398,6 +491,9 @@ void MainWindow::Login() {
     l.exec();
 }
 
+/*
+  This method creates the actions and assigns them to the toolbar.
+*/
 void MainWindow::PopulateToolbar() {
     QList<QAction*> Actions;
     Actions.reserve(7);
@@ -448,13 +544,10 @@ void MainWindow::PopulateToolbar() {
         toolbar->addAction(Actions[x]);
 }
 
-void MainWindow::RevertCellData() {
-    int x = storedcoords.first;
-    int y = storedcoords.second;
-    ui->tableWidget->item(x, y)->setText(storeditem);
-    ShowMessage("Reverting cell data", 3000);
-}
 
+/*
+  Getters/Setters
+*/
 void MainWindow::SetUsername(const QString &text) {
     username = text;
 }
