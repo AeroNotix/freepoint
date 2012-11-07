@@ -30,7 +30,8 @@ void Database::Insert(QStringList newrowdata) {
                      parent, SLOT(InsertedRow(QNetworkReply*)));
 
     InsertQuery iq = InsertQuery(UsingDB, TableName, newrowdata);
-    QByteArray data(iq.QueryString().toStdString().c_str());
+    QByteArray data;
+    data.append(iq.QueryString());
     QUrl url(Settings::INSERTURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
@@ -45,7 +46,8 @@ void Database::Query() {
                      parent, SLOT(InsertData(QNetworkReply*)));
 
     GetQuery gq = GetQuery(UsingDB, TableName);
-    QByteArray data(gq.QueryString().toStdString().c_str());
+    QByteArray data;
+    data.append(gq.QueryString());
     QUrl url(Settings::PARAMURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
@@ -77,7 +79,8 @@ void Database::ChangeTable(QString newdata, QString col, QString id) {
                      parent, SLOT(UpdatedData(QNetworkReply*)));
 
     UpdateQuery uq = UpdateQuery(UsingDB, TableName, newdata, col, id);
-    QByteArray data(uq.QueryString().toStdString().c_str());
+    QByteArray data;
+    data.append(uq.QueryString());
     QUrl url(Settings::UPDATEURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
