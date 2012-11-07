@@ -9,43 +9,43 @@
 #include <QByteArray>
 
 #ifdef _WIN32
-	#include "QJson/Parser"
+    #include "QJson/Parser"
 #elif defined __unix__
-	#include "qjson/parser.h"
+    #include "qjson/parser.h"
 #endif
 
 #include "jsonpackets.h"
 
 QVariantMap ReadJSONFromFile(QString filename) {
-	QFile file(filename);
+    QFile file(filename);
     if (!file.exists()) {
-		QString s = "File does not exist: ";
-		s.append(filename);
+        QString s = "File does not exist: ";
+        s.append(filename);
         throw JSONOpenError(s.toStdString());
     }
 
-	QByteArray rawstring;
-	
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QString s = "Failure to open: ";
-		s.append(filename);
-		throw JSONOpenError(s.toStdString());	
-	}
+    QByteArray rawstring;
 
-	while (!file.atEnd()) {
-		rawstring.append(file.readLine());
-	}
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString s = "Failure to open: ";
+        s.append(filename);
+        throw JSONOpenError(s.toStdString());
+    }
 
-	QJson::Parser parser;
-	bool ok;
-	QVariantMap results = parser.parse(rawstring, &ok).toMap();
- 	if (!ok) {
-		QString s = "Failure to parse: ";
-		s.append(filename);
-		throw JSONParseError(s.toStdString());
-	}
+    while (!file.atEnd()) {
+        rawstring.append(file.readLine());
+    }
 
-	return results;
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap results = parser.parse(rawstring, &ok).toMap();
+    if (!ok) {
+        QString s = "Failure to parse: ";
+        s.append(filename);
+        throw JSONParseError(s.toStdString());
+    }
+
+    return results;
 }
 
 bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_map,
@@ -101,6 +101,7 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     }
     s << "]\n}\n";
     s.flush();
+
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
