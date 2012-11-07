@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+#include <QList>
 #include <QtGui>
 #include <QtCore/QString>
 #include <QMap>
@@ -36,6 +37,7 @@ public:
     void Update();
     void Insert(QStringList newrowdata);
     void Query();
+    void Delete(QList<QString> deleters);
     void ChangeTable(QString newdata, QString col, QString id);
 	bool ParseMetadata(QMap<QString, QVariant>);
 	QMetadata GetMetadata() {

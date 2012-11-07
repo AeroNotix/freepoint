@@ -244,6 +244,14 @@ void MainWindow::DeleteRow(int x) {
     ui->tableWidget->removeRow(x);
 }
 
+void MainWindow::DeleteRows() {
+    QList<QString> deleters;
+    QList<QModelIndex> raw = ui->tableWidget->selectionModel()->selectedRows();
+    for (int x = 0; x < raw.size(); ++x)
+        deleters.append(ui->tableWidget->item(raw[x].row(), 0)->text());
+    db->Delete(deleters);
+}
+
 void MainWindow::InsertData(QNetworkReply *reply) {
     QString text = reply->readAll();
     QByteArray json(text.toStdString().c_str());

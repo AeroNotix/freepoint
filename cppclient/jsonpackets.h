@@ -174,6 +174,33 @@ private:
 };
 
 // not implemented yet.
+class DeleteQuery :
+    public BaseQuery {
+public:
+    DeleteQuery(QString database, QString table, QList<QString> deleters)
+        : BaseQuery(database, table), deleters(deleters) {};
+
+    QString QueryString() {
+        QString ss;
+        QTextStream s(&ss);
+        s << "{" << BaseQuery::QueryString() << ","
+          << quote("DATA") << ":" << "[";
+
+        for (int x = 0; x < deleters.size(); ++x) {
+            s << quote(deleters[x]);
+            if (x + 1 != deleters.size())
+                s << ",";
+        }
+        s << "]}";
+        std::cout << s.string()->toStdString() << std::endl;
+        return *s.string();
+   }
+private:
+    QList<QString> deleters;
+};
+
+
+// not implemented yet.
 class CreateQuery :
     public BaseQuery {
 };

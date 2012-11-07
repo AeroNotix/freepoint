@@ -70,6 +70,7 @@ private:
     void OpenConnectionDialog();
     void CreateAction();
     void PopulateToolbar();
+    void DeleteRows();
 
     Ui::MainWindow *ui;
     QAction *newAction;
