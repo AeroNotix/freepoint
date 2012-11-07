@@ -33,6 +33,9 @@ public:
     void InsertRow(QStringList newrowdata);
     void AddNewConnection(QString database, QString table);
 
+public slots:
+	void InsertedRow(QNetworkReply *reply);
+
 private slots:
     void InsertData(QNetworkReply *reply);
     void UpdatedData(QNetworkReply *reply);

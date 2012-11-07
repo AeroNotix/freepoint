@@ -149,6 +149,26 @@ void MainWindow::InsertRow(QStringList newrowdata) {
     db->Insert(newrowdata);
 }
 
+void MainWindow::InsertedRow(QNetworkReply *reply) {
+    QString text = reply->readAll();
+    QByteArray json(text.toStdString().c_str());
+    QJson::Parser parser;
+    bool ok;
+    QVariantMap result = parser.parse(json, &ok).toMap();
+
+	if (!ok || json.size() == 0) {
+		ShowError("Malformed data from the server. Contact Administrator.");
+		return;
+	}
+
+	if (!result["Success"].toBool()) {
+		ShowError(result["error"].toString());
+		return;
+	}
+
+	RefreshTable();
+}
+
 void MainWindow::changeTable(int x, int y) {
     if (x < 0 || y < 0)
         return;
