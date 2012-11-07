@@ -15,17 +15,22 @@ QString Settings::LOGINURL;
 QString Settings::PARAMURL;
 QString Settings::UPDATEURL;
 QString Settings::INSERTURL;
+QString Settings::DELETEURL;
+QString Settings::CREATEURL;
+
 
 Settings::Settings(QString filename) {
 
 	QVariantMap result = ReadJSONFromFile(filename);
 	QMap<QString, QVariant> settings = result["CONNECTION_DETAILS"].toMap();
 
-	SERVERURL = settings["SERVERURL"].toString();
-	LOGINURL = settings["LOGINURL"].toString();
-	PARAMURL = settings["PARAMURL"].toString();
-	UPDATEURL = settings["UPDATEURL"].toString();
-	INSERTURL = settings["INSERTURL"].toString();
+    SERVERURL = settings["SERVERURL"].toString();
+    LOGINURL = settings["LOGINURL"].toString();
+    PARAMURL = settings["PARAMURL"].toString();
+    UPDATEURL = settings["UPDATEURL"].toString();
+    INSERTURL = settings["INSERTURL"].toString();
+    DELETEURL = settings["DELETEURL"].toString();
+    CREATEURL = settings["CREATEURL"].toString();
 }
 
 bool InitializeSettings(QDir filename) {

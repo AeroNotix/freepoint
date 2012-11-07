@@ -12,6 +12,8 @@ public:
 	static QString PARAMURL;
 	static QString UPDATEURL;
 	static QString INSERTURL;
+	static QString DELETEURL;
+	static QString CREATEURL;
 };
 
 bool InitializeSettings(QDir filename);
