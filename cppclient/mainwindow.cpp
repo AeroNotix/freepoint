@@ -300,10 +300,17 @@ void MainWindow::UpdatedData(QNetworkReply *reply) {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent * event) {
-    if (event->key() == Qt::Key_F5)
+    switch (event->key()) {
+    case Qt::Key_F5:
         RefreshTable();
-    else
-        QWidget::keyPressEvent(event);
+        return;
+    case Qt::Key_Backspace:
+    case Qt::Key_Delete:
+        DeleteRows();
+        return;
+    }
+
+    QWidget::keyPressEvent(event);
 }
 
 void MainWindow::insertRowData(QList<QStringList> rows) {
