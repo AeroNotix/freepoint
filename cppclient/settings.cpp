@@ -21,8 +21,8 @@ QString Settings::CREATEURL;
 
 Settings::Settings(QString filename) {
 
-	QVariantMap result = ReadJSONFromFile(filename);
-	QMap<QString, QVariant> settings = result["CONNECTION_DETAILS"].toMap();
+    QVariantMap result = ReadJSONFromFile(filename);
+    QMap<QString, QVariant> settings = result["CONNECTION_DETAILS"].toMap();
 
     SERVERURL = settings["SERVERURL"].toString();
     LOGINURL = settings["LOGINURL"].toString();
@@ -34,10 +34,10 @@ Settings::Settings(QString filename) {
 }
 
 bool InitializeSettings(QDir filename) {
-	try {
-		Settings settings(filename.path());
-		return true;
-	} catch (JSONError &jerror) {
-		return false;
-	}
+    try {
+        Settings settings(filename.path());
+        return true;
+    } catch (JSONError &jerror) {
+        return false;
+    }
 }
