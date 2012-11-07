@@ -17,6 +17,7 @@
 #include "mainwindow.h"
 #include "table_tools.h"
 #include "settings.h"
+#include "server_setup.h"
 
 int main(int argc, char *argv[])
 {

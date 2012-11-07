@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CXNServer</class>
+ <widget class="QDialog" name="CXNServer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>290</width>
+    <height>261</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="5" column="1">
+    <widget class="QLabel" name="lblInsertURL">
+     <property name="text">
+      <string>Insert:</string>
+     </property>
+     <property name="buddy">
+      <cstring>txtInsertURL</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLineEdit" name="txtBaseURL"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="txtLoginURL"/>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLineEdit" name="txtQueryURL"/>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLineEdit" name="txtUpdateURL"/>
+   </item>
+   <item row="9" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="2">
+    <widget class="QLineEdit" name="txtDeleteURL"/>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="lblUpdateURL">
+     <property name="text">
+      <string>Update:</string>
+     </property>
+     <property name="buddy">
+      <cstring>txtUpdateURL</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
+    <widget class="QLineEdit" name="txtInsertURL"/>
+   </item>
+   <item row="7" column="1">
+    <widget class="QLabel" name="lblCreateURL">
+     <property name="text">
+      <string>Create:</string>
+     </property>
+     <property name="buddy">
+      <cstring>txtCreateURL</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QLabel" name="lblDeleteURL">
+     <property name="text">
+      <string>Delete:</string>
+     </property>
+     <property name="buddy">
+      <cstring>txtDeleteURL</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2">
+    <widget class="QLineEdit" name="txtCreateURL"/>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLabel" name="lblQueryURL">
+     <property name="text">
+      <string>Query:</string>
+     </property>
+     <property name="buddy">
+      <cstring>txtQueryURL</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="lblLoginURL">
+     <property name="text">
+      <string>Login:</string>
+     </property>
+     <property name="buddy">
+      <cstring>txtLoginURL</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLabel" name="lblBaseURL">
+     <property name="text">
+      <string>Base URL:</string>
+     </property>
+     <property name="buddy">
+      <cstring>txtBaseURL</cstring>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>CXNServer</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>227</x>
+     <y>272</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>CXNServer</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

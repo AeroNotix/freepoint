@@ -18,6 +18,7 @@ SOURCES += \
          mainwindow.cpp \
          database.cpp \
          login.cpp \
+         server_setup.cpp \
          main.cpp
 
 HEADERS  += \
@@ -30,6 +31,7 @@ HEADERS  += \
          login.h \
          mainwindow.h \
          database.h \
+         server_setup.h \
          settings.h \
 
 unix:RESOURCES += "../resources/resource.qrc"
@@ -42,7 +44,8 @@ unix {
     ../ui/create_new_table.ui \
     ../ui/loginbox.ui \
     ../ui/mainwindow.ui \
-    ../ui/cxn_setup.ui
+    ../ui/cxn_setup.ui \
+    ../ui/server_setup.ui
 }
 
 win32:RESOURCES += "..\resources\resource.qrc"
@@ -56,5 +59,6 @@ win32 {
     ..\ui\create_new_table.ui \
     ..\ui\loginbox.ui \
     ..\ui\mainwindow.ui \
-    ..\ui\cxn_setup.ui
+    ..\ui\cxn_setup.ui \
+    ..\ui\server_setup.ui
 }
