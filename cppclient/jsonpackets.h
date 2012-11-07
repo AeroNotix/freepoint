@@ -16,10 +16,10 @@
 #define JSONPACKETS_H
 
 #include <string>
-#include <sstream>
 #include <stdexcept>
 #include <iostream>
 
+#include <QTextStream>
 #include <QtCore/QString>
 #include <QStringList>
 #include <QFile>
@@ -28,27 +28,29 @@
 static const char* dq = "\"";
 
 /*
-  T should be std::string or char*
+  T should be QString or char*
 
   Returns "T"
 */
 template <typename T>
-static std::string quote(T toQuote) {
-    std::stringstream s;
+static QString quote(T toQuote) {
+    QString ss;
+    QTextStream s(&ss);
     s << dq << toQuote << dq;
-    return s.str();
+    return *s.string();
 }
 
 /*
-  T should be std::string or char*
+  T should be QString or char*
 
   Returns "key":"value"
 */
 template <typename T>
-static std::string quote(std::string key, T value) {
-    std::stringstream s;
+static QString quote(QString key, T value) {
+    QString ss;
+    QTextStream s(&ss);
     s << dq << key << dq << ":" << dq << value << dq;
-    return s.str();
+    return *s.string();
 }
 
 /*
@@ -59,22 +61,23 @@ class BaseQuery {
 
 public:
     BaseQuery(QString database, QString table) :
-        database(database.toStdString()), table(table.toStdString()) {};
+        database(database), table(table) {};
     virtual ~BaseQuery() {};
 
 	/*
 	  Returns "DATABASE": <database>, "TABLE": <table>"
 	*/
     virtual QString QueryString() {
-        std::stringstream s;
-        s << quote("DATABASE", database) << "," 
+        QString ss;
+        QTextStream s(&ss);
+        s << quote("DATABASE", database) << ","
           << quote("TABLE", table);
-        return QString(s.str().c_str());
+        return *s.string();
     }
 
 protected:
-    std::string database;
-    std::string table;
+    QString database;
+    QString table;
 };
 
 /*
@@ -89,9 +92,10 @@ public:
         BaseQuery(database, table) {};
 
     QString QueryString() {
-        std::stringstream s;
-        s << "{" << BaseQuery::QueryString().toStdString() << "}";
-        return QString(s.str().c_str());
+        QString ss;
+        QTextStream s(&ss);
+        s << "{" << BaseQuery::QueryString() << "}";
+        return *s.string();
     }
 };
 
@@ -105,9 +109,9 @@ class UpdateQuery :
 public:
     UpdateQuery(QString database, QString table, QString newdata, QString column, QString id) :
         BaseQuery(database, table),
-        column(column.toStdString()),
-        newdata(newdata.toStdString()),
-        id(id.toStdString()) {};
+        column(column),
+        newdata(newdata),
+        id(id) {};
 
 	/*
 	  Returns:
@@ -118,19 +122,20 @@ public:
 	  }
 	*/
     QString QueryString() {
-        std::stringstream s;
-        s << "{" << BaseQuery::QueryString().toStdString() << "," 
+        QString ss;
+        QTextStream s(&ss);
+        s << "{" << BaseQuery::QueryString() << ","
           << quote("COLUMN", column) << ","
           << quote("DATA", newdata) << ","
           << quote("ID", id)
           << "}";
-        return QString(s.str().c_str());
+        return *s.string();
     }
 
 private:
-    std::string column;
-    std::string newdata;
-    std::string id;
+    QString column;
+    QString newdata;
+    QString id;
 };
 
 /*
@@ -152,16 +157,17 @@ public:
       }
 	*/
     QString QueryString() {
-        std::stringstream s;
-        s << "{" << BaseQuery::QueryString().toStdString() << ","
+        QString ss;
+        QTextStream s(&ss);
+        s << "{" << BaseQuery::QueryString() << ","
           << quote("DATA") << ": [";
         for (int x = 0; x < newrowdata.size(); ++x) {
-            s << quote(newrowdata[x].toStdString().c_str());
+            s << quote(newrowdata[x]);
             if (x != (newrowdata.size() - 1))
                 s << ",";
         }
         s << "]}";
-        return QString(s.str().c_str());
+        return *s.string();
     }
 private:
     QStringList newrowdata;
@@ -178,7 +184,7 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
 bool WriteJSONServerFile(QString base, QString login, QString param, QString update,
                          QString insert, QString del, QString create, QString filename);
 
-std::string cxnstring(int num);
+QString cxnstring(int num);
 
 /*
 

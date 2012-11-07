@@ -1,5 +1,4 @@
 #include <iostream>
-#include <sstream>
 
 #include <QTextStream>
 #include <QFile>
@@ -51,13 +50,18 @@ QVariantMap ReadJSONFromFile(QString filename) {
 bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_map,
                          QString filename, QString database, QString table)
 {
-    std::stringstream s;
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+
+    QTextStream s(&file);
+
     s << "{\n\t";
 
     // if the connection_names has a size, then it must be a pre-existing
     // config file, pre-existing files should all have version strings.
     if (connection_names.size())
-        s << quote("version", connection_map["version"].toString().toStdString())
+        s << quote("version", connection_map["version"].toString())
           << ",\n\t";
     else
         s << quote("version", "0.1");
@@ -71,9 +75,9 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
         // we're using newlines and tabs because the config file should be
         // human readable.
         s << quote(cxnstring(x)) << ": {\n\t\t";
-        s << quote("database", xmap["database"].toString().toStdString())
+        s << quote("database", xmap["database"].toString())
           << ",\n\t\t";
-        s << quote("table", xmap["table"].toString().toStdString())
+        s << quote("table", xmap["table"].toString())
           << "\n\t}";
         // if we're on the last one, don't insert a comma.
         if (x + 1 != connection_names.size())
@@ -88,8 +92,8 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     if (database != empty) {
         s << ",\n\t";
         s << quote(cxnstring(x)) << ": {\n\t\t";
-        s << quote("database", database.toStdString()) << ",\n\t\t";
-        s << quote("table", table.toStdString()) << "\n\t";
+        s << quote("database", database) << ",\n\t\t";
+        s << quote("table", table) << "\n\t";
         s << "},";
         // we increment x because we need to write out the names of the
         // connections, if we don't increment x it will write out just the
@@ -106,14 +110,6 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     }
     s << "]\n}\n";
     s.flush();
-
-    QFile file(filename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return false;
-
-    QTextStream out(&file);
-    out << QString(s.str().c_str());
-    out.flush();
     return true;
 }
 
@@ -123,35 +119,32 @@ bool WriteJSONServerFile(
     QString insert, QString del,
     QString create, QString filename)
 {
-    std::stringstream s;
-    std::string le = "/\",\n\t\t";
-    std::string dq = "\"";
-    std::string qtdbase = ":\"";
-    qtdbase.append(base.toStdString());
-
-    s << "{\n";
-    s << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t";
-    s << quote("SERVERURL") << qtdbase << dq << ",\n\t\t";
-    s << quote("LOGINURL") << qtdbase << login.toStdString() << le;
-    s << quote("PARAMURL") << qtdbase << param.toStdString() << le;
-    s << quote("UPDATEURL") << qtdbase << update.toStdString() << le;
-    s << quote("INSERTURL") << qtdbase << insert.toStdString() << le;
-    s << quote("DELETEURL") << qtdbase << del.toStdString() << le;
-    s << quote("CREATEURL") << qtdbase << create.toStdString() << "/" << dq << "\n\t}\n}\n";
-    s.flush();
 
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
 
-    QTextStream out(&file);
-    out << QString(s.str().c_str());
-    out.flush();
+    QTextStream s(&file);
+    QString le = "/\",\n\t\t";
+    QString dq = "\"";
+    QString qtdbase = ":\"";
+    qtdbase.append(base);
+
+    s << "{\n";
+    s << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t";
+    s << quote("SERVERURL") << qtdbase << dq << ",\n\t\t";
+    s << quote("LOGINURL") << qtdbase << login << le;
+    s << quote("PARAMURL") << qtdbase << param << le;
+    s << quote("UPDATEURL") << qtdbase << update << le;
+    s << quote("INSERTURL") << qtdbase << insert << le;
+    s << quote("DELETEURL") << qtdbase << del << le;
+    s << quote("CREATEURL") << qtdbase << create << "/" << dq << "\n\t}\n}\n";
+    s.flush();
     return true;
 }
 
-std::string cxnstring(int num) {
-    std::stringstream s;
+QString cxnstring(int num) {
+    QTextStream s(new QString(""));
     s << "connection-" << num;
-    return s.str();
+    return *s.string();
 }
