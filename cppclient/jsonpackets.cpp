@@ -57,7 +57,8 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     // if the connection_names has a size, then it must be a pre-existing
     // config file, pre-existing files should all have version strings.
     if (connection_names.size())
-        s << quote("version", connection_map["version"].toString().toStdString()) << ",\n\t";
+        s << quote("version", connection_map["version"].toString().toStdString())
+          << ",\n\t";
     else
         s << quote("version", "0.1");
 
@@ -70,8 +71,10 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
         // we're using newlines and tabs because the config file should be
         // human readable.
         s << quote(cxnstring(x)) << ": {\n\t\t";
-        s << quote("database", xmap["database"].toString().toStdString()) << ",\n\t\t";
-        s << quote("table", xmap["table"].toString().toStdString()) << "\n\t}";
+        s << quote("database", xmap["database"].toString().toStdString())
+          << ",\n\t\t";
+        s << quote("table", xmap["table"].toString().toStdString())
+          << "\n\t}";
         // if we're on the last one, don't insert a comma.
         if (x + 1 != connection_names.size())
             s << ",\n\t";
@@ -79,6 +82,8 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
 
     // we're simply re-writing the config file if we weren't supplied with
     // additional database/table strings.
+    //
+    // Otherwise we've got an additional database/table combo to store.
     QString empty = QString("");
     if (database != empty) {
         s << ",\n\t";
