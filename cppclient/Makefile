@@ -231,7 +231,10 @@ mocables: compiler_moc_header_make_all compiler_moc_source_make_all
 compiler_moc_header_make_all: moc_createnewdatabase.cpp moc_database.cpp moc_threading.cpp moc_cxn_setup.cpp moc_add_new_row.cpp moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp moc_server_setup.cpp
 compiler_moc_header_clean:
 	-$(DEL_FILE) moc_createnewdatabase.cpp moc_database.cpp moc_threading.cpp moc_cxn_setup.cpp moc_add_new_row.cpp moc_delegates.cpp moc_login.cpp moc_mainwindow.cpp moc_server_setup.cpp
-moc_createnewdatabase.cpp: ui_loginbox.h \
+moc_createnewdatabase.cpp: ui_create_new_table.h \
+		mainwindow.h \
+		database.h \
+		settings.h \
 		createnewdatabase.h
 	/usr/bin/moc $(DEFINES) $(INCPATH) createnewdatabase.h -o moc_createnewdatabase.cpp
 
@@ -398,7 +401,10 @@ compiler_clean: compiler_moc_header_clean compiler_rcc_clean compiler_uic_clean
 ####### Compile
 
 createnewdatabase.o: createnewdatabase.cpp createnewdatabase.h \
-		ui_loginbox.h
+		ui_create_new_table.h \
+		mainwindow.h \
+		database.h \
+		settings.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o createnewdatabase.o createnewdatabase.cpp
 
 database.o: database.cpp database.h \
@@ -456,7 +462,9 @@ mainwindow.o: mainwindow.cpp login.h \
 		add_new_row.h \
 		ui_add_new_row.h \
 		cxn_setup.h \
-		ui_cxn_setup.h
+		ui_cxn_setup.h \
+		createnewdatabase.h \
+		ui_create_new_table.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 login.o: login.cpp login.h \
