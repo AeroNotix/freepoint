@@ -18,7 +18,7 @@ namespace Ui {
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -34,23 +34,23 @@ public:
     void AddNewConnection(QString database, QString table);
 
 public slots:
-	void InsertedRow(QNetworkReply *reply);
-	void DeletedData(QNetworkReply *reply);
+    void InsertedRow(QNetworkReply *reply);
+    void DeletedData(QNetworkReply *reply);
 
 private slots:
     void InsertData(QNetworkReply *reply);
     void UpdatedData(QNetworkReply *reply);
-	void openConnectionDialog();
+    void openConnectionDialog();
     void openManageDialog();
     void storeCell(int x, int y);
     void RefreshTable();
-	void InsertRow();
-	void changeTable(int, int);
-	void ExportAsCSV();
-	void CreateNewTable();
-	void PreviousTable();
-	void NextTable();
-	void Exit();
+    void InsertRow();
+    void changeTable(int, int);
+    void ExportAsCSV();
+    void CreateNewTable();
+    void PreviousTable();
+    void NextTable();
+    void Exit();
     void NewRow(int x, int y, QTableWidgetItem* newrow);
     void InsertRow(int x);
     void DeleteItem(int x, int y);
@@ -63,8 +63,8 @@ private:
     void SetCurrentTable();
     void ClearTable();
     void insertRowData(QList<QStringList>);
-	void SetDelegates(QMetadata);
-	void ClearDelegates();
+    void SetDelegates(QMetadata);
+    void ClearDelegates();
     void keyPressEvent(QKeyEvent * event);
     void StoreCell(int x, int y);
     void RevertCellData();
@@ -75,7 +75,7 @@ private:
     void CreateAction();
     void PopulateToolbar();
     void DeleteRows();
-	void GenericHandleResponse(QNetworkReply *reply);
+    void GenericHandleResponse(QNetworkReply *reply);
 
     Ui::MainWindow *ui;
     QAction *newAction;
@@ -87,10 +87,10 @@ private:
     QList<QStringList> queryset;
     QList<QVariantMap> connections;
     bool networkRequestPending;
-	QToolBar *toolbar;
+    QToolBar *toolbar;
     QString storeditem;
     std::pair<int, int> storedcoords;
-	QList<QItemDelegate*> delegates;
+    QList<QItemDelegate*> delegates;
     QStringList connection_names;
     QVariantMap connection_map;
     int current_connection_index;
