@@ -37,6 +37,26 @@ public slots:
     void InsertedRow(QNetworkReply *reply);
     void DeletedData(QNetworkReply *reply);
 
+private slots:
+    void InsertData(QNetworkReply *reply);
+    void UpdatedData(QNetworkReply *reply);
+    void openConnectionDialog();
+    void openManageDialog();
+    void storeCell(int x, int y);
+    void RefreshTable();
+    void InsertRow();
+    void changeTable(int, int);
+    void ExportAsCSV();
+    void CreateNewTable();
+    void PreviousTable();
+    void NextTable();
+    void Exit();
+    void NewRow(int x, int y, QTableWidgetItem* newrow);
+    void InsertRow(int x);
+    void DeleteItem(int x, int y);
+    void DeleteRow(int x);
+    void WriteCSV(QString);
+
 private:
     void PopulateTable();
     bool ParseTableConfig();
