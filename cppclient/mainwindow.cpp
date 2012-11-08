@@ -23,6 +23,7 @@
 #include "jsonpackets.h"
 #include "add_new_row.h"
 #include "cxn_setup.h"
+#include "createnewdatabase.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -351,7 +352,8 @@ void MainWindow::WriteCSV(QString csvfilename) {
 }
 
 void MainWindow::CreateNewTable() {
-    throw std::runtime_error("Not implemented! CreateNewTable");
+    CreateNewDatabase cnd(this);
+    cnd.exec();
 }
 
 /*
