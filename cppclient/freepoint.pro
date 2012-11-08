@@ -1,7 +1,7 @@
 QT += core gui network
 
 unix {
-	QMAKE_CXXFLAGS += -std=c++11
+	QMAKE_CXXFLAGS += -std=c++11 -g
 }
 
 TARGET = freepoint
