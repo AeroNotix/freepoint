@@ -18,7 +18,7 @@
 Database::Database
 (QWidget *parent, QString user, QString passwd, QString using_db, QString table)
     : QObject(), parent(parent), User(user), Password(passwd), UsingDB(using_db),
-      TableName(table), currentNam(nullptr) {};
+	TableName(table), currentNam(nullptr), i(10) {};
 
 void Database::Close() {
     return;
@@ -72,12 +72,10 @@ void Database::Delete(QList<QString> deleters) {
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
 }
 
-
 void Database::ChangeTable(QString newdata, QString col, QString id) {
     currentNam = new QNetworkAccessManager(this);
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(UpdatedData(QNetworkReply*)));
-
     UpdateQuery uq = UpdateQuery(UsingDB, TableName, newdata, col, id);
     QByteArray data;
     data.append(uq.QueryString());
@@ -87,7 +85,18 @@ void Database::ChangeTable(QString newdata, QString col, QString id) {
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+}
 
+void Database::CreateTable(QString jsondata) {
+	if (this == nullptr) {
+		qDebug() << "dafuq";
+		return;
+	}
+	if (this == NULL) {
+		qDebug() << "dafuq";
+		return;
+	}
+	qDebug() << this->i;
 }
 
 bool Database::ParseMetadata(QMap<QString, QVariant> rawmeta) {

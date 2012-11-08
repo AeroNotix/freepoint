@@ -32,6 +32,7 @@ public:
     const QString GetDatabase(void) const;
     void InsertRow(QStringList newrowdata);
     void AddNewConnection(QString database, QString table);
+	void CreateNew(QString jsondata);
 
 public slots:
     void InsertedRow(QNetworkReply *reply);

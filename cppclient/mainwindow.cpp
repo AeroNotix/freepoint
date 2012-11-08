@@ -356,6 +356,10 @@ void MainWindow::CreateNewTable() {
     cnd.exec();
 }
 
+void MainWindow::CreateNew(QString jsondata) {
+	db->CreateTable(jsondata);
+}
+
 /*
   Goes back a table.
 */

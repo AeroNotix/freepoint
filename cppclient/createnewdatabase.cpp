@@ -7,21 +7,38 @@
 
 #include "createnewdatabase.h"
 
-
 CreateNewDatabase::CreateNewDatabase(MainWindow *parent)
     : QDialog(parent), ui(new Ui_CreateNewDatabase),
-      currentNam(nullptr), rowmap(new QMap<QString, QString>()),
-      column_number(0)
+      rowmap(new QMap<QString, QString>()), column_number(0)
 {
     ui->setupUi(this);
 }
 
 void CreateNewDatabase::accept() {
     QList<QString> keys = rowmap->keys();
-    QString str;
-    foreach(str, keys)
-        qDebug() << str << ": " << (*rowmap)[str] << "\n";
+	QString ss;
+	QString sa;
+	QString dq = "\"";
+	QTextStream s(&ss);
+	QTextStream sub(&sa);
 
+	s << "{" << dq << "DATABASE" << dq << ":";
+	s << dq << ui->txt_database_name->text() << dq << ",";
+	s << dq << "TABLE" << dq << ":";
+	s << dq << ui->txt_table_name->text() << dq << ",";
+	sub << dq << "HEADINGS" << dq << ":{";
+
+	for (int x = 0; x < keys.size(); ++x) {
+		sub << (*rowmap)[keys[x]];
+		if (x + 1 != keys.size())
+			sub << ",";
+	}
+	s << *sub.string();
+	s << "," << dq << "PAYLOAD" << dq << ":";
+	s << dq << (*sub.string()).replace("\"", "\\\"") << dq;
+	s << "}}";
+
+	parent->CreateNew(*s.string());
     QDialog::accept();
 }
 

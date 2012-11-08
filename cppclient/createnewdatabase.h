@@ -31,7 +31,6 @@ public:
     explicit CreateNewDatabase(MainWindow *parent = 0);
     virtual ~CreateNewDatabase() {
         delete ui;
-        delete currentNam;
         delete rowmap;
         for (int x = 0; x < list_items.size(); ++x)
             delete list_items[x];
@@ -57,7 +56,6 @@ private:
     MainWindow *parent;
     Ui_CreateNewDatabase *ui;
     bool networkRequestPending;
-    QNetworkAccessManager *currentNam;
     QMap<QString, QString> *rowmap;
     unsigned int column_number;
     QList<QListWidgetItem*> list_items;

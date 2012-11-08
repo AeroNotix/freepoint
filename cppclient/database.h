@@ -42,6 +42,8 @@ public:
     void Query();
     void Delete(QList<QString> deleters);
     void ChangeTable(QString newdata, QString col, QString id);
+	void CreateTable(QString jsondata);
+
     bool ParseMetadata(QMap<QString, QVariant>);
     QMetadata GetMetadata() {
         return metadata;
@@ -70,6 +72,7 @@ public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
 
 private:
+	int i;
     QWidget *parent;
     QString User;
     QString Password;
