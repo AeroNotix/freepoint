@@ -29,6 +29,8 @@ public slots:
 //    void networkRequestFinished(QNetworkReply*);
 //    void handleNetworkError(QNetworkReply::NetworkError);
     void changeFieldDescriptions(int i);
+    void acceptFieldAdd();
+
 private:
     MainWindow *parent;
     Ui_CreateNewDatabase *ui;
