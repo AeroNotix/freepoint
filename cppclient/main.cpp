@@ -22,15 +22,15 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-	// we need the cwd for two things, might as well store it.
-	QDir cwd = sgetcwd();
-	if (!InitializeSettings(appendDir(cwd, "server.json"))) {
+    // we need the cwd for two things, might as well store it.
+    QDir cwd = sgetcwd();
+    if (!InitializeSettings(appendDir(cwd, "server.json"))) {
         ServerSetup setup;
         setup.exec();
         InitializeSettings(appendDir(cwd, "server.json"));
     }
-	QDir resource = appendDir(cwd, "resources/resource.rcc");
-	QResource::registerResource(resource.path());
+    QDir resource = appendDir(cwd, "resources/resource.rcc");
+    QResource::registerResource(resource.path());
     MainWindow w;
     w.show();
     return a.exec();

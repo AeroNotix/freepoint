@@ -64,9 +64,9 @@ public:
         database(database), table(table) {};
     virtual ~BaseQuery() {};
 
-	/*
-	  Returns "DATABASE": <database>, "TABLE": <table>"
-	*/
+    /*
+      Returns "DATABASE": <database>, "TABLE": <table>"
+    */
     virtual QString QueryString() {
         QString ss;
         QTextStream s(&ss);
@@ -113,14 +113,14 @@ public:
         newdata(newdata),
         id(id) {};
 
-	/*
-	  Returns:
-	  {
-	      "COLUMN": <column>,
-		  "DATA": <data>,
-		  "ID": <id>
-	  }
-	*/
+    /*
+      Returns:
+      {
+          "COLUMN": <column>,
+          "DATA": <data>,
+          "ID": <id>
+      }
+    */
     QString QueryString() {
         QString ss;
         QTextStream s(&ss);
@@ -147,15 +147,15 @@ public:
     InsertQuery(QString database, QString table, QStringList newrowdata)
         : BaseQuery(database, table), newrowdata(newrowdata) {};
 
-	/*
-	  Returns:
+    /*
+      Returns:
 
-	  {
-	      "DATABASE": <database>,
-		  "TABLE": <table>,
-		  "DATA": [array, of, strings],
+      {
+          "DATABASE": <database>,
+          "TABLE": <table>,
+          "DATA": [array, of, strings],
       }
-	*/
+    */
     QString QueryString() {
         QString ss;
         QTextStream s(&ss);
@@ -220,24 +220,24 @@ QString cxnstring(int num);
 */
 
 class JSONError
-	: public std::runtime_error {
+    : public std::runtime_error {
 public:
-	JSONError(std::string s)
-		: std::runtime_error(s) {};
+    JSONError(std::string s)
+        : std::runtime_error(s) {};
 };
 
-class JSONParseError 
-	: public JSONError {
+class JSONParseError
+    : public JSONError {
 public:
-	JSONParseError(std::string s)
-		: JSONError(s) {};
+    JSONParseError(std::string s)
+        : JSONError(s) {};
 };
 
-class JSONOpenError 
-	: public JSONError {
+class JSONOpenError
+    : public JSONError {
 public:
-	JSONOpenError(std::string s)
-		: JSONError(s) {};
+    JSONOpenError(std::string s)
+        : JSONError(s) {};
 };
 
 #endif //JSONPACKETS_H

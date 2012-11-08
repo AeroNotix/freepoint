@@ -29,7 +29,7 @@ class TimeDelegate :
 public:
     explicit TimeDelegate(QMainWindow *parent = nullptr)
         : QItemDelegate(parent) {};
-	QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
+    QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
 };
 
 class DateDelegate :
@@ -41,7 +41,7 @@ public:
     explicit DateDelegate(QMainWindow *parent = nullptr)
         : QItemDelegate(parent) {};
     QWidget* createEditor(QWidget*, const QStyleOptionViewItem&, const QModelIndex&) const;
-	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
 };
 
 QItemDelegate* SelectDelegate(QString choice, QStringList choices, QMainWindow *parent = nullptr);

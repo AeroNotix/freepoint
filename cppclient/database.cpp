@@ -91,17 +91,17 @@ void Database::ChangeTable(QString newdata, QString col, QString id) {
 }
 
 bool Database::ParseMetadata(QMap<QString, QVariant> rawmeta) {
-	QMap<QString, QVariant> rawmetadata = rawmeta["Metadata"].toMap();
-	QMap<QString, QVariant> headings = rawmetadata["HEADINGS"].toMap();
+    QMap<QString, QVariant> rawmetadata = rawmeta["Metadata"].toMap();
+    QMap<QString, QVariant> headings = rawmetadata["HEADINGS"].toMap();
 
-	QMetadata newmetadata;
-	QList<QString> headerlist = headings.keys();
-	for (int x = 0; x < headerlist.size(); ++x) {
-		newmetadata.insert(headerlist[x], headings[headerlist[x]].toMap());
-	}
+    QMetadata newmetadata;
+    QList<QString> headerlist = headings.keys();
+    for (int x = 0; x < headerlist.size(); ++x) {
+        newmetadata.insert(headerlist[x], headings[headerlist[x]].toMap());
+    }
 
-	metadata = newmetadata;
-	return true;
+    metadata = newmetadata;
+    return true;
 }
 
 void Database::handleNetworkError(QNetworkReply::NetworkError error) {}

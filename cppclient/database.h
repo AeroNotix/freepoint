@@ -24,7 +24,7 @@ typedef QMap<QString, QVariant> QMetadata;
 class Database :
     public QObject {
 
-	Q_OBJECT
+    Q_OBJECT
 
 public:
     Database(QWidget *parent, QString user, QString passwd,
@@ -42,10 +42,10 @@ public:
     void Query();
     void Delete(QList<QString> deleters);
     void ChangeTable(QString newdata, QString col, QString id);
-	bool ParseMetadata(QMap<QString, QVariant>);
-	QMetadata GetMetadata() {
-		return metadata;
-	};
+    bool ParseMetadata(QMap<QString, QVariant>);
+    QMetadata GetMetadata() {
+        return metadata;
+    };
 
     void SetUsername(const QString &Username) {
         User = Username;
@@ -78,7 +78,7 @@ private:
     bool Connected;
     QList<QList<QString> > queryset;
     QNetworkAccessManager *currentNam;
-	QMetadata metadata;
+    QMetadata metadata;
 };
 
 #endif // DATABASE_H
