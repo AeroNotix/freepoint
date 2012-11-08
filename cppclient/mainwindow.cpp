@@ -197,7 +197,7 @@ void MainWindow::insertRowData(QList<QStringList> rows) {
     int rowno = rows.size();
 
     for (int x = 0; x < rowno; ++x) {
-		emit InsertRowSIG(x);
+        emit InsertRowSIG(x);
         for (int y = 0; y < rows[x].size(); ++y) {
             emit NewRowSIG(x, y, new QTableWidgetItem(rows[x][y]));
         }
@@ -210,7 +210,7 @@ void MainWindow::insertRowData(QList<QStringList> rows) {
   invoked to handle the response from the server.
 */
 void MainWindow::InsertedRow(QNetworkReply *reply) {
-	return GenericHandleResponse(reply);
+    return GenericHandleResponse(reply);
 }
 
 /*
@@ -230,7 +230,7 @@ void MainWindow::DeleteRows() {
   invoked to handle the response from the server.
 */
 void MainWindow::DeletedData(QNetworkReply *reply) {
-	return GenericHandleResponse(reply);
+    return GenericHandleResponse(reply);
 }
 
 /*
@@ -244,17 +244,17 @@ void MainWindow::GenericHandleResponse(QNetworkReply *reply) {
     bool ok;
     QVariantMap result = parser.parse(json, &ok).toMap();
 
-	if (!ok || json.size() == 0) {
-		ShowError("Malformed data from the server. Contact Administrator.");
-		return;
-	}
+    if (!ok || json.size() == 0) {
+        ShowError("Malformed data from the server. Contact Administrator.");
+        return;
+    }
 
-	if (!result["Success"].toBool()) {
-		ShowError(result["error"].toString());
-		return;
-	}
+    if (!result["Success"].toBool()) {
+        ShowError(result["error"].toString());
+        return;
+    }
 
-	RefreshTable();
+    RefreshTable();
 }
 
 /*
