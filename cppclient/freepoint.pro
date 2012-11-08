@@ -8,6 +8,7 @@ TARGET = freepoint
 TEMPLATE = app
 
 SOURCES += \
+         createnewdatabase.cpp \
          database.cpp \
 	     threading.cpp \
          cxn_setup.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
          main.cpp
 
 HEADERS  += \
+         createnewdatabase.h \
          database.h \
 	     threading.h \
 	     cxn_setup.h \
