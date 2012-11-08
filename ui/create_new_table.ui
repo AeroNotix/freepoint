@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>CreateNewDatabase</class>
+ <widget class="QDialog" name="CreateNewDatabase">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -57,13 +57,13 @@
     </rect>
    </property>
   </widget>
-  <widget class="QGroupBox" name="groupBox">
+  <widget class="QGroupBox" name="fieldChoiceBox">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>20</y>
      <width>114</width>
-     <height>311</height>
+     <height>291</height>
     </rect>
    </property>
    <property name="title">
@@ -79,7 +79,7 @@
        <bool>true</bool>
       </property>
       <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
+       <string notr="true">fieldButtonGroup</string>
       </attribute>
      </widget>
     </item>
@@ -89,7 +89,7 @@
        <string>Choice</string>
       </property>
       <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
+       <string notr="true">fieldButtonGroup</string>
       </attribute>
      </widget>
     </item>
@@ -99,7 +99,7 @@
        <string>Date</string>
       </property>
       <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
+       <string notr="true">fieldButtonGroup</string>
       </attribute>
      </widget>
     </item>
@@ -109,7 +109,7 @@
        <string>Time</string>
       </property>
       <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
+       <string notr="true">fieldButtonGroup</string>
       </attribute>
      </widget>
     </item>
@@ -119,7 +119,7 @@
        <string>Person/Group</string>
       </property>
       <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
+       <string notr="true">fieldButtonGroup</string>
       </attribute>
      </widget>
     </item>
@@ -129,13 +129,13 @@
        <string>Currency</string>
       </property>
       <attribute name="buttonGroup">
-       <string notr="true">buttonGroup</string>
+       <string notr="true">fieldButtonGroup</string>
       </attribute>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QTabWidget" name="tabWidget">
+  <widget class="QStackedWidget" name="stackedWidget">
    <property name="geometry">
     <rect>
      <x>140</x>
@@ -147,10 +147,7 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="tab_3">
-    <attribute name="title">
-     <string>Text</string>
-    </attribute>
+   <widget class="QWidget" name="stackedWidget_TextPage" native="true">
     <widget class="QGroupBox" name="txt_group">
      <property name="geometry">
       <rect>
@@ -178,7 +175,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <spacer name="verticalSpacer">
+       <spacer name="txt_grp_vspacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -191,7 +188,7 @@
        </spacer>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="txt_grp_lbl_rowname">
         <property name="text">
          <string>Row Name: </string>
         </property>
@@ -201,7 +198,7 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="txt_grp_lbl_length">
         <property name="text">
          <string>Length:</string>
         </property>
@@ -224,7 +221,7 @@
        </widget>
       </item>
       <item row="3" column="2">
-       <widget class="QPushButton" name="btn_txt_group">
+       <widget class="QPushButton" name="txt_grp_btnAdd">
         <property name="text">
          <string>Add &gt;&gt;</string>
         </property>
@@ -243,10 +240,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_4">
-    <attribute name="title">
-     <string>Choice</string>
-    </attribute>
+   <widget class="QWidget" name="stackedWidget_ChoicePage" native="true">
     <widget class="QGroupBox" name="choice_group">
      <property name="geometry">
       <rect>
@@ -261,7 +255,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="2" column="1">
-       <spacer name="verticalSpacer_2">
+       <spacer name="choice_grp_vspacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -284,7 +278,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="choice_grp_lbl_rowname">
         <property name="text">
          <string>Row Name: </string>
         </property>
@@ -304,14 +298,14 @@
        </widget>
       </item>
       <item row="3" column="3">
-       <widget class="QPushButton" name="btn_choice_group">
+       <widget class="QPushButton" name="choice_grp_btnAdd">
         <property name="text">
          <string>Add &gt;&gt;</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0" alignment="Qt::AlignTop">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="choice_grp_lbl_choices">
         <property name="text">
          <string>Choices:</string>
         </property>
@@ -333,10 +327,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_5">
-    <attribute name="title">
-     <string>Date</string>
-    </attribute>
+   <widget class="QWidget" name="stackedWidget_DatePage" native="true">
     <widget class="QGroupBox" name="date_group">
      <property name="geometry">
       <rect>
@@ -351,7 +342,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="2" column="1">
-       <spacer name="verticalSpacer_4">
+       <spacer name="date_grp_vspacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -377,7 +368,7 @@
        <widget class="QLineEdit" name="date_grp_rowname"/>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_8">
+       <widget class="QLabel" name="date_grp_lbl_rowname">
         <property name="text">
          <string>Row Name: </string>
         </property>
@@ -387,7 +378,7 @@
        </widget>
       </item>
       <item row="3" column="2">
-       <widget class="QPushButton" name="btn_date_group">
+       <widget class="QPushButton" name="date_grp_btnAdd">
         <property name="text">
          <string>Add &gt;&gt;</string>
         </property>
@@ -406,10 +397,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_6">
-    <attribute name="title">
-     <string>Time</string>
-    </attribute>
+   <widget class="QWidget" name="stackedWidget_TimePage" native="true">
     <widget class="QGroupBox" name="time_group">
      <property name="geometry">
       <rect>
@@ -422,85 +410,23 @@
      <property name="title">
       <string>Field Description - Time</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Row Name:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="checkBox_5">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>Unique?:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2">
-       <widget class="QPushButton" name="btn_date_group_2">
-        <property name="text">
-         <string>Add &gt;&gt;</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEdit_5"/>
-      </item>
-      <item row="4" column="1">
-       <spacer name="verticalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="1">
-       <widget class="QTimeEdit" name="timeEdit_4"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Min Time:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QTimeEdit" name="timeEdit_5"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Max Time:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="time_grp_isnull">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>Null?:</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QLabel" name="time_grp_lbl_notimplemented">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>50</y>
+        <width>107</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Not Implemented</string>
+      </property>
+     </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
-    <attribute name="title">
-     <string>Group</string>
-    </attribute>
-    <widget class="QGroupBox" name="groupBox_8">
+   <widget class="QWidget" name="stackedWidget_GroupPage" native="true">
+    <widget class="QGroupBox" name="group_group">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -512,7 +438,7 @@
      <property name="title">
       <string>Field Description - Group</string>
      </property>
-     <widget class="QLabel" name="label_12">
+     <widget class="QLabel" name="grp_grp_lbl_notimplemented">
       <property name="geometry">
        <rect>
         <x>120</x>
@@ -527,10 +453,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab">
-    <attribute name="title">
-     <string>Currency</string>
-    </attribute>
+   <widget class="QWidget" name="stackedWidget_CurrPage" native="true">
     <widget class="QGroupBox" name="curr_group">
      <property name="geometry">
       <rect>
@@ -558,7 +481,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <spacer name="verticalSpacer_3">
+       <spacer name="curr_grp_vspacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -571,17 +494,17 @@
        </spacer>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
+       <widget class="QLabel" name="curr_grp_lbl_rowname">
         <property name="text">
          <string>Row Name: </string>
         </property>
         <property name="buddy">
-         <cstring>txt_grp_rowname</cstring>
+         <cstring>curr_grp_rowname</cstring>
         </property>
        </widget>
       </item>
       <item row="3" column="2">
-       <widget class="QPushButton" name="btn_curr_group">
+       <widget class="QPushButton" name="curr_grp_btnAdd">
         <property name="text">
          <string>Add &gt;&gt;</string>
         </property>
@@ -601,7 +524,7 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QLabel" name="label_5">
+  <widget class="QLabel" name="lbl_database_name">
    <property name="geometry">
     <rect>
      <x>540</x>
@@ -637,7 +560,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_7">
+  <widget class="QLabel" name="lbl_table_name">
    <property name="geometry">
     <rect>
      <x>542</x>
@@ -660,16 +583,36 @@
   <tabstop>date_radio</tabstop>
   <tabstop>time_radio</tabstop>
   <tabstop>grp_radio</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>curr_radio</tabstop>
+  <tabstop>txt_database_name</tabstop>
+  <tabstop>txt_table_name</tabstop>
   <tabstop>list_db_rows</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>txt_grp_rowname</tabstop>
+  <tabstop>txt_grp_unique</tabstop>
+  <tabstop>txt_grp_length</tabstop>
+  <tabstop>txt_grp_btnAdd</tabstop>
+  <tabstop>txt_grp_isnull</tabstop>
+  <tabstop>choice_grp_rowname</tabstop>
+  <tabstop>choice_grp_choices</tabstop>
+  <tabstop>choice_grp_unique</tabstop>
+  <tabstop>choice_grp_btnAdd</tabstop>
+  <tabstop>choice_grp_isnull</tabstop>
+  <tabstop>date_grp_unique</tabstop>
+  <tabstop>date_grp_rowname</tabstop>
+  <tabstop>date_grp_btnAdd</tabstop>
+  <tabstop>date_grp_isnull</tabstop>
+  <tabstop>curr_grp_rowname</tabstop>
+  <tabstop>curr_grp_unique</tabstop>
+  <tabstop>curr_grp_btnAdd</tabstop>
+  <tabstop>curr_grp_isnull</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>CreateNewDatabase</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -685,7 +628,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>CreateNewDatabase</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -699,10 +642,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonGroup</sender>
+   <sender>fieldButtonGroup</sender>
    <signal>buttonClicked(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>changeFieldDescriptions()</slot>
+   <receiver>CreateNewDatabase</receiver>
+   <slot>changeFieldDescriptions(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -715,78 +658,62 @@
    </hints>
   </connection>
   <connection>
-   <sender>btn_txt_group</sender>
+   <sender>txt_grp_btnAdd</sender>
    <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>CreateNewDatabase</receiver>
    <slot>acceptFieldAdd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
-     <y>561</y>
+     <x>445</x>
+     <y>522</y>
     </hint>
     <hint type="destinationlabel">
-     <x>900</x>
-     <y>753</y>
+     <x>1100</x>
+     <y>686</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btn_date_group_2</sender>
+   <sender>choice_grp_btnAdd</sender>
    <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>CreateNewDatabase</receiver>
    <slot>acceptFieldAdd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
-     <y>561</y>
+     <x>459</x>
+     <y>527</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1024</x>
-     <y>847</y>
+     <x>409</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btn_choice_group</sender>
+   <sender>date_grp_btnAdd</sender>
    <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>CreateNewDatabase</receiver>
    <slot>acceptFieldAdd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
-     <y>561</y>
+     <x>459</x>
+     <y>527</y>
     </hint>
     <hint type="destinationlabel">
-     <x>885</x>
-     <y>748</y>
+     <x>409</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>btn_date_group</sender>
+   <sender>curr_grp_btnAdd</sender>
    <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>CreateNewDatabase</receiver>
    <slot>acceptFieldAdd()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>501</x>
-     <y>561</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1156</x>
-     <y>854</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btn_curr_group</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>acceptFieldAdd()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>501</x>
-     <y>561</y>
+     <x>459</x>
+     <y>527</y>
     </hint>
     <hint type="destinationlabel">
      <x>409</x>
@@ -798,8 +725,9 @@
  <slots>
   <slot>changeFieldDescriptions()</slot>
   <slot>acceptFieldAdd()</slot>
+  <slot>changeFieldDescriptions(int)</slot>
  </slots>
  <buttongroups>
-  <buttongroup name="buttonGroup"/>
+  <buttongroup name="fieldButtonGroup"/>
  </buttongroups>
 </ui>
