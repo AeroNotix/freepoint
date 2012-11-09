@@ -39,16 +39,24 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(this, SIGNAL(DeleteRowSIG(int)), this, SLOT(DeleteRow(int)));
     QObject::connect(this, SIGNAL(DeleteItemSIG(int, int)), this, SLOT(DeleteItem(int, int)));
 
+    // instantiate the UI, set some options
     ui->setupUi(this);
     ui->tableWidget->setAlternatingRowColors(true);
     setStatusBar(ui->statusbar);
+
+    // Show the login screen
     Login();
+
+    // Parse the config file, if there's a problem with it, re-write
+    // it.
     if (!ParseTableConfig()) {
         CXNSetup *cxn = new CXNSetup(this);
         cxn->exec();
         ParseTableConfig();
         delete cxn;
     }
+    // If we're here it means we have a config, so set the table and
+    // populate it.
     SetCurrentTable();
     PopulateToolbar();
 }

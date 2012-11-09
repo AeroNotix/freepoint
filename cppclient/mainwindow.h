@@ -1,3 +1,14 @@
+/*
+ *
+ * This is the MainWindow class, it can be thought of as the 'core' of
+ * the application. It talks with both the database and the child
+ * dialogs.
+ *
+ * One of the design aims was to keep things modular, thus, a lot of
+ * functions simply talk to the internal Database object. This means
+ * it's implementation can be swapped out with relative ease.
+ *
+ */
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
