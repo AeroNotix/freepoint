@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <memory>
 
 #include <QList>
 #include <QtGui>
@@ -30,10 +31,10 @@ public:
     Database(QWidget *parent, QString user, QString passwd,
              QString using_db, QString table);
     Database(QWidget *parent) :
-        parent(parent) {};
-    ~Database() {
-        delete currentNam;
-    }
+        parent(parent) {
+        qDebug() << "in db dtor";
+    };
+    ~Database() {};
 
     void Connect();
     void Close();
@@ -72,7 +73,6 @@ public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
 
 private:
-	int i;
     QWidget *parent;
     QString User;
     QString Password;
@@ -80,7 +80,7 @@ private:
     QString TableName;
     bool Connected;
     QList<QList<QString> > queryset;
-    QNetworkAccessManager *currentNam;
+    std::unique_ptr<QNetworkAccessManager> currentNam;
     QMetadata metadata;
 };
 

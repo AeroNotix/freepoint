@@ -147,7 +147,7 @@
    <property name="currentIndex">
     <number>0</number>
    </property>
-   <widget class="QWidget" name="stackedWidget_TextPage" native="true">
+   <widget class="QWidget" name="stackedWidget_TextPage">
     <widget class="QGroupBox" name="txt_group">
      <property name="geometry">
       <rect>
@@ -240,7 +240,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="stackedWidget_ChoicePage" native="true">
+   <widget class="QWidget" name="stackedWidget_ChoicePage">
     <widget class="QGroupBox" name="choice_group">
      <property name="geometry">
       <rect>
@@ -327,7 +327,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="stackedWidget_DatePage" native="true">
+   <widget class="QWidget" name="stackedWidget_DatePage">
     <widget class="QGroupBox" name="date_group">
      <property name="geometry">
       <rect>
@@ -397,7 +397,7 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="stackedWidget_TimePage" native="true">
+   <widget class="QWidget" name="stackedWidget_TimePage">
     <widget class="QGroupBox" name="time_group">
      <property name="geometry">
       <rect>
@@ -425,7 +425,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="stackedWidget_GroupPage" native="true">
+   <widget class="QWidget" name="stackedWidget_GroupPage">
     <widget class="QGroupBox" name="group_group">
      <property name="geometry">
       <rect>
@@ -453,7 +453,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="stackedWidget_CurrPage" native="true">
+   <widget class="QWidget" name="stackedWidget_CurrPage">
     <widget class="QGroupBox" name="curr_group">
      <property name="geometry">
       <rect>
@@ -574,6 +574,19 @@
    </property>
    <property name="buddy">
     <cstring>txt_table_name</cstring>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>600</x>
+     <y>370</y>
+     <width>83</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>TEST SEGV</string>
    </property>
   </widget>
  </widget>
@@ -721,11 +734,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateNewDatabase</receiver>
+   <slot>testSegv()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>623</x>
+     <y>388</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1166</x>
+     <y>642</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeFieldDescriptions()</slot>
   <slot>acceptFieldAdd()</slot>
   <slot>changeFieldDescriptions(int)</slot>
+  <slot>testSegv()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="fieldButtonGroup"/>

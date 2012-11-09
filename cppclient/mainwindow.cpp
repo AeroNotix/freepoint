@@ -25,6 +25,15 @@
 #include "cxn_setup.h"
 #include "createnewdatabase.h"
 
+void MainWindow::testSegv() {
+    if (db == nullptr ||
+        db == NULL) {
+        qDebug() << "is null";
+        return;
+    }
+    db->Query();
+}
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
       db(nullptr), connections(QList<QVariantMap>()),
@@ -51,8 +60,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
     ClearDelegates();
-    delete ui;
-    delete db;
 }
 
 /*
@@ -85,13 +92,18 @@ bool MainWindow::ParseTableConfig() {
 }
 
 void MainWindow::SetCurrentTable() {
-    if (db == nullptr)
-        db = new Database(this);
-
-    db->SetUsername(GetUsername());
-    db->SetPassword(GetPassword());
-    db->SetTable(GetTable());
-    db->SetDatabase(GetDatabase());
+    if (!db) {
+        db = std::unique_ptr<Database>(new Database(this, 
+                                                    GetUsername(),
+                                                    GetPassword(),
+                                                    GetDatabase(),
+                                                    GetTable()));  
+    } else {
+        db->SetUsername(GetUsername());
+        db->SetPassword(GetPassword());
+        db->SetTable(GetTable());
+        db->SetDatabase(GetDatabase());
+    }    
     PopulateTable();
 }
 
@@ -357,7 +369,7 @@ void MainWindow::CreateNewTable() {
 }
 
 void MainWindow::CreateNew(QString jsondata) {
-	db->CreateTable(jsondata);
+    db->Query();
 }
 
 /*

@@ -4,6 +4,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QMessageBox>
+#include "assert.h"
 
 #include "createnewdatabase.h"
 
@@ -11,34 +12,17 @@ CreateNewDatabase::CreateNewDatabase(MainWindow *parent)
     : QDialog(parent), ui(new Ui_CreateNewDatabase),
       rowmap(new QMap<QString, QString>()), column_number(0)
 {
+    assert(parent->db != nullptr);
+    assert(parent->db != NULL);
     ui->setupUi(this);
 }
 
+void CreateNewDatabase::testSegv() {
+    parent->testSegv();
+}
+
 void CreateNewDatabase::accept() {
-    QList<QString> keys = rowmap->keys();
-	QString ss;
-	QString sa;
-	QString dq = "\"";
-	QTextStream s(&ss);
-	QTextStream sub(&sa);
-
-	s << "{" << dq << "DATABASE" << dq << ":";
-	s << dq << ui->txt_database_name->text() << dq << ",";
-	s << dq << "TABLE" << dq << ":";
-	s << dq << ui->txt_table_name->text() << dq << ",";
-	sub << dq << "HEADINGS" << dq << ":{";
-
-	for (int x = 0; x < keys.size(); ++x) {
-		sub << (*rowmap)[keys[x]];
-		if (x + 1 != keys.size())
-			sub << ",";
-	}
-	s << *sub.string();
-	s << "," << dq << "PAYLOAD" << dq << ":";
-	s << dq << (*sub.string()).replace("\"", "\\\"") << dq;
-	s << "}}";
-
-	parent->CreateNew(*s.string());
+	parent->CreateNew(QString("LOL?"));
     QDialog::accept();
 }
 
@@ -95,9 +79,9 @@ void CreateNewDatabase::acceptFieldAdd() {
 }
 
 QString CreateNewDatabase::generateTextData() {
-    QString ss;
+    std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
-    QTextStream s(&ss);
+    QTextStream s(ss.get());
 
     s << genericAddData();
     s << dq << "TYPE" << dq << ":" << dq << "VARCHAR" << dq << ",";
@@ -108,9 +92,9 @@ QString CreateNewDatabase::generateTextData() {
 }
 
 QString CreateNewDatabase::generateChoiceData() {
-    QString ss;
+    std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
-    QTextStream s(&ss);
+    QTextStream s(ss.get());
 
     QStringList choices = ui->choice_grp_choices->toPlainText().split("\n");
     choices.removeDuplicates();
@@ -129,9 +113,9 @@ QString CreateNewDatabase::generateChoiceData() {
 }
 
 QString CreateNewDatabase::generateCurrData() {
-    QString ss;
+    std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
-    QTextStream s(&ss);
+    QTextStream s(ss.get());
 
     s << genericAddData();
     s << dq << "TYPE" << dq << ":" << dq << "DATE" << dq;
@@ -140,9 +124,9 @@ QString CreateNewDatabase::generateCurrData() {
 }
 
 QString CreateNewDatabase::generateDateData() {
-    QString ss;
+    std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
-    QTextStream s(&ss);
+    QTextStream s(ss.get());
 
     s << genericAddData();
     s << dq << "TYPE" << dq << ":" << dq << "DATE" << dq;
@@ -235,9 +219,9 @@ QString CreateNewDatabase::toStrBool(bool it_is) {
 }
 
 QString CreateNewDatabase::genericAddData() {
-    QString ss;
+    std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
-    QTextStream s(&ss);
+    QTextStream s(ss.get());
     bool un = false;
     bool nu = false;
     QString rowname;

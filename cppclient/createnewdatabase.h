@@ -30,8 +30,6 @@ public:
 
     explicit CreateNewDatabase(MainWindow *parent = 0);
     virtual ~CreateNewDatabase() {
-        delete ui;
-        delete rowmap;
         for (int x = 0; x < list_items.size(); ++x)
             delete list_items[x];
     }
@@ -41,6 +39,7 @@ public:
 public slots:
     void changeFieldDescriptions(int i);
     void acceptFieldAdd();
+    void testSegv();
 
 private:
     QString generateTextData();
@@ -54,9 +53,9 @@ private:
     QString toStrBool(bool);
     bool CheckOverwrite();
     MainWindow *parent;
-    Ui_CreateNewDatabase *ui;
+    std::unique_ptr<Ui_CreateNewDatabase> ui;
     bool networkRequestPending;
-    QMap<QString, QString> *rowmap;
+    std::unique_ptr<QMap<QString, QString>> rowmap;
     unsigned int column_number;
     QList<QListWidgetItem*> list_items;
 };

@@ -19,7 +19,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QTableWidget" name="tableWidget">
       <property name="columnCount">
        <number>3</number>
@@ -27,6 +27,13 @@
       <column/>
       <column/>
       <column/>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="pushButton">
+      <property name="text">
+       <string>TEST SEGV</string>
+      </property>
      </widget>
     </item>
    </layout>
@@ -190,6 +197,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>testSegv()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>437</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1158</x>
+     <y>655</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeTable()</slot>
@@ -198,5 +221,6 @@
   <slot>openManageDialog()</slot>
   <slot>changeTable(int,int)</slot>
   <slot>storeCell(int,int)</slot>
+  <slot>testSegv()</slot>
  </slots>
 </ui>

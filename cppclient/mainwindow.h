@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
+
 #include <Qt>
 #include <QMainWindow>
 #include <QKeyEvent>
@@ -33,10 +35,12 @@ public:
     void InsertRow(QStringList newrowdata);
     void AddNewConnection(QString database, QString table);
 	void CreateNew(QString jsondata);
+    std::unique_ptr<Database> db;
 
 public slots:
     void InsertedRow(QNetworkReply *reply);
     void DeletedData(QNetworkReply *reply);
+    void testSegv();
 
 private slots:
     void InsertData(QNetworkReply *reply);
@@ -52,7 +56,7 @@ private slots:
     void PreviousTable();
     void NextTable();
     void Exit();
-    void NewRow(int x, int y, QTableWidgetItem* newrow);
+    void NewRow(int x, int y, QTableWidgetItem *newrow);
     void InsertRow(int x);
     void DeleteItem(int x, int y);
     void DeleteRow(int x);
@@ -66,7 +70,7 @@ private:
     void insertRowData(QList<QStringList>);
     void SetDelegates(QMetadata);
     void ClearDelegates();
-    void keyPressEvent(QKeyEvent * event);
+    void keyPressEvent(QKeyEvent *event);
     void StoreCell(int x, int y);
     void RevertCellData();
     void ChangeConnection(int connection_number);
@@ -78,9 +82,7 @@ private:
     void DeleteRows();
     void GenericHandleResponse(QNetworkReply *reply);
 
-    Ui::MainWindow *ui;
-    QAction *newAction;
-    Database *db;
+    std::unique_ptr<Ui::MainWindow> ui;
     bool populating;
     QString username;
     QString password;
@@ -88,7 +90,7 @@ private:
     QList<QStringList> queryset;
     QList<QVariantMap> connections;
     bool networkRequestPending;
-    QToolBar *toolbar;
+    std::unique_ptr<QToolBar> toolbar;
     QString storeditem;
     std::pair<int, int> storedcoords;
     QList<QItemDelegate*> delegates;

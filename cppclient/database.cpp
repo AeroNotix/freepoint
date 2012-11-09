@@ -18,15 +18,17 @@
 Database::Database
 (QWidget *parent, QString user, QString passwd, QString using_db, QString table)
     : QObject(), parent(parent), User(user), Password(passwd), UsingDB(using_db),
-	TableName(table), currentNam(nullptr), i(10) {};
+    TableName(table), currentNam(new QNetworkAccessManager(this)) {
+    qDebug() << "in db ctor";
+};
 
 void Database::Close() {
     return;
 }
 
 void Database::Insert(QStringList newrowdata) {
-    currentNam = new QNetworkAccessManager(this);
-    QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+    currentNam->disconnect();
+    QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(InsertedRow(QNetworkReply*)));
 
     InsertQuery iq = InsertQuery(UsingDB, TableName, newrowdata);
@@ -41,10 +43,9 @@ void Database::Insert(QStringList newrowdata) {
 }
 
 void Database::Query() {
-    currentNam = new QNetworkAccessManager(this);
-    QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+    currentNam->disconnect();
+    QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(InsertData(QNetworkReply*)));
-
     GetQuery gq = GetQuery(UsingDB, TableName);
     QByteArray data;
     data.append(gq.QueryString());
@@ -57,8 +58,8 @@ void Database::Query() {
 }
 
 void Database::Delete(QList<QString> deleters) {
-    currentNam = new QNetworkAccessManager(this);
-    QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+    currentNam->disconnect();
+    QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(DeletedData(QNetworkReply*)));
 
     DeleteQuery dq = DeleteQuery(UsingDB, TableName, deleters);
@@ -73,8 +74,8 @@ void Database::Delete(QList<QString> deleters) {
 }
 
 void Database::ChangeTable(QString newdata, QString col, QString id) {
-    currentNam = new QNetworkAccessManager(this);
-    QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+    currentNam->disconnect();
+    QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(UpdatedData(QNetworkReply*)));
     UpdateQuery uq = UpdateQuery(UsingDB, TableName, newdata, col, id);
     QByteArray data;
@@ -88,15 +89,15 @@ void Database::ChangeTable(QString newdata, QString col, QString id) {
 }
 
 void Database::CreateTable(QString jsondata) {
-	if (this == nullptr) {
-		qDebug() << "dafuq";
-		return;
-	}
-	if (this == NULL) {
-		qDebug() << "dafuq";
-		return;
-	}
-	qDebug() << this->i;
+    currentNam->disconnect();
+    QByteArray data;
+    data.append(jsondata);
+    QUrl url(Settings::CREATEURL);
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+    QNetworkReply *reply = currentNam->post(req, data);
+    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                     this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
 }
 
 bool Database::ParseMetadata(QMap<QString, QVariant> rawmeta) {
