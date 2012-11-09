@@ -14,6 +14,12 @@ CreateNewDatabase::CreateNewDatabase(MainWindow *p)
     ui->setupUi(this);
 }
 
+/*
+  TODO: Refactor this method.
+
+  accept creates the JSON string from the user-created rows and fires
+  off a request to the database.
+*/
 void CreateNewDatabase::accept() {
     QList<QString> keys = rowmap->keys();
     QString ss;
@@ -41,8 +47,18 @@ void CreateNewDatabase::accept() {
     QDialog::accept();
 }
 
+/*
+  reject just closes the dialog without using the suppled data
+*/
 void CreateNewDatabase::reject() {
-    QDialog::reject();
+    QMessageBox *msgbox = new QMessageBox(this);
+    msgbox->setText("Are you sure?");
+    msgbox->addButton(QMessageBox::Yes);
+    msgbox->addButton(QMessageBox::No);
+    bool ans = msgbox->exec() == QMessageBox::Yes;
+    delete msgbox;
+    if (ans)
+        QDialog::reject();
 }
 
 /*
@@ -106,6 +122,9 @@ QString CreateNewDatabase::generateTextData() {
     return *s.string();
 }
 
+/*
+  Generates the json string for the CHOICE type.
+*/
 QString CreateNewDatabase::generateChoiceData() {
     std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
@@ -127,6 +146,9 @@ QString CreateNewDatabase::generateChoiceData() {
     return *s.string();
 }
 
+/*
+  Generates the json string for the CURR type.
+*/
 QString CreateNewDatabase::generateCurrData() {
     std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
@@ -138,6 +160,9 @@ QString CreateNewDatabase::generateCurrData() {
     return *s.string();
 }
 
+/*
+  Generates the json string for the DATE type.
+*/
 QString CreateNewDatabase::generateDateData() {
     std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
@@ -150,12 +175,18 @@ QString CreateNewDatabase::generateDateData() {
     return *s.string();
 }
 
+/*
+  Adds a QListWidgetItem to the row list UI element.
+*/
 void CreateNewDatabase::AddToList(QString toAdd) {
     QListWidgetItem *item = new QListWidgetItem(toAdd);
     list_items.append(item);
     ui->list_db_rows->addItem(item);
 }
 
+/*
+  Most pages have similar items, we clear these generic items here.
+*/
 void CreateNewDatabase::GenericCleanup() {
     AddToList(GetCurrentRowname());
     switch(ui->stackedWidget->currentIndex())
@@ -189,6 +220,9 @@ void CreateNewDatabase::GenericCleanup() {
     }
 }
 
+/*
+  Returns the textual representation of the current rowname.
+ */
 QString CreateNewDatabase::GetCurrentRowname() {
     switch(ui->stackedWidget->currentIndex())
     {
@@ -227,12 +261,19 @@ bool CreateNewDatabase::CheckOverwrite() {
     return !ans;
 }
 
+/*
+  Returns a boolean value as a string
+*/
 QString CreateNewDatabase::toStrBool(bool it_is) {
     if (it_is)
         return "true";
     return "false";
 }
 
+/*
+  Most pages have similar items, we add their generic data to the JSON
+  string here.
+*/
 QString CreateNewDatabase::genericAddData() {
     std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
@@ -270,6 +311,8 @@ QString CreateNewDatabase::genericAddData() {
         nu = ui->curr_grp_isnull->isChecked();
         break;
     }
+
+    // TODO: Refactor this shit, use the quote function in the jsonpackets.h
     s << dq << rowname << dq << ":{";
     s << dq << "RowNum" << dq << ":" << column_number << ",";
     s << dq << "RowData" << dq << ":{";
