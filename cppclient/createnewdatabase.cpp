@@ -8,7 +8,7 @@
 
 CreateNewDatabase::CreateNewDatabase(MainWindow *parent)
     : QDialog(parent), parent(parent), ui(new Ui_CreateNewDatabase),
-      rowmap(new QMap<QString, QString>()), column_number(0)
+      rowmap(new QMap<QString, QString>()), column_number(-1)
 {
     ui->setupUi(this);
 }
@@ -32,13 +32,11 @@ void CreateNewDatabase::accept() {
         if (x + 1 != keys.size())
             sub << ",";
     }
-    s << *sub.string();
-    s << "," << dq << "PAYLOAD" << dq << ":";
-    s << dq << (*sub.string()).replace("\"", "\\\"") << dq;
-    s << "}}";
+    s << *sub.string() << "}}";
+    s << "," << dq << "PAYLOAD" << dq << ":" << dq << "{";
+    s << (*sub.string()).replace("\"", "\\\"") << "}}" << '"';
 
     parent->CreateNew(*s.string());
-    QDialog::accept();
     QDialog::accept();
 }
 
