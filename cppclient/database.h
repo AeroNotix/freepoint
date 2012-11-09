@@ -1,3 +1,14 @@
+/*
+ *
+ * This module is a reference implementation of talking with the API.
+ *
+ * The design of this means that the database can be swapped out on
+ * GUI relatively easy, since a lot of the operations are simply VOID.
+ * and are supposed to have slots assigned to the finshed() signal of
+ * the QNetworkAccessManager.
+ *
+ */
+
 #ifndef DATABASE_H
 #define DATABASE_H
 
