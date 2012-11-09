@@ -105,6 +105,9 @@ void CreateNewDatabase::acceptFieldAdd() {
     case CreateNewDatabase::currency:
         rowmap->insert(ui->curr_grp_rowname->text(), generateCurrData());
         break;
+    default:
+        std::runtime_error("Index out of bounds on the buttonGroup, you also need to add the element to the class enum");
+        break;
     }
     GenericCleanup();
 }
@@ -220,6 +223,9 @@ void CreateNewDatabase::GenericCleanup() {
         ui->curr_grp_unique->setCheckState(Qt::Unchecked);
         ui->curr_grp_rowname->setText("");
         break;
+    default:
+        std::runtime_error("Index out of bounds on the buttonGroup, you also need to add the element to the class enum");
+        break;
     }
 }
 
@@ -241,6 +247,9 @@ QString CreateNewDatabase::GetCurrentRowname() {
         std::runtime_error("Adding group rows is not implemented");
     case CreateNewDatabase::currency:
         return ui->curr_grp_rowname->text();
+    default:
+        std::runtime_error("Index out of bounds on the buttonGroup, you also need to add the element to the class enum");
+        break;
     }
     std::runtime_error("Shouldn't get here");
     return QString("");
@@ -312,6 +321,9 @@ QString CreateNewDatabase::genericAddData() {
         rowname = ui->curr_grp_rowname->text();
         un = ui->curr_grp_unique->isChecked();
         nu = ui->curr_grp_isnull->isChecked();
+        break;
+    default:
+        std::runtime_error("Index out of bounds on the buttonGroup, you also need to add the element to the class enum");
         break;
     }
 
