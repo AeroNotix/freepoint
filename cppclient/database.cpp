@@ -18,9 +18,7 @@
 Database::Database
 (QWidget *parent, QString user, QString passwd, QString using_db, QString table)
     : QObject(), parent(parent), User(user), Password(passwd), UsingDB(using_db),
-    TableName(table), currentNam(new QNetworkAccessManager(this)) {
-    qDebug() << "in db ctor";
-};
+    TableName(table), currentNam(new QNetworkAccessManager(this)) {};
 
 void Database::Close() {
     return;

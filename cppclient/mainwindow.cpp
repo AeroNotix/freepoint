@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(this, SIGNAL(DeleteItemSIG(int, int)), this, SLOT(DeleteItem(int, int)));
 
     ui->setupUi(this);
+    ui->tableWidget->setAlternatingRowColors(true);
     setStatusBar(ui->statusbar);
     Login();
     if (!ParseTableConfig()) {

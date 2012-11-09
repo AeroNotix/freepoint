@@ -6,9 +6,10 @@
 #include <QMessageBox>
 #include "createnewdatabase.h"
 
-CreateNewDatabase::CreateNewDatabase(MainWindow *parent)
-    : QDialog(parent), parent(parent), ui(new Ui_CreateNewDatabase),
-      rowmap(new QMap<QString, QString>()), column_number(-1)
+CreateNewDatabase::CreateNewDatabase(MainWindow *p)
+    : QDialog(p), parent(p), ui(new Ui_CreateNewDatabase),
+      rowmap(new QMap<QString, QString>()), column_number(-1),
+      list_items(QList<QListWidgetItem*>())
 {
     ui->setupUi(this);
 }
