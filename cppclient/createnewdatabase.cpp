@@ -109,6 +109,9 @@ void CreateNewDatabase::acceptFieldAdd() {
     GenericCleanup();
 }
 
+/*
+  Generates the json string for the TEXT type.
+*/
 QString CreateNewDatabase::generateTextData() {
     std::unique_ptr<QString> ss(new QString(""));
     QString dq("\"");
