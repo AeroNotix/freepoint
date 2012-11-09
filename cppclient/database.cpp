@@ -73,6 +73,18 @@ void Database::Delete(QList<QString> deleters) {
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
 }
 
+void Database::Create(QString jsondata) {
+    currentNam->disconnect();
+    QByteArray data;
+    data.append(jsondata);
+    QUrl url(Settings::CREATEURL);
+    QNetworkRequest req(url);
+    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+    QNetworkReply *reply = currentNam->post(req, data);
+    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                     this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+}
+
 void Database::ChangeTable(QString newdata, QString col, QString id) {
     currentNam->disconnect();
     QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
@@ -81,18 +93,6 @@ void Database::ChangeTable(QString newdata, QString col, QString id) {
     QByteArray data;
     data.append(uq.QueryString());
     QUrl url(Settings::UPDATEURL);
-    QNetworkRequest req(url);
-    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
-    QNetworkReply *reply = currentNam->post(req, data);
-    QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
-                     this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
-}
-
-void Database::CreateTable(QString jsondata) {
-    currentNam->disconnect();
-    QByteArray data;
-    data.append(jsondata);
-    QUrl url(Settings::CREATEURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
     QNetworkReply *reply = currentNam->post(req, data);

@@ -32,9 +32,10 @@ public:
              QString using_db, QString table);
     Database(QWidget *parent) :
         parent(parent) {
+    };
+    ~Database() {
         qDebug() << "in db dtor";
     };
-    ~Database() {};
 
     void Connect();
     void Close();
@@ -42,8 +43,8 @@ public:
     void Insert(QStringList newrowdata);
     void Query();
     void Delete(QList<QString> deleters);
+	void Create(QString jsondata);
     void ChangeTable(QString newdata, QString col, QString id);
-	void CreateTable(QString jsondata);
 
     bool ParseMetadata(QMap<QString, QVariant>);
     QMetadata GetMetadata() {

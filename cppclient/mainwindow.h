@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <Qt>
+#include <QPointer>
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QToolBar>
@@ -35,12 +36,10 @@ public:
     void InsertRow(QStringList newrowdata);
     void AddNewConnection(QString database, QString table);
 	void CreateNew(QString jsondata);
-    std::unique_ptr<Database> db;
 
 public slots:
     void InsertedRow(QNetworkReply *reply);
     void DeletedData(QNetworkReply *reply);
-    void testSegv();
 
 private slots:
     void InsertData(QNetworkReply *reply);
@@ -82,21 +81,23 @@ private:
     void DeleteRows();
     void GenericHandleResponse(QNetworkReply *reply);
 
+    QWidget *parent;
     std::unique_ptr<Ui::MainWindow> ui;
+    QPointer<Database> db;
+    QList<QVariantMap> connections;
+    QPointer<QToolBar> toolbar;
+    int current_connection_index;
     bool populating;
     QString username;
     QString password;
     QStringList headings;
     QList<QStringList> queryset;
-    QList<QVariantMap> connections;
     bool networkRequestPending;
-    std::unique_ptr<QToolBar> toolbar;
     QString storeditem;
     std::pair<int, int> storedcoords;
     QList<QItemDelegate*> delegates;
     QStringList connection_names;
     QVariantMap connection_map;
-    int current_connection_index;
 
 signals:
     void NewRowSIG(int x, int y, QTableWidgetItem* newrow);

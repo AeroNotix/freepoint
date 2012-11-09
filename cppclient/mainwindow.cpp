@@ -9,6 +9,7 @@
     #include "qjson/parser.h"
 #endif
 
+#include <QPointer>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QFileDialog>
@@ -25,17 +26,9 @@
 #include "cxn_setup.h"
 #include "createnewdatabase.h"
 
-void MainWindow::testSegv() {
-    if (db == nullptr ||
-        db == NULL) {
-        qDebug() << "is null";
-        return;
-    }
-    db->Query();
-}
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow),
+    : QMainWindow(parent), parent(parent), ui(new Ui::MainWindow),
       db(nullptr), connections(QList<QVariantMap>()),
       toolbar(addToolBar("toolbar")), current_connection_index(0)
 {
@@ -50,9 +43,10 @@ MainWindow::MainWindow(QWidget *parent)
     setStatusBar(ui->statusbar);
     Login();
     if (!ParseTableConfig()) {
-        CXNSetup cxn(this);
-        cxn.exec();
+        CXNSetup *cxn = new CXNSetup(this);
+        cxn->exec();
         ParseTableConfig();
+        delete cxn;
     }
     SetCurrentTable();
     PopulateToolbar();
@@ -93,17 +87,17 @@ bool MainWindow::ParseTableConfig() {
 
 void MainWindow::SetCurrentTable() {
     if (!db) {
-        db = std::unique_ptr<Database>(new Database(this, 
+        db = QPointer<Database>(new Database(this,
                                                     GetUsername(),
                                                     GetPassword(),
                                                     GetDatabase(),
-                                                    GetTable()));  
+                                                    GetTable()));
     } else {
         db->SetUsername(GetUsername());
         db->SetPassword(GetPassword());
         db->SetTable(GetTable());
         db->SetDatabase(GetDatabase());
-    }    
+    }
     PopulateTable();
 }
 
@@ -119,8 +113,9 @@ void MainWindow::RefreshTable() {
 }
 
 void MainWindow::openConnectionDialog() {
-    CXNSetup cxn(this);
-    cxn.exec();
+    CXNSetup *cxn = new CXNSetup(this);
+    cxn->exec();
+    delete cxn;
 }
 
 void MainWindow::openManageDialog() {
@@ -144,8 +139,9 @@ void MainWindow::storeCell(int x, int y) {
 }
 
 void MainWindow::InsertRow() {
-    AddNewRow a(headings, delegates, this);
-    a.exec();
+    AddNewRow *add = new AddNewRow(headings, delegates, this);
+    add->exec();
+    delete add;
 }
 
 void MainWindow::InsertRow(int x) {
@@ -364,12 +360,13 @@ void MainWindow::WriteCSV(QString csvfilename) {
 }
 
 void MainWindow::CreateNewTable() {
-    CreateNewDatabase cnd(this);
-    cnd.exec();
+    CreateNewDatabase *cnd = new CreateNewDatabase(this);
+    cnd->exec();
+    delete cnd;
 }
 
 void MainWindow::CreateNew(QString jsondata) {
-    db->Query();
+    db->Create(jsondata);
 }
 
 /*
@@ -498,15 +495,17 @@ void MainWindow::ShowMessage(const QString &text, int t) {
   Pops open an error dialog with a message and on the StatusBar.
 */
 void MainWindow::ShowError(const QString &text) {
-    QMessageBox msgBox;
-    msgBox.setText(text);
-    msgBox.exec();
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setText(text);
+    msgBox->exec();
     ShowMessage(text, 1000);
+    delete msgBox;
 }
 
 void MainWindow::Login() {
-    login::Login l(this);
-    l.exec();
+    login::Login *l = new login::Login(this);
+    l->exec();
+    delete l;
 }
 
 /*

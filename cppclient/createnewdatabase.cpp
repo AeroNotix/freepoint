@@ -4,25 +4,41 @@
 #include <QString>
 #include <QTextStream>
 #include <QMessageBox>
-#include "assert.h"
-
 #include "createnewdatabase.h"
 
 CreateNewDatabase::CreateNewDatabase(MainWindow *parent)
-    : QDialog(parent), ui(new Ui_CreateNewDatabase),
+    : QDialog(parent), parent(parent), ui(new Ui_CreateNewDatabase),
       rowmap(new QMap<QString, QString>()), column_number(0)
 {
-    assert(parent->db != nullptr);
-    assert(parent->db != NULL);
     ui->setupUi(this);
 }
 
-void CreateNewDatabase::testSegv() {
-    parent->testSegv();
-}
-
 void CreateNewDatabase::accept() {
-	parent->CreateNew(QString("LOL?"));
+    QList<QString> keys = rowmap->keys();
+    QString ss;
+    QString sa;
+    QString dq = "\"";
+    QTextStream s(&ss);
+    QTextStream sub(&sa);
+
+    s << "{" << dq << "DATABASE" << dq << ":";
+    s << dq << ui->txt_database_name->text() << dq << ",";
+    s << dq << "TABLE" << dq << ":";
+    s << dq << ui->txt_table_name->text() << dq << ",";
+    sub << dq << "HEADINGS" << dq << ":{";
+
+    for (int x = 0; x < keys.size(); ++x) {
+        sub << (*rowmap)[keys[x]];
+        if (x + 1 != keys.size())
+            sub << ",";
+    }
+    s << *sub.string();
+    s << "," << dq << "PAYLOAD" << dq << ":";
+    s << dq << (*sub.string()).replace("\"", "\\\"") << dq;
+    s << "}}";
+
+    parent->CreateNew(*s.string());
+    QDialog::accept();
     QDialog::accept();
 }
 

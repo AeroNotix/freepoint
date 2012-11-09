@@ -39,7 +39,6 @@ public:
 public slots:
     void changeFieldDescriptions(int i);
     void acceptFieldAdd();
-    void testSegv();
 
 private:
     QString generateTextData();
@@ -52,9 +51,9 @@ private:
     QString genericAddData();
     QString toStrBool(bool);
     bool CheckOverwrite();
+
     MainWindow *parent;
     std::unique_ptr<Ui_CreateNewDatabase> ui;
-    bool networkRequestPending;
     std::unique_ptr<QMap<QString, QString>> rowmap;
     unsigned int column_number;
     QList<QListWidgetItem*> list_items;

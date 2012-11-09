@@ -576,19 +576,6 @@
     <cstring>txt_table_name</cstring>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>600</x>
-     <y>370</y>
-     <width>83</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TEST SEGV</string>
-   </property>
-  </widget>
  </widget>
  <tabstops>
   <tabstop>line_radio</tabstop>
@@ -731,22 +718,6 @@
     <hint type="destinationlabel">
      <x>409</x>
      <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>CreateNewDatabase</receiver>
-   <slot>testSegv()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>623</x>
-     <y>388</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>1166</x>
-     <y>642</y>
     </hint>
    </hints>
   </connection>
