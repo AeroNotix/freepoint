@@ -26,7 +26,12 @@
 #include "cxn_setup.h"
 #include "createnewdatabase.h"
 
+/*
+  Class ctor.
 
+  This will create the SIGNAL/SLOT connections, parse the configuration
+  files and create the login dialog.
+*/
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), parent(parent), ui(new Ui::MainWindow),
       db(nullptr), connections(QList<QVariantMap>()),
@@ -121,6 +126,10 @@ void MainWindow::RefreshTable() {
     PopulateTable();
 }
 
+/*
+  Creates an instance of the CXNSetup dialog and shows it. This dialog
+  is assigned to a menu item and shouldn't be called programatically.
+*/
 void MainWindow::openConnectionDialog() {
     CXNSetup *cxn = new CXNSetup(this);
     cxn->exec();
@@ -147,16 +156,28 @@ void MainWindow::storeCell(int x, int y) {
         storeditem = ui->tableWidget->item(x, y)->text();
 }
 
+/*
+  Creates an instance of the AddNewRow dialog and shows it. This dialog
+  is assigned to a menu item and shouldn't be called programatically.
+*/
 void MainWindow::InsertRow() {
     AddNewRow *add = new AddNewRow(headings, delegates, this);
     add->exec();
     delete add;
 }
 
+/*
+  Pass-through method to call the tableWidget's insertRow method.
+*/
 void MainWindow::InsertRow(int x) {
     ui->tableWidget->insertRow(x);
 }
 
+/*
+  AddNewConnection simply opens the connection configuration file and
+  adds in a new connection with the database:table entry. This method
+  will check for failures and signify an error in that case.
+*/
 void MainWindow::AddNewConnection(QString database, QString table) {
     QString fname = appendDir(sgetcwd(), "config.json").path();
     if (!WriteJSONConfigFile(connection_names, connection_map, fname, database, table))
@@ -368,6 +389,11 @@ void MainWindow::WriteCSV(QString csvfilename) {
     }
 }
 
+/*
+  Creates an instance of the CreateNewDatabase dialog and shows it.
+  This method is assigned to a toolbar button and should not be called
+  programatically.
+*/
 void MainWindow::CreateNewTable() {
     CreateNewDatabase *cnd = new CreateNewDatabase(this);
     cnd->exec();
