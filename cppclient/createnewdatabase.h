@@ -45,6 +45,7 @@ public slots:
 private slots:
     void removeDatabaseNotifications();
     void removeTableNotifications();
+    void removeMissingRowsNotifications();
 
 private:
     QString generateTextData();

@@ -123,8 +123,7 @@ void CreateNewDatabase::acceptFieldAdd() {
         break;
     }
     GenericCleanup();
-    ui->lbl_rows_missing_lbl->hide();
-    ui->lbl_rows_missing->hide();
+    removeMissingRowsNotifications();
 }
 
 /*
@@ -396,8 +395,7 @@ bool CreateNewDatabase::doPreChecks() {
         ui->lbl_rows_missing->show();
         failure = false;
     } else {
-        ui->lbl_rows_missing_lbl->hide();
-        ui->lbl_rows_missing->hide();
+        removeMissingRowsNotifications();
     }
 
     return failure;
@@ -411,4 +409,9 @@ void CreateNewDatabase::removeTableNotifications() {
 void CreateNewDatabase::removeDatabaseNotifications() {
     ui->lbl_database_missing->hide();
     ui->lbl_database_name->setStyleSheet("color : black");
+}
+
+void CreateNewDatabase::removeMissingRowsNotifications() {
+    ui->lbl_rows_missing_lbl->hide();
+    ui->lbl_rows_missing->hide();
 }
