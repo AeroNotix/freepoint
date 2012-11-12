@@ -101,6 +101,11 @@ bool MainWindow::ParseTableConfig() {
     return true;
 }
 
+/*
+  SetCurrentTable creates a new instance of the database if there
+  currently isn't one. If there is one it sets which database we're
+  currently viewing.
+*/
 void MainWindow::SetCurrentTable() {
     if (!db) {
         db = QPointer<Database>(
