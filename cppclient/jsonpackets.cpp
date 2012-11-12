@@ -15,6 +15,24 @@
 
 #include "jsonpackets.h"
 
+static const char* dq = "\"";
+
+template <typename T>
+QString quote(QString key, T value) {
+    QString ss;
+    QTextStream s(&ss);
+    s << dq << key << dq << ":" << dq << value << dq;
+    return *s.string();
+}
+
+template <typename T>
+QString quote(T toQuote) {
+    QString ss;
+    QTextStream s(&ss);
+    s << dq << toQuote << dq;
+    return *s.string();
+}
+
 QVariantMap ReadJSONFromFile(QString filename) {
     QFile file(filename);
     if (!file.exists()) {

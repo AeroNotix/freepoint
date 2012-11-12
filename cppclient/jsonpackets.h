@@ -25,7 +25,6 @@
 #include <QFile>
 #include <QByteArray>
 
-static const char* dq = "\"";
 
 /*
   T should be QString or char*
@@ -33,12 +32,7 @@ static const char* dq = "\"";
   Returns "T"
 */
 template <typename T>
-static QString quote(T toQuote) {
-    QString ss;
-    QTextStream s(&ss);
-    s << dq << toQuote << dq;
-    return *s.string();
-}
+QString quote(T toQuote);
 
 /*
   T should be QString or char*
@@ -46,12 +40,7 @@ static QString quote(T toQuote) {
   Returns "key":"value"
 */
 template <typename T>
-static QString quote(QString key, T value) {
-    QString ss;
-    QTextStream s(&ss);
-    s << dq << key << dq << ":" << dq << value << dq;
-    return *s.string();
-}
+QString quote(QString key, T value);
 
 /*
   BaseQuery is used as the base class for all Queries because all Queries
