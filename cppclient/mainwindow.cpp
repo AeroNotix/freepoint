@@ -439,10 +439,12 @@ void MainWindow::CreateNew(QString jsondata) {
   Goes back a table.
 */
 void MainWindow::PreviousTable() {
+    actionGroupConnections->actions()[current_connection_index]->setChecked(false);
     if ((current_connection_index - 1) < 0)
         current_connection_index = connection_names.size() - 1;
     else
         --current_connection_index;
+    actionGroupConnections->actions()[current_connection_index]->setChecked(true);
     SetCurrentTable();
 }
 
@@ -450,10 +452,12 @@ void MainWindow::PreviousTable() {
   Goes forward a table.
 */
 void MainWindow::NextTable() {
+    actionGroupConnections->actions()[current_connection_index]->setChecked(false);
     if ((current_connection_index + 1) > connection_names.size() - 1)
         current_connection_index = 0;
     else
         ++current_connection_index;
+    actionGroupConnections->actions()[current_connection_index]->setChecked(true);
     SetCurrentTable();
 }
 
