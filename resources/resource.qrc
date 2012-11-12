@@ -1,76 +1,915 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
-  <qresource>
-	<file alias="address-book-new">address-book-new.png</file>
-	<file alias="appointment-new">appointment-new.png</file>
-	<file alias="bookmark-new">bookmark-new.png</file>
-	<file alias="contact-new">contact-new.png</file>
-	<file alias="document-new">document-new.png</file>
-	<file alias="document-open">document-open.png</file>
-	<file alias="document-print-preview">document-print-preview.png</file>
-	<file alias="document-print">document-print.png</file>
-	<file alias="document-properties">document-properties.png</file>
-	<file alias="document-save-as">document-save-as.png</file>
-	<file alias="document-save">document-save.png</file>
-	<file alias="edit-clear">edit-clear.png</file>
-	<file alias="edit-copy">edit-copy.png</file>
-	<file alias="edit-cut">edit-cut.png</file>
-	<file alias="edit-delete">edit-delete.png</file>
-	<file alias="edit-find-replace">edit-find-replace.png</file>
-	<file alias="edit-find">edit-find.png</file>
-	<file alias="edit-paste">edit-paste.png</file>
-	<file alias="edit-redo">edit-redo.png</file>
-	<file alias="edit-select-all">edit-select-all.png</file>
-	<file alias="edit-undo">edit-undo.png</file>
-	<file alias="folder-new">folder-new.png</file>
-	<file alias="format-indent-less">format-indent-less.png</file>
-	<file alias="format-indent-more">format-indent-more.png</file>
-	<file alias="format-justify-center">format-justify-center.png</file>
-	<file alias="format-justify-fill">format-justify-fill.png</file>
-	<file alias="format-justify-left">format-justify-left.png</file>
-	<file alias="format-justify-right">format-justify-right.png</file>
-	<file alias="format-text-bold">format-text-bold.png</file>
-	<file alias="format-text-italic">format-text-italic.png</file>
-	<file alias="format-text-strikethrough">format-text-strikethrough.png</file>
-	<file alias="format-text-underline">format-text-underline.png</file>
-	<file alias="go-bottom">go-bottom.png</file>
-	<file alias="go-down">go-down.png</file>
-	<file alias="go-first">go-first.png</file>
-	<file alias="go-home">go-home.png</file>
-	<file alias="go-jump">go-jump.png</file>
-	<file alias="go-last">go-last.png</file>
-	<file alias="go-next">go-next.png</file>
-	<file alias="go-previous">go-previous.png</file>
-	<file alias="go-top">go-top.png</file>
-	<file alias="go-up">go-up.png</file>
-	<file alias="list-add">list-add.png</file>
-	<file alias="list-remove">list-remove.png</file>
-	<file alias="mail-forward">mail-forward.png</file>
-	<file alias="mail-mark-junk">mail-mark-junk.png</file>
-	<file alias="mail-mark-not-junk">mail-mark-not-junk.png</file>
-	<file alias="mail-message-new">mail-message-new.png</file>
-	<file alias="mail-reply-all">mail-reply-all.png</file>
-	<file alias="mail-reply-sender">mail-reply-sender.png</file>
-	<file alias="mail-send-receive">mail-send-receive.png</file>
-	<file alias="media-eject">media-eject.png</file>
-	<file alias="media-playback-pause">media-playback-pause.png</file>
-	<file alias="media-playback-start">media-playback-start.png</file>
-	<file alias="media-playback-stop">media-playback-stop.png</file>
-	<file alias="media-record">media-record.png</file>
-	<file alias="media-seek-backward">media-seek-backward.png</file>
-	<file alias="media-seek-forward">media-seek-forward.png</file>
-	<file alias="media-skip-backward">media-skip-backward.png</file>
-	<file alias="media-skip-forward">media-skip-forward.png</file>
-	<file alias="mysql">mysql.png</file>
-	<file alias="process-stop">process-stop.png</file>
-	<file alias="resource">resource.qrc</file>
-	<file alias="system-lock-screen">system-lock-screen.png</file>
-	<file alias="system-log-out">system-log-out.png</file>
-	<file alias="system-search">system-search.png</file>
-	<file alias="system-shutdown">system-shutdown.png</file>
-	<file alias="tab-new">tab-new.png</file>
-	<file alias="view-fullscreen">view-fullscreen.png</file>
-	<file alias="view-refresh">view-refresh.png</file>
-	<file alias="window-new">window-new.png</file>
-  </qresource>
+	<qresource>
+    		<file alias="edit-find-replace">edit-find-replace.png</file>
+
+    		<file alias="browser">browser.png</file>
+
+    		<file alias="KDE  Resources Configuration">KDE  Resources Configuration.png</file>
+
+    		<file alias="kguitar">kguitar.png</file>
+
+    		<file alias="aktion">aktion.png</file>
+
+    		<file alias="tablet">tablet.png</file>
+
+    		<file alias="folder_html">folder_html.png</file>
+
+    		<file alias="kfilereplace">kfilereplace.png</file>
+
+    		<file alias="kwalletmanager">kwalletmanager.png</file>
+
+    		<file alias="lsuite">lsuite.png</file>
+
+    		<file alias="2uparrow">2uparrow.png</file>
+
+    		<file alias="remote">remote.png</file>
+
+    		<file alias="kshisen">kshisen.png</file>
+
+    		<file alias="format-justify-left">format-justify-left.png</file>
+
+    		<file alias="reminders">reminders.png</file>
+
+    		<file alias="package_favourite">package_favourite.png</file>
+
+    		<file alias="kdmconfig">kdmconfig.png</file>
+
+    		<file alias="media-skip-backward">media-skip-backward.png</file>
+
+    		<file alias="find">find.png</file>
+
+    		<file alias="blockdevice">blockdevice.png</file>
+
+    		<file alias="go-down">go-down.png</file>
+
+    		<file alias="system-search">system-search.png</file>
+
+    		<file alias="kghostview">kghostview.png</file>
+
+    		<file alias="back">back.png</file>
+
+    		<file alias="kgoldrunner">kgoldrunner.png</file>
+
+    		<file alias="contact-new">contact-new.png</file>
+
+    		<file alias="ksokoban">ksokoban.png</file>
+
+    		<file alias="mozilla-mail">mozilla-mail.png</file>
+
+    		<file alias="media-eject">media-eject.png</file>
+
+    		<file alias="go_kde">go_kde.png</file>
+
+    		<file alias="apply">apply.png</file>
+
+    		<file alias="edit-redo">edit-redo.png</file>
+
+    		<file alias="noatun">noatun.png</file>
+
+    		<file alias="trashcan_empty">trashcan_empty.png</file>
+
+    		<file alias="window_fullscreen">window_fullscreen.png</file>
+
+    		<file alias="kmenu">kmenu.png</file>
+
+    		<file alias="run">run.png</file>
+
+    		<file alias="list-remove">list-remove.png</file>
+
+    		<file alias="usb">usb.png</file>
+
+    		<file alias="window_new">window_new.png</file>
+
+    		<file alias="kscd">kscd.png</file>
+
+    		<file alias="folder_tar">folder_tar.png</file>
+
+    		<file alias="mylinspire">mylinspire.png</file>
+
+    		<file alias="tutorials">tutorials.png</file>
+
+    		<file alias="ksirtet">ksirtet.png</file>
+
+    		<file alias="viewmag-">viewmag-.png</file>
+
+    		<file alias="reload">reload.png</file>
+
+    		<file alias="network 2">network 2.png</file>
+
+    		<file alias="format-justify-right">format-justify-right.png</file>
+
+    		<file alias="flash">flash.png</file>
+
+    		<file alias="os-support">os-support.png</file>
+
+    		<file alias="kwin">kwin.png</file>
+
+    		<file alias="viewmag1">viewmag1.png</file>
+
+    		<file alias="go-bottom">go-bottom.png</file>
+
+    		<file alias="kwin4">kwin4.png</file>
+
+    		<file alias="socket">socket.png</file>
+
+    		<file alias="build">build.png</file>
+
+    		<file alias="karm">karm.png</file>
+
+    		<file alias="agent">agent.png</file>
+
+    		<file alias="package_wordprocessing">package_wordprocessing.png</file>
+
+    		<file alias="laptop_pcmcia">laptop_pcmcia.png</file>
+
+    		<file alias="exit">exit.png</file>
+
+    		<file alias="trashcan_full">trashcan_full.png</file>
+
+    		<file alias="chardevice">chardevice.png</file>
+
+    		<file alias="klines">klines.png</file>
+
+    		<file alias="view_detailed">view_detailed.png</file>
+
+    		<file alias="document-print-preview">document-print-preview.png</file>
+
+    		<file alias="kppp">kppp.png</file>
+
+    		<file alias="kbattleship">kbattleship.png</file>
+
+    		<file alias="kfouleggs">kfouleggs.png</file>
+
+    		<file alias="resource">resource.qrc</file>
+
+    		<file alias="shutdown">shutdown.png</file>
+
+    		<file alias="go-next">go-next.png</file>
+
+    		<file alias="folder_documents">folder_documents.png</file>
+
+    		<file alias="folder_lin">folder_lin.png</file>
+
+    		<file alias="go-top">go-top.png</file>
+
+    		<file alias="easymoblog">easymoblog.png</file>
+
+    		<file alias="format-indent-more">format-indent-more.png</file>
+
+    		<file alias="media-record">media-record.png</file>
+
+    		<file alias="go-up">go-up.png</file>
+
+    		<file alias="view_top_bottom">view_top_bottom.png</file>
+
+    		<file alias="virus detected">virus detected.png</file>
+
+    		<file alias="view-fullscreen">view-fullscreen.png</file>
+
+    		<file alias="format-justify-center">format-justify-center.png</file>
+
+    		<file alias="voice-support">voice-support.png</file>
+
+    		<file alias="energy_star">energy_star.png</file>
+
+    		<file alias="konqueror">konqueror.png</file>
+
+    		<file alias="msn">msn.png</file>
+
+    		<file alias="cal">cal.png</file>
+
+    		<file alias="camera">camera.png</file>
+
+    		<file alias="knotes">knotes.png</file>
+
+    		<file alias="arts">arts.png</file>
+
+    		<file alias="media-seek-backward">media-seek-backward.png</file>
+
+    		<file alias="Synaptics touchpad">Synaptics touchpad.png</file>
+
+    		<file alias="folder_home">folder_home.png</file>
+
+    		<file alias="kthememgr">kthememgr.png</file>
+
+    		<file alias="restart">restart.png</file>
+
+    		<file alias="mail-mark-junk">mail-mark-junk.png</file>
+
+    		<file alias="ksame">ksame.png</file>
+
+    		<file alias="mail-reply-all">mail-reply-all.png</file>
+
+    		<file alias="Volume Manager">Volume Manager.png</file>
+
+    		<file alias="utilities">utilities.png</file>
+
+    		<file alias="mail-message-new">mail-message-new.png</file>
+
+    		<file alias="edit-find">edit-find.png</file>
+
+    		<file alias="musicstore2">musicstore2.png</file>
+
+    		<file alias="ark">ark.png</file>
+
+    		<file alias="go">go.png</file>
+
+    		<file alias="system-lock-screen">system-lock-screen.png</file>
+
+    		<file alias="kwallet2">kwallet2.png</file>
+
+    		<file alias="xpaint">xpaint.png</file>
+
+    		<file alias="katomic">katomic.png</file>
+
+    		<file alias="kolf">kolf.png</file>
+
+    		<file alias="document-save-as">document-save-as.png</file>
+
+    		<file alias="mailreminder">mailreminder.png</file>
+
+    		<file alias="gohome">gohome.png</file>
+
+    		<file alias="folder_blue">folder_blue.png</file>
+
+    		<file alias="ktouch">ktouch.png</file>
+
+    		<file alias="launch">launch.png</file>
+
+    		<file alias="gaimphone">gaimphone.png</file>
+
+    		<file alias="view_bottom">view_bottom.png</file>
+
+    		<file alias="kate">kate.png</file>
+
+    		<file alias="kaddressbook">kaddressbook.png</file>
+
+    		<file alias="mp3player2">mp3player2.png</file>
+
+    		<file alias="viewmagfit">viewmagfit.png</file>
+
+    		<file alias="folder_music">folder_music.png</file>
+
+    		<file alias="database">database.png</file>
+
+    		<file alias="kbackgammon">kbackgammon.png</file>
+
+    		<file alias="edit-undo">edit-undo.png</file>
+
+    		<file alias="kalarm">kalarm.png</file>
+
+    		<file alias="lphoto">lphoto.png</file>
+
+    		<file alias="system-shutdown">system-shutdown.png</file>
+
+    		<file alias="mail-forward">mail-forward.png</file>
+
+    		<file alias="lists">lists.png</file>
+
+    		<file alias="lock">lock.png</file>
+
+    		<file alias="Cardgame">Cardgame.png</file>
+
+    		<file alias="knotify">knotify.png</file>
+
+    		<file alias="1downarrow">1downarrow.png</file>
+
+    		<file alias="harddrive">harddrive.png</file>
+
+    		<file alias="kenolaba">kenolaba.png</file>
+
+    		<file alias="karm 2">karm 2.png</file>
+
+    		<file alias="zip_unmount">zip_unmount.png</file>
+
+    		<file alias="Session Manager">Session Manager.png</file>
+
+    		<file alias="1uparrow">1uparrow.png</file>
+
+    		<file alias="viewmag+">viewmag+.png</file>
+
+    		<file alias="Internet Connection Tools">Internet Connection Tools.png</file>
+
+    		<file alias="mac">mac.png</file>
+
+    		<file alias="loopnone">loopnone.png</file>
+
+    		<file alias="ksnake">ksnake.png</file>
+
+    		<file alias="2dowarrow">2dowarrow.png</file>
+
+    		<file alias="view_right">view_right.png</file>
+
+    		<file alias="kcmkwm">kcmkwm.png</file>
+
+    		<file alias="player_play">player_play.png</file>
+
+    		<file alias="cdwriter_unmount">cdwriter_unmount.png</file>
+
+    		<file alias="player-end">player-end.png</file>
+
+    		<file alias="khelpcenter">khelpcenter.png</file>
+
+    		<file alias="tab_remove">tab_remove.png</file>
+
+    		<file alias="windows_users">windows_users.png</file>
+
+    		<file alias="connect_to_network">connect_to_network.png</file>
+
+    		<file alias="seyon">seyon.png</file>
+
+    		<file alias="ark2">ark2.png</file>
+
+    		<file alias="2leftarrow">2leftarrow.png</file>
+
+    		<file alias="Startup Wizard 2">Startup Wizard 2.png</file>
+
+    		<file alias="aim">aim.png</file>
+
+    		<file alias="folder_home2">folder_home2.png</file>
+
+    		<file alias="Login Manager">Login Manager.png</file>
+
+    		<file alias="exec">exec.png</file>
+
+    		<file alias="kasteroids">kasteroids.png</file>
+
+    		<file alias="folder_print">folder_print.png</file>
+
+    		<file alias="encrypted">encrypted.png</file>
+
+    		<file alias="kaboodle">kaboodle.png</file>
+
+    		<file alias="edit_remove">edit_remove.png</file>
+
+    		<file alias="kfloppy">kfloppy.png</file>
+
+    		<file alias="All software is current">All software is current.png</file>
+
+    		<file alias="tab-new">tab-new.png</file>
+
+    		<file alias="2rightarrow">2rightarrow.png</file>
+
+    		<file alias="Community Help">Community Help.png</file>
+
+    		<file alias="lsongs">lsongs.png</file>
+
+    		<file alias="button_ok">button_ok.png</file>
+
+    		<file alias="kuser">kuser.png</file>
+
+    		<file alias="games">games.png</file>
+
+    		<file alias="keyboard_layout">keyboard_layout.png</file>
+
+    		<file alias="kpersonalizer">kpersonalizer.png</file>
+
+    		<file alias="Linspire Quickstart Guide">Linspire Quickstart Guide.png</file>
+
+    		<file alias="musicstore">musicstore.png</file>
+
+    		<file alias="player_eject">player_eject.png</file>
+
+    		<file alias="folder_locked">folder_locked.png</file>
+
+    		<file alias="kpat">kpat.png</file>
+
+    		<file alias="xine">xine.png</file>
+
+    		<file alias="miscellaneous">miscellaneous.png</file>
+
+    		<file alias="hdd_unmount">hdd_unmount.png</file>
+
+    		<file alias="media-skip-forward">media-skip-forward.png</file>
+
+    		<file alias="xmms">xmms.png</file>
+
+    		<file alias="info">info.png</file>
+
+    		<file alias="kdeprintfax">kdeprintfax.png</file>
+
+    		<file alias="kpresenter">kpresenter.png</file>
+
+    		<file alias="calc">calc.png</file>
+
+    		<file alias="gnome">gnome.png</file>
+
+    		<file alias="tux">tux.png</file>
+
+    		<file alias="kcmmemory">kcmmemory.png</file>
+
+    		<file alias="konsole">konsole.png</file>
+
+    		<file alias="ktip">ktip.png</file>
+
+    		<file alias="db_comit">db_comit.png</file>
+
+    		<file alias="miscellaneous 2">miscellaneous 2.png</file>
+
+    		<file alias="quicktime">quicktime.png</file>
+
+    		<file alias="media-seek-forward">media-seek-forward.png</file>
+
+    		<file alias="mouse">mouse.png</file>
+
+    		<file alias="2downarrow">2downarrow.png</file>
+
+    		<file alias="k3b">k3b.png</file>
+
+    		<file alias="flag">flag.png</file>
+
+    		<file alias="network">network.png</file>
+
+    		<file alias="folder_sound">folder_sound.png</file>
+
+    		<file alias="view_icon">view_icon.png</file>
+
+    		<file alias="blender">blender.png</file>
+
+    		<file alias="babelfish">babelfish.png</file>
+
+    		<file alias="folder_image">folder_image.png</file>
+
+    		<file alias="system-log-out">system-log-out.png</file>
+
+    		<file alias="bookmark-new">bookmark-new.png</file>
+
+    		<file alias="db_update">db_update.png</file>
+
+    		<file alias="folder_video">folder_video.png</file>
+
+    		<file alias="knewsticker">knewsticker.png</file>
+
+    		<file alias="clanbomber">clanbomber.png</file>
+
+    		<file alias="kcmsystem">kcmsystem.png</file>
+
+    		<file alias="edit">edit.png</file>
+
+    		<file alias="1leftarrow">1leftarrow.png</file>
+
+    		<file alias="kjumpingcube">kjumpingcube.png</file>
+
+    		<file alias="document-properties">document-properties.png</file>
+
+    		<file alias="Network Connection Manager">Network Connection Manager.png</file>
+
+    		<file alias="staroffice">staroffice.png</file>
+
+    		<file alias="kpoker">kpoker.png</file>
+
+    		<file alias="looknfeel">looknfeel.png</file>
+
+    		<file alias="view-refresh">view-refresh.png</file>
+
+    		<file alias="lassist">lassist.png</file>
+
+    		<file alias="krita">krita.png</file>
+
+    		<file alias="mozilla">mozilla.png</file>
+
+    		<file alias="folder_red">folder_red.png</file>
+
+    		<file alias="korn">korn.png</file>
+
+    		<file alias="player_end">player_end.png</file>
+
+    		<file alias="kfind">kfind.png</file>
+
+    		<file alias="document-new">document-new.png</file>
+
+    		<file alias="kivio">kivio.png</file>
+
+    		<file alias="go-home">go-home.png</file>
+
+    		<file alias="ksmiletris">ksmiletris.png</file>
+
+    		<file alias="down">down.png</file>
+
+    		<file alias="messenger">messenger.png</file>
+
+    		<file alias="kscreensaver">kscreensaver.png</file>
+
+    		<file alias="document-print">document-print.png</file>
+
+    		<file alias="decrypted">decrypted.png</file>
+
+    		<file alias="kcmpci">kcmpci.png</file>
+
+    		<file alias="web">web.png</file>
+
+    		<file alias="view_multicolumn">view_multicolumn.png</file>
+
+    		<file alias="news_subscribe">news_subscribe.png</file>
+
+    		<file alias="lskat">lskat.png</file>
+
+    		<file alias="kview">kview.png</file>
+
+    		<file alias="bookmark">bookmark.png</file>
+
+    		<file alias="network_local">network_local.png</file>
+
+    		<file alias="sharemanager">sharemanager.png</file>
+
+    		<file alias="folder_desktop">folder_desktop.png</file>
+
+    		<file alias="internet">internet.png</file>
+
+    		<file alias="palm">palm.png</file>
+
+    		<file alias="konverter">konverter.png</file>
+
+    		<file alias="format-text-italic">format-text-italic.png</file>
+
+    		<file alias="kreversi">kreversi.png</file>
+
+    		<file alias="folder_public">folder_public.png</file>
+
+    		<file alias="edit-delete">edit-delete.png</file>
+
+    		<file alias="editcut">editcut.png</file>
+
+    		<file alias="edit_add">edit_add.png</file>
+
+    		<file alias="format-indent-less">format-indent-less.png</file>
+
+    		<file alias="desktop">desktop.png</file>
+
+    		<file alias="www">www.png</file>
+
+    		<file alias="zip">zip.png</file>
+
+    		<file alias="address-book-new">address-book-new.png</file>
+
+    		<file alias="go-last">go-last.png</file>
+
+    		<file alias="mail">mail.png</file>
+
+    		<file alias="colors">colors.png</file>
+
+    		<file alias="kblackbox">kblackbox.png</file>
+
+    		<file alias="Thumbs">Thumbs.db</file>
+
+    		<file alias="kteatime">kteatime.png</file>
+
+    		<file alias="edit-copy">edit-copy.png</file>
+
+    		<file alias="package_games_board">package_games_board.png</file>
+
+    		<file alias="kworldclock">kworldclock.png</file>
+
+    		<file alias="date">date.png</file>
+
+    		<file alias="linuxconf">linuxconf.png</file>
+
+    		<file alias="mail-send-receive">mail-send-receive.png</file>
+
+    		<file alias="edit-clear">edit-clear.png</file>
+
+    		<file alias="view_tree">view_tree.png</file>
+
+    		<file alias="lreminder">lreminder.png</file>
+
+    		<file alias="knetconfig">knetconfig.png</file>
+
+    		<file alias="List manager">List manager.png</file>
+
+    		<file alias="konquest">konquest.png</file>
+
+    		<file alias="folder_favorites">folder_favorites.png</file>
+
+    		<file alias="warehause">warehause.png</file>
+
+    		<file alias="go-first">go-first.png</file>
+
+    		<file alias="view_text">view_text.png</file>
+
+    		<file alias="pysol">pysol.png</file>
+
+    		<file alias="kmines">kmines.png</file>
+
+    		<file alias="ktron">ktron.png</file>
+
+    		<file alias="1rightarrow">1rightarrow.png</file>
+
+    		<file alias="mail-mark-not-junk">mail-mark-not-junk.png</file>
+
+    		<file alias="list-add">list-add.png</file>
+
+    		<file alias="kcmscsi">kcmscsi.png</file>
+
+    		<file alias="desktop_enhancements">desktop_enhancements.png</file>
+
+    		<file alias="Service Manager">Service Manager.png</file>
+
+    		<file alias="file_locked">file_locked.png</file>
+
+    		<file alias="share">share.png</file>
+
+    		<file alias="format-justify-fill">format-justify-fill.png</file>
+
+    		<file alias="format-text-underline">format-text-underline.png</file>
+
+    		<file alias="filenew">filenew.png</file>
+
+    		<file alias="file-manager">file-manager.png</file>
+
+    		<file alias="up">up.png</file>
+
+    		<file alias="juk">juk.png</file>
+
+    		<file alias="db_status">db_status.png</file>
+
+    		<file alias="mycomputer">mycomputer.png</file>
+
+    		<file alias="navigator">navigator.png</file>
+
+    		<file alias="irkick">irkick.png</file>
+
+    		<file alias="linneighborhood">linneighborhood.png</file>
+
+    		<file alias="kcontrol">kcontrol.png</file>
+
+    		<file alias="folder_doments">folder_doments.png</file>
+
+    		<file alias="document-open">document-open.png</file>
+
+    		<file alias="format-text-strikethrough">format-text-strikethrough.png</file>
+
+    		<file alias="sipphone">sipphone.png</file>
+
+    		<file alias="kspaceduel">kspaceduel.png</file>
+
+    		<file alias="networksettings">networksettings.png</file>
+
+    		<file alias="mp3">mp3.png</file>
+
+    		<file alias="filefind">filefind.png</file>
+
+    		<file alias="klaptop">klaptop.png</file>
+
+    		<file alias="access">access.png</file>
+
+    		<file alias="edit-cut">edit-cut.png</file>
+
+    		<file alias="krec">krec.png</file>
+
+    		<file alias="amor">amor.png</file>
+
+    		<file alias="folder_txt">folder_txt.png</file>
+
+    		<file alias="editpaste">editpaste.png</file>
+
+    		<file alias="folder-new">folder-new.png</file>
+
+    		<file alias="package_games_arcade">package_games_arcade.png</file>
+
+    		<file alias="clicknrun">clicknrun.png</file>
+
+    		<file alias="netscape">netscape.png</file>
+
+    		<file alias="modem">modem.png</file>
+
+    		<file alias="acroread">acroread.png</file>
+
+    		<file alias="forward">forward.png</file>
+
+    		<file alias="tab_new">tab_new.png</file>
+
+    		<file alias="3floppy_unmount">3floppy_unmount.png</file>
+
+    		<file alias="galeon">galeon.png</file>
+
+    		<file alias="hardware">hardware.png</file>
+
+    		<file alias="kxkb">kxkb.png</file>
+
+    		<file alias="playlist">playlist.png</file>
+
+    		<file alias="wifi">wifi.png</file>
+
+    		<file alias="core">core.png</file>
+
+    		<file alias="edit-paste">edit-paste.png</file>
+
+    		<file alias="folder_green">folder_green.png</file>
+
+    		<file alias="editcopy">editcopy.png</file>
+
+    		<file alias="kexi">kexi.png</file>
+
+    		<file alias="mysql">mysql.png</file>
+
+    		<file alias="document-save">document-save.png</file>
+
+    		<file alias="media-playback-stop">media-playback-stop.png</file>
+
+    		<file alias="display">display.png</file>
+
+    		<file alias="nfs_unmount">nfs_unmount.png</file>
+
+    		<file alias="stop">stop.png</file>
+
+    		<file alias="ksysguard">ksysguard.png</file>
+
+    		<file alias="quick_restart">quick_restart.png</file>
+
+    		<file alias="my_documents">my_documents.png</file>
+
+    		<file alias="locale">locale.png</file>
+
+    		<file alias="folder_images">folder_images.png</file>
+
+    		<file alias="xeyes">xeyes.png</file>
+
+    		<file alias="virussafe">virussafe.png</file>
+
+    		<file alias="softwareD">softwareD.png</file>
+
+    		<file alias="thunderbird">thunderbird.png</file>
+
+    		<file alias="gimp">gimp.png</file>
+
+    		<file alias="button_cancel">button_cancel.png</file>
+
+    		<file alias="kwallet">kwallet.png</file>
+
+    		<file alias="kfm_home">kfm_home.png</file>
+
+    		<file alias="fileprint">fileprint.png</file>
+
+    		<file alias="kmahjongg">kmahjongg.png</file>
+
+    		<file alias="lassists">lassists.png</file>
+
+    		<file alias="printmgr">printmgr.png</file>
+
+    		<file alias="db_add">db_add.png</file>
+
+    		<file alias="openoffice">openoffice.png</file>
+
+    		<file alias="kcmmidi">kcmmidi.png</file>
+
+    		<file alias="viewmag">viewmag.png</file>
+
+    		<file alias="Ym">Ym.png</file>
+
+    		<file alias="appointment-new">appointment-new.png</file>
+
+    		<file alias="kcmsound">kcmsound.png</file>
+
+    		<file alias="view_choose">view_choose.png</file>
+
+    		<file alias="Startup Wizard">Startup Wizard.png</file>
+
+    		<file alias="kllckety">kllckety.png</file>
+
+    		<file alias="dvd_unmount">dvd_unmount.png</file>
+
+    		<file alias="tab">tab.png</file>
+
+    		<file alias="kedit">kedit.png</file>
+
+    		<file alias="joystick">joystick.png</file>
+
+    		<file alias="cdrom_unmount">cdrom_unmount.png</file>
+
+    		<file alias="firewall">firewall.png</file>
+
+    		<file alias="go-jump">go-jump.png</file>
+
+    		<file alias="kmid">kmid.png</file>
+
+    		<file alias="realplayer">realplayer.png</file>
+
+    		<file alias="player_start">player_start.png</file>
+
+    		<file alias="kget">kget.png</file>
+
+    		<file alias="advancedsettings">advancedsettings.png</file>
+
+    		<file alias="input_devices_settings">input_devices_settings.png</file>
+
+    		<file alias="player_rew">player_rew.png</file>
+
+    		<file alias="randr">randr.png</file>
+
+    		<file alias="view_left_right">view_left_right.png</file>
+
+    		<file alias="linphone">linphone.png</file>
+
+    		<file alias="stylesheet">stylesheet.png</file>
+
+    		<file alias="lockoverlay">lockoverlay.png</file>
+
+    		<file alias="process-stop">process-stop.png</file>
+
+    		<file alias="window_nofullscreen">window_nofullscreen.png</file>
+
+    		<file alias="history">history.png</file>
+
+    		<file alias="home">home.png</file>
+
+    		<file alias="folder_home3">folder_home3.png</file>
+
+    		<file alias="demo">demo.png</file>
+
+    		<file alias="logout">logout.png</file>
+
+    		<file alias="media-playback-start">media-playback-start.png</file>
+
+    		<file alias="kodo">kodo.png</file>
+
+    		<file alias="mp3player">mp3player.png</file>
+
+    		<file alias="format-text-bold">format-text-bold.png</file>
+
+    		<file alias="view_remove">view_remove.png</file>
+
+    		<file alias="spellcheck">spellcheck.png</file>
+
+    		<file alias="desktopshare">desktopshare.png</file>
+
+    		<file alias="filetypes">filetypes.png</file>
+
+    		<file alias="lswitch">lswitch.png</file>
+
+    		<file alias="folder_grey">folder_grey.png</file>
+
+    		<file alias="edit-select-all">edit-select-all.png</file>
+
+    		<file alias="window-new">window-new.png</file>
+
+    		<file alias="icons">icons.png</file>
+
+    		<file alias="katuberling">katuberling.png</file>
+
+    		<file alias="kcmprocessor">kcmprocessor.png</file>
+
+    		<file alias="kcmpartitions">kcmpartitions.png</file>
+
+    		<file alias="db_remove">db_remove.png</file>
+
+    		<file alias="windowlist">windowlist.png</file>
+
+    		<file alias="business">business.png</file>
+
+    		<file alias="package_games_strategy">package_games_strategy.png</file>
+
+    		<file alias="error">error.png</file>
+
+    		<file alias="ftp">ftp.png</file>
+
+    		<file alias="gaimphone2">gaimphone2.png</file>
+
+    		<file alias="kbounce">kbounce.png</file>
+
+    		<file alias="kfm">kfm.png</file>
+
+    		<file alias="clean">clean.png</file>
+
+    		<file alias="neotux">neotux.png</file>
+
+    		<file alias="karbon">karbon.png</file>
+
+    		<file alias="editdelete">editdelete.png</file>
+
+    		<file alias="mail-reply-sender">mail-reply-sender.png</file>
+
+    		<file alias="cnrclient">cnrclient.png</file>
+
+    		<file alias="view_remove 2">view_remove 2.png</file>
+
+    		<file alias="folder_yellow">folder_yellow.png</file>
+
+    		<file alias="ksplash">ksplash.png</file>
+
+    		<file alias="virus detected 2">virus detected 2.png</file>
+
+    		<file alias="kstars">kstars.png</file>
+
+    		<file alias="kfax">kfax.png</file>
+
+    		<file alias="atlantik">atlantik.png</file>
+
+    		<file alias="klaptopdaemon">klaptopdaemon.png</file>
+
+    		<file alias="fonts">fonts.png</file>
+
+    		<file alias="media-playback-pause">media-playback-pause.png</file>
+
+    		<file alias="kpilot">kpilot.png</file>
+
+    		<file alias="cam">cam.png</file>
+
+    		<file alias="folder">folder.png</file>
+
+    		<file alias="go-previous">go-previous.png</file>
+
+    		<file alias="vcalendar">vcalendar.png</file>
+
+	</qresource>
 </RCC>
