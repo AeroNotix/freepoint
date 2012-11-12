@@ -123,6 +123,8 @@ void CreateNewDatabase::acceptFieldAdd() {
         break;
     }
     GenericCleanup();
+    ui->lbl_rows_missing_lbl->hide();
+    ui->lbl_rows_missing->hide();
 }
 
 /*
@@ -372,25 +374,23 @@ void CreateNewDatabase::DeleteSelectedRow() {
 bool CreateNewDatabase::doPreChecks() {
     QString empty = QString("");
     bool failure = true;
-    if (ui->txt_database_name->text() == empty ||
-        ui->txt_table_name->text() == empty) {
-        if (ui->txt_database_name->text() == empty) {
-            ui->lbl_database_missing->show();
-            ui->lbl_database_name->setStyleSheet("color : red");
-        }
-        if (ui->txt_table_name->text() == empty) {
-            ui->lbl_table_missing->show();
-            ui->lbl_table_name->setStyleSheet("color : red");
-        }
+    if (ui->txt_database_name->text() == empty) {
+        ui->lbl_database_missing->show();
+        ui->lbl_database_name->setStyleSheet("color : red");
         failure = false;
     } else {
-        // if all is well we can remove the notifications
-        ui->lbl_database_missing->hide();
-        ui->lbl_table_missing->hide();
-        ui->lbl_database_name->setStyleSheet("color : black");
-        ui->lbl_table_name->setStyleSheet("color : black");
+        removeDatabaseNotifications();
     }
 
+    if (ui->txt_table_name->text() == empty) {
+        ui->lbl_table_missing->show();
+        ui->lbl_table_name->setStyleSheet("color : red");
+        failure = false;
+    } else {
+        removeTableNotifications();
+    }
+
+    // if there are zero rows selected, notify and return false.
     if (rowmap->keys().size() == 0) {
         ui->lbl_rows_missing_lbl->show();
         ui->lbl_rows_missing->show();
@@ -401,4 +401,14 @@ bool CreateNewDatabase::doPreChecks() {
     }
 
     return failure;
+}
+
+void CreateNewDatabase::removeTableNotifications() {
+    ui->lbl_table_missing->hide();
+    ui->lbl_table_name->setStyleSheet("color : black");
+}
+
+void CreateNewDatabase::removeDatabaseNotifications() {
+    ui->lbl_database_missing->hide();
+    ui->lbl_database_name->setStyleSheet("color : black");
 }

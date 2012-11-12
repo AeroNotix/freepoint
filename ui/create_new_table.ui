@@ -644,7 +644,7 @@
    <property name="geometry">
     <rect>
      <x>520</x>
-     <y>110</y>
+     <y>190</y>
      <width>16</width>
      <height>16</height>
     </rect>
@@ -662,8 +662,8 @@
   <widget class="QLabel" name="lbl_rows_missing_lbl">
    <property name="geometry">
     <rect>
-     <x>540</x>
-     <y>370</y>
+     <x>550</x>
+     <y>190</y>
      <width>241</width>
      <height>16</height>
     </rect>
@@ -853,6 +853,38 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>txt_database_name</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>CreateNewDatabase</receiver>
+   <slot>removeDatabaseNotifications()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>729</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1028</x>
+     <y>835</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>txt_table_name</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>CreateNewDatabase</receiver>
+   <slot>removeTableNotifications()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>687</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1045</x>
+     <y>867</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeFieldDescriptions()</slot>
@@ -861,6 +893,8 @@
   <slot>testSegv()</slot>
   <slot>ShowRowAttributes()</slot>
   <slot>DeleteSelectedRow()</slot>
+  <slot>removeDatabaseNotifications()</slot>
+  <slot>removeTableNotifications()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="fieldButtonGroup"/>

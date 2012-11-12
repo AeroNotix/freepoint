@@ -42,6 +42,10 @@ public slots:
     void ShowRowAttributes();
     void DeleteSelectedRow();
 
+private slots:
+    void removeDatabaseNotifications();
+    void removeTableNotifications();
+
 private:
     QString generateTextData();
     QString generateChoiceData();
