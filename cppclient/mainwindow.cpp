@@ -9,6 +9,7 @@
     #include "qjson/parser.h"
 #endif
 
+#include <QActionGroup>
 #include <QPointer>
 #include <QCoreApplication>
 #include <QDebug>
@@ -64,6 +65,7 @@ MainWindow::MainWindow(QWidget *parent)
     // populate it.
     SetCurrentTable();
     PopulateToolbar();
+    AddMenuActions();
 }
 
 MainWindow::~MainWindow() {
@@ -344,6 +346,35 @@ void MainWindow::RevertCellData() {
     int y = storedcoords.second;
     ui->tableWidget->item(x, y)->setText(storeditem);
     ShowMessage("Reverting cell data", 3000);
+}
+
+void MainWindow::ChangeConnection(QAction *action) {
+    QString connection_name = action->objectName();
+    db->SetDatabase(connection_map[connection_name].toMap()["database"].toString());
+    db->SetTable(connection_map[connection_name].toMap()["table"].toString());
+    PopulateTable();
+}
+
+void MainWindow::AddMenuActions() {
+
+    actionGroupConnections = new QActionGroup(this);
+    connect(actionGroupConnections, SIGNAL(triggered(QAction*)),
+            this, SLOT(ChangeConnection(QAction*)));
+    for (int x = 0; x < connection_names.size(); ++x) {
+
+        QString database = connection_map[connection_names[x]].toMap()["database"].toString();
+        QString table = connection_map[connection_names[x]].toMap()["table"].toString();
+
+        QAction *action = new QAction(this);
+        action->setText(database+"."+table);
+        action->setObjectName(connection_names[x]);
+        action->setCheckable(true);
+        if (connection_names[x] == QString("connection-0"))
+            action->setChecked(true);
+
+        ui->menuSelect_Table->addAction(action);
+        actionGroupConnections->addAction(action);
+    }
 }
 
 /*

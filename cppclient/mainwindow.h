@@ -71,6 +71,7 @@ private slots:
     void DeleteItem(int x, int y);
     void DeleteRow(int x);
     void WriteCSV(QString);
+    void ChangeConnection(QAction *action);
 
 private:
     void PopulateTable();
@@ -83,7 +84,6 @@ private:
     void keyPressEvent(QKeyEvent *event);
     void StoreCell(int x, int y);
     void RevertCellData();
-    void ChangeConnection(int connection_number);
     void AddMenuActions();
     void Login();
     void OpenConnectionDialog();
@@ -97,6 +97,7 @@ private:
     QPointer<Database> db;
     QList<QVariantMap> connections;
     QPointer<QToolBar> toolbar;
+    QPointer<QActionGroup> actionGroupConnections;
     int current_connection_index;
     bool populating;
     QString username;
