@@ -1,3 +1,14 @@
+// TODO:
+//
+// Currently this is broken if you delete a row since the row number
+// is hard-coded into the JSON data string.
+//
+// I think if each of the generateRowData style functions returned
+// a std::pair of <before row number and >after row num, then whilst
+// the final JSON string is being generated then we can interpolate the
+// values, OR, have it so the generate functions leave a format string
+// (e.g. %d) that we can interpolate with values at the end.
+
 #include <stdexcept>
 
 #include <QDebug>
