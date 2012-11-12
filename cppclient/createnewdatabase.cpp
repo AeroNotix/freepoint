@@ -4,7 +4,9 @@
 #include <QString>
 #include <QTextStream>
 #include <QMessageBox>
+
 #include "createnewdatabase.h"
+#include "jsonpackets.h"
 
 CreateNewDatabase::CreateNewDatabase(MainWindow *p)
     : QDialog(p), parent(p), ui(new Ui_CreateNewDatabase),
@@ -15,8 +17,6 @@ CreateNewDatabase::CreateNewDatabase(MainWindow *p)
 }
 
 /*
-  TODO: Refactor this method.
-
   accept creates the JSON string from the user-created rows and fires
   off a request to the database.
 */
@@ -28,20 +28,25 @@ void CreateNewDatabase::accept() {
     QTextStream s(&ss);
     QTextStream sub(&sa);
 
-    s << "{" << dq << "DATABASE" << dq << ":";
-    s << dq << ui->txt_database_name->text() << dq << ",";
-    s << dq << "TABLE" << dq << ":";
-    s << dq << ui->txt_table_name->text() << dq << ",";
-    sub << dq << "HEADINGS" << dq << ":{";
+    s << "{"x
+      << quote("DATABASE", ui->txt_database_name->text()) << ","
+      << quote("TABLE", ui->txt_table_name->text()) << ",";
 
+    sub << quote("HEADINGS") << ":{";
+    // for each row entry, insert the string we create when the
+    // acceptFieldAdd function fired.
     for (int x = 0; x < keys.size(); ++x) {
         sub << (*rowmap)[keys[x]];
         if (x + 1 != keys.size())
             sub << ",";
     }
+    // close the headings section.
     s << *sub.string() << "}}";
-    s << "," << dq << "PAYLOAD" << dq << ":" << dq << "{";
-    s << (*sub.string()).replace("\"", "\\\"") << "}}" << '"';
+
+    // start writing raw strings, this is what will be put into the
+    // metadata field.
+    s << "," << quote("PAYLOAD") << ":" << dq << "{"
+      << (*sub.string()).replace("\"", "\\\"") << "}}" << '"';
 
     parent->CreateNew(*s.string());
     QDialog::accept();
@@ -120,10 +125,10 @@ QString CreateNewDatabase::generateTextData() {
     QString dq("\"");
     QTextStream s(ss.get());
 
-    s << genericAddData();
-    s << dq << "TYPE" << dq << ":" << dq << "VARCHAR" << dq << ",";
-    s << dq << "LEN" << dq << ":" << ui->txt_grp_length->value();
-    s << "}}";
+    s << genericAddData()
+      << quote("TYPE","VARCHAR") << ","
+      << quote("LEN", ui->txt_grp_length->value())
+      << "}}";
 
     return *s.string();
 }
@@ -139,9 +144,9 @@ QString CreateNewDatabase::generateChoiceData() {
     QStringList choices = ui->choice_grp_choices->toPlainText().split("\n");
     choices.removeDuplicates();
 
-    s << genericAddData();
-    s << dq << "TYPE" << dq << ":" << dq << "CHOICE" << dq << ",";
-    s << dq << "CHOICES" << dq << ":[";
+    s << genericAddData()
+      << quote("TYPE", "CHOICE") << ","
+      << quote("CHOICES") << ":[";
     for (int x = 0; x < choices.size(); ++x) {
         s << dq << choices[x] << dq;
         if (x + 1 != choices.size())
@@ -161,7 +166,7 @@ QString CreateNewDatabase::generateCurrData() {
     QTextStream s(ss.get());
 
     s << genericAddData();
-    s << dq << "TYPE" << dq << ":" << dq << "DATE" << dq;
+    s << quote("TYPE", "CURR");
 
     return *s.string();
 }
@@ -175,7 +180,7 @@ QString CreateNewDatabase::generateDateData() {
     QTextStream s(ss.get());
 
     s << genericAddData();
-    s << dq << "TYPE" << dq << ":" << dq << "DATE" << dq;
+    s << quote("TYPE", "DATE");
     s << "}}";
 
     return *s.string();
@@ -327,12 +332,11 @@ QString CreateNewDatabase::genericAddData() {
         break;
     }
 
-    // TODO: Refactor this shit, use the quote function in the jsonpackets.h
-    s << dq << rowname << dq << ":{";
-    s << dq << "RowNum" << dq << ":" << column_number << ",";
-    s << dq << "RowData" << dq << ":{";
-    s << dq << "UNIQUE" << dq << ":" << toStrBool(un) << ",";
-    s << dq << "NULL" << dq << ":" << toStrBool(nu) << ",";
+    s << quote(rowname) << ":{"
+      << quote("RowNum") << ":" << column_number << ","
+      << quote("RowData") << ":{"
+      << quote("UNIQUE") << ":" << toStrBool(un) << ","
+      << quote("NULL") << ":" << toStrBool(nu) << ",";
 
     return *s.string();
 }

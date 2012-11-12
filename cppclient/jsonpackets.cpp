@@ -21,7 +21,15 @@ template <typename T>
 QString quote(QString key, T value) {
     QString ss;
     QTextStream s(&ss);
-    s << dq << key << dq << ":" << dq << value << dq;
+    s << quote(key) << ":" << quote(value);
+    return *s.string();
+}
+
+template <>
+QString quote(QString key, int value) {
+    QString ss;
+    QTextStream s(&ss);
+    s << quote(key) << ":" << quote(value);
     return *s.string();
 }
 
