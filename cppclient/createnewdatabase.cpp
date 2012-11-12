@@ -14,6 +14,10 @@ CreateNewDatabase::CreateNewDatabase(MainWindow *p)
       list_items(QList<QListWidgetItem*>())
 {
     ui->setupUi(this);
+    ui->lbl_database_missing->hide();
+    ui->lbl_table_missing->hide();
+    ui->lbl_rows_missing_lbl->hide();
+    ui->lbl_rows_missing->hide();
 }
 
 /*
@@ -21,6 +25,10 @@ CreateNewDatabase::CreateNewDatabase(MainWindow *p)
   off a request to the database.
 */
 void CreateNewDatabase::accept() {
+
+    if (!doPreChecks())
+        return;
+
     QList<QString> keys = rowmap->keys();
     QString ss;
     QString sa;
@@ -339,4 +347,41 @@ QString CreateNewDatabase::genericAddData() {
       << quote("NULL") << ":" << toStrBool(nu) << ",";
 
     return *s.string();
+}
+/*
+  Performs pre-commit checks on various fields and the containing values
+  of those fields.
+*/
+bool CreateNewDatabase::doPreChecks() {
+    QString empty = QString("");
+    bool failure = true;
+    if (ui->txt_database_name->text() == empty ||
+        ui->txt_table_name->text() == empty) {
+        if (ui->txt_database_name->text() == empty) {
+            ui->lbl_database_missing->show();
+            ui->lbl_database_name->setStyleSheet("color : red");
+        }
+        if (ui->txt_table_name->text() == empty) {
+            ui->lbl_table_missing->show();
+            ui->lbl_table_name->setStyleSheet("color : red");
+        }
+        failure = false;
+    } else {
+        // if all is well we can remove the notifications
+        ui->lbl_database_missing->hide();
+        ui->lbl_table_missing->hide();
+        ui->lbl_database_name->setStyleSheet("color : black");
+        ui->lbl_table_name->setStyleSheet("color : black");
+    }
+
+    if (rowmap->keys().size() == 0) {
+        ui->lbl_rows_missing_lbl->show();
+        ui->lbl_rows_missing->show();
+        failure = false;
+    } else {
+        ui->lbl_rows_missing_lbl->hide();
+        ui->lbl_rows_missing->hide();
+    }
+
+    return failure;
 }

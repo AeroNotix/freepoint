@@ -576,6 +576,102 @@
     <cstring>txt_table_name</cstring>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>320</y>
+     <width>83</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Edit Row</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_2">
+   <property name="geometry">
+    <rect>
+     <x>690</x>
+     <y>320</y>
+     <width>83</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Delete Row</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbl_database_missing">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>40</y>
+     <width>16</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="../resources/resource.qrc">:/media-record</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbl_table_missing">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>71</y>
+     <width>16</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="../resources/resource.qrc">:/media-record</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbl_rows_missing">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>110</y>
+     <width>16</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="../resources/resource.qrc">:/media-record</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="lbl_rows_missing_lbl">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>370</y>
+     <width>241</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;You have not included any table rows.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>line_radio</tabstop>
@@ -587,14 +683,14 @@
   <tabstop>txt_database_name</tabstop>
   <tabstop>txt_table_name</tabstop>
   <tabstop>list_db_rows</tabstop>
-  <tabstop>buttonBox</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>pushButton_2</tabstop>
   <tabstop>txt_grp_rowname</tabstop>
   <tabstop>txt_grp_unique</tabstop>
   <tabstop>txt_grp_length</tabstop>
-  <tabstop>txt_grp_btnAdd</tabstop>
   <tabstop>txt_grp_isnull</tabstop>
-  <tabstop>choice_grp_rowname</tabstop>
-  <tabstop>choice_grp_choices</tabstop>
+  <tabstop>txt_grp_btnAdd</tabstop>
+  <tabstop>buttonBox</tabstop>
   <tabstop>choice_grp_unique</tabstop>
   <tabstop>choice_grp_btnAdd</tabstop>
   <tabstop>choice_grp_isnull</tabstop>
@@ -606,8 +702,12 @@
   <tabstop>curr_grp_unique</tabstop>
   <tabstop>curr_grp_btnAdd</tabstop>
   <tabstop>curr_grp_isnull</tabstop>
+  <tabstop>choice_grp_choices</tabstop>
+  <tabstop>choice_grp_rowname</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="../resources/resource.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>
@@ -721,12 +821,46 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateNewDatabase</receiver>
+   <slot>ShowRowAttributes()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>594</x>
+     <y>339</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1083</x>
+     <y>888</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateNewDatabase</receiver>
+   <slot>DeleteSelectedRow()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>729</x>
+     <y>331</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1016</x>
+     <y>823</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeFieldDescriptions()</slot>
   <slot>acceptFieldAdd()</slot>
   <slot>changeFieldDescriptions(int)</slot>
   <slot>testSegv()</slot>
+  <slot>ShowRowAttributes()</slot>
+  <slot>DeleteSelectedRow()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="fieldButtonGroup"/>

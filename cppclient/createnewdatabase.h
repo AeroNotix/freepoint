@@ -51,6 +51,7 @@ private:
     QString genericAddData();
     QString toStrBool(bool);
     bool CheckOverwrite();
+    bool doPreChecks();
 
     MainWindow *parent;
     std::unique_ptr<Ui_CreateNewDatabase> ui;
