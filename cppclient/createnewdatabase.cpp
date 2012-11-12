@@ -348,6 +348,23 @@ QString CreateNewDatabase::genericAddData() {
 
     return *s.string();
 }
+
+void CreateNewDatabase::ShowRowAttributes() {
+    QListWidgetItem* curr = ui->list_db_rows->currentItem();
+    if (!curr)
+        return;
+    qDebug() << curr << " : " << curr->text();
+}
+
+void CreateNewDatabase::DeleteSelectedRow() {
+    QListWidgetItem *curr = ui->list_db_rows->currentItem();
+    if (!curr)
+        return;
+    rowmap->remove(curr->text());
+    list_items.removeAt(ui->list_db_rows->row(curr));
+    ui->list_db_rows->takeItem(ui->list_db_rows->row(curr));
+}
+
 /*
   Performs pre-commit checks on various fields and the containing values
   of those fields.

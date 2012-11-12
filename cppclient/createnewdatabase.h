@@ -39,6 +39,8 @@ public:
 public slots:
     void changeFieldDescriptions(int i);
     void acceptFieldAdd();
+    void ShowRowAttributes();
+    void DeleteSelectedRow();
 
 private:
     QString generateTextData();
