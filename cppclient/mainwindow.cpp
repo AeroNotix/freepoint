@@ -101,11 +101,11 @@ bool MainWindow::ParseTableConfig() {
 
 void MainWindow::SetCurrentTable() {
     if (!db) {
-        db = QPointer<Database>(new Database(this,
-                                                    GetUsername(),
-                                                    GetPassword(),
-                                                    GetDatabase(),
-                                                    GetTable()));
+        db = QPointer<Database>(
+            new Database(this,
+                         GetUsername(), GetPassword(),
+                         GetDatabase(), GetTable())
+            );
     } else {
         db->SetUsername(GetUsername());
         db->SetPassword(GetPassword());
