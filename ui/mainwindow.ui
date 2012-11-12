@@ -42,7 +42,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="separator"/>
     <addaction name="actionConnection_details"/>
@@ -50,11 +50,11 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
     <widget class="QMenu" name="menuSelect_Table">
      <property name="title">
-      <string>Select Table</string>
+      <string>&amp;Select Table</string>
      </property>
     </widget>
     <addaction name="menuSelect_Table"/>
@@ -66,12 +66,12 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit.</string>
+    <string>&amp;Quit</string>
    </property>
   </action>
   <action name="actionConnection_details">
    <property name="text">
-    <string>Add Connection</string>
+    <string>Add &amp;Connection</string>
    </property>
   </action>
   <action name="actionManage_Connections">
@@ -86,7 +86,7 @@
   </action>
   <action name="actionManageConnections">
    <property name="text">
-    <string>Manage Connections</string>
+    <string>&amp;Manage Connections</string>
    </property>
   </action>
  </widget>
