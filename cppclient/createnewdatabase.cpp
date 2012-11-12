@@ -28,7 +28,7 @@ void CreateNewDatabase::accept() {
     QTextStream s(&ss);
     QTextStream sub(&sa);
 
-    s << "{"x
+    s << "{"
       << quote("DATABASE", ui->txt_database_name->text()) << ","
       << quote("TABLE", ui->txt_table_name->text()) << ",";
 
