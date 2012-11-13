@@ -1,18 +1,8 @@
-// TODO:
-//
-// Currently this is broken if you delete a row since the row number
-// is hard-coded into the JSON data string.
-//
-// I think if each of the generateRowData style functions returned
-// a std::pair of <before row number and >after row num, then whilst
-// the final JSON string is being generated then we can interpolate the
-// values, OR, have it so the generate functions leave a format string
-// (e.g. %d) that we can interpolate with values at the end.
-
 #include <stdexcept>
 
 #include <QDebug>
 #include <QString>
+#include <QStringList>
 #include <QTextStream>
 #include <QMessageBox>
 
@@ -22,7 +12,7 @@
 CreateNewDatabase::CreateNewDatabase(MainWindow *p)
     : QDialog(p), parent(p), ui(new Ui_CreateNewDatabase),
       rowmap(new QMap<QString, QString>()), column_number(-1),
-      list_items(QList<QListWidgetItem*>())
+      list_items(QList<QListWidgetItem*>()), rownames(QStringList())
 {
     ui->setupUi(this);
     ui->lbl_database_missing->hide();
@@ -40,7 +30,6 @@ void CreateNewDatabase::accept() {
     if (!doPreChecks())
         return;
 
-    QList<QString> keys = rowmap->keys();
     QString ss;
     QString sa;
     QString dq = "\"";
@@ -54,18 +43,18 @@ void CreateNewDatabase::accept() {
     sub << quote("HEADINGS") << ":{";
     // for each row entry, insert the string we create when the
     // acceptFieldAdd function fired.
-    for (int x = 0; x < keys.size(); ++x) {
-        sub << (*rowmap)[keys[x]];
-        if (x + 1 != keys.size())
+    for (int x = 0; x < rownames.size(); ++x) {
+        sub << (*rowmap)[rownames[x]].arg(x);
+        if (x + 1 != rownames.size())
             sub << ",";
     }
     // close the headings section.
-    s << *sub.string() << "}}";
-
+    s << *sub.string() << "}";
+    sub << "}}";
     // start writing raw strings, this is what will be put into the
     // metadata field.
     s << "," << quote("PAYLOAD") << ":" << dq << "{"
-      << (*sub.string()).replace("\"", "\\\"") << "}}" << '"';
+      << (*sub.string()).replace("\"", "\\\"") << '"' << '}';
 
     parent->CreateNew(*s.string());
     QDialog::accept();
@@ -107,18 +96,20 @@ void CreateNewDatabase::acceptFieldAdd() {
     if (CheckOverwrite())
         return;
 
-    ++column_number;
-
+    QString rowname;
     switch(ui->stackedWidget->currentIndex())
     {
     case CreateNewDatabase::text:
-        rowmap->insert(ui->txt_grp_rowname->text(), generateTextData());
+        rowname = ui->txt_grp_rowname->text();
+rowmap->insert(rowname, generateTextData());
         break;
     case CreateNewDatabase::choice:
-        rowmap->insert(ui->choice_grp_rowname->text(), generateChoiceData());
+        rowname = ui->choice_grp_rowname->text();
+        rowmap->insert(rowname, generateChoiceData());
         break;
     case CreateNewDatabase::date:
-        rowmap->insert(ui->date_grp_rowname->text(), generateDateData());
+        rowname = ui->date_grp_rowname->text();
+        rowmap->insert(rowname, generateDateData());
         break;
     case CreateNewDatabase::time:
         std::runtime_error("Adding time rows is not implemented");
@@ -127,12 +118,15 @@ void CreateNewDatabase::acceptFieldAdd() {
         std::runtime_error("Adding group rows is not implemented");
         break;
     case CreateNewDatabase::currency:
-        rowmap->insert(ui->curr_grp_rowname->text(), generateCurrData());
+        rowname = ui->curr_grp_rowname->text();
+        rowmap->insert(rowname, generateCurrData());
         break;
     default:
         std::runtime_error("Index out of bounds on the buttonGroup, you also need to add the element to the class enum");
         break;
     }
+
+    rownames.append(rowname);
     GenericCleanup();
     removeMissingRowsNotifications();
 }
@@ -147,7 +141,7 @@ QString CreateNewDatabase::generateTextData() {
 
     s << genericAddData()
       << quote("TYPE","VARCHAR") << ","
-      << quote("LEN", ui->txt_grp_length->value())
+      << quote("LEN") << ":" << ui->txt_grp_length->value()
       << "}}";
 
     return *s.string();
@@ -353,7 +347,9 @@ QString CreateNewDatabase::genericAddData() {
     }
 
     s << quote(rowname) << ":{"
-      << quote("RowNum") << ":" << column_number << ","
+        // we're using QStrings, so %1, %2 etc refer to positional
+        // arguments. They can be filled in with QString::arg(...)
+      << quote("RowNum") << ":" << "%1" << ","
       << quote("RowData") << ":{"
       << quote("UNIQUE") << ":" << toStrBool(un) << ","
       << quote("NULL") << ":" << toStrBool(nu) << ",";
@@ -372,6 +368,8 @@ void CreateNewDatabase::DeleteSelectedRow() {
     QListWidgetItem *curr = ui->list_db_rows->currentItem();
     if (!curr)
         return;
+    if (rownames.indexOf(curr->text()))
+        rownames.removeAt(rownames.indexOf(curr->text()));
     rowmap->remove(curr->text());
     list_items.removeAt(ui->list_db_rows->row(curr));
     ui->list_db_rows->takeItem(ui->list_db_rows->row(curr));

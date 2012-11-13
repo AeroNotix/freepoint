@@ -63,7 +63,7 @@ private:
     MainWindow *parent;
     std::unique_ptr<Ui_CreateNewDatabase> ui;
     std::unique_ptr<QMap<QString, QString>> rowmap;
-    int column_number;
     QList<QListWidgetItem*> list_items;
+    QStringList rownames;
 };
 #endif
