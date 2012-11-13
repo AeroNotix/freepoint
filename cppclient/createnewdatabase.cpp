@@ -11,8 +11,8 @@
 
 CreateNewDatabase::CreateNewDatabase(MainWindow *p)
     : QDialog(p), parent(p), ui(new Ui_CreateNewDatabase),
-      rowmap(new QMap<QString, QString>()), column_number(-1),
-      list_items(QList<QListWidgetItem*>()), rownames(QStringList())
+      rowmap(new QMap<QString, QString>()), list_items(QList<QListWidgetItem*>()),
+      rownames(QStringList())
 {
     ui->setupUi(this);
     ui->lbl_database_missing->hide();
@@ -22,10 +22,18 @@ CreateNewDatabase::CreateNewDatabase(MainWindow *p)
 }
 
 /*
-  accept creates the JSON string from the user-created rows and fires
-  off a request to the database.
+  Simply accepts the dialog without creating a database or prompting
+  the user to see if they are sure about quitting.
 */
 void CreateNewDatabase::accept() {
+    QDialog::accept();
+}
+
+/*
+  CreateTable creates the JSON string from the user-created rows and fires
+  off a request to the database.
+*/
+void CreateNewDatabase::CreateTable() {
 
     if (!doPreChecks())
         return;
@@ -57,6 +65,7 @@ void CreateNewDatabase::accept() {
       << (*sub.string()).replace("\"", "\\\"") << '"' << '}';
 
     parent->CreateNew(*s.string());
+    GenericCleanup();
     QDialog::accept();
 }
 
@@ -101,7 +110,7 @@ void CreateNewDatabase::acceptFieldAdd() {
     {
     case CreateNewDatabase::text:
         rowname = ui->txt_grp_rowname->text();
-rowmap->insert(rowname, generateTextData());
+        rowmap->insert(rowname, generateTextData());
         break;
     case CreateNewDatabase::choice:
         rowname = ui->choice_grp_rowname->text();

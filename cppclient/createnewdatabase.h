@@ -41,6 +41,7 @@ public slots:
     void acceptFieldAdd();
     void ShowRowAttributes();
     void DeleteSelectedRow();
+    void CreateTable();
 
 private slots:
     void removeDatabaseNotifications();
