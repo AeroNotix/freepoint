@@ -1,4 +1,6 @@
 #include "managedialog.h"
+#include "jsonpackets.h"
+#include "table_tools.h"
 
 ManageConnectionDialog::ManageConnectionDialog(MainWindow *parent)
     : QDialog(parent), parent(parent),
