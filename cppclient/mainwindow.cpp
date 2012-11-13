@@ -26,7 +26,7 @@
 #include "add_new_row.h"
 #include "cxn_setup.h"
 #include "createnewdatabase.h"
-
+#include "managedialog.h"
 
 /*
   Class ctor.
@@ -145,7 +145,9 @@ void MainWindow::openConnectionDialog() {
 }
 
 void MainWindow::openManageDialog() {
-    throw std::runtime_error("Not implemented! openManageDialog");
+    ManageConnectionDialog *mcd = new ManageConnectionDialog(this);
+    mcd->exec();
+    delete mcd;
 }
 
 /*
