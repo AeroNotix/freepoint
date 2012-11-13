@@ -105,9 +105,7 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
           << ",\n\t\t";
         s << quote("table", xmap["table"].toString())
           << "\n\t}";
-        // if we're on the last one, don't insert a comma.
-        if (x + 1 != connection_names.size())
-            s << ",\n\t";
+        s << ",\n\t";
     }
 
     // we're simply re-writing the config file if we weren't supplied with
@@ -116,7 +114,6 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     // Otherwise we've got an additional database/table combo to store.
     QString empty = QString("");
     if (database != empty) {
-        s << ",\n\t";
         s << quote(cxnstring(x)) << ": {\n\t\t";
         s << quote("database", database) << ",\n\t\t";
         s << quote("table", table) << "\n\t";
