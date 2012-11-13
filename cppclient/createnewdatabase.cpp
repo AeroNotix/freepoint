@@ -8,6 +8,7 @@
 
 #include "createnewdatabase.h"
 #include "jsonpackets.h"
+#include "table_tools.h"
 
 CreateNewDatabase::CreateNewDatabase(MainWindow *p)
     : QDialog(p), parent(p), ui(new Ui_CreateNewDatabase),
@@ -73,13 +74,7 @@ void CreateNewDatabase::CreateTable() {
   reject just closes the dialog without using the suppled data
 */
 void CreateNewDatabase::reject() {
-    QMessageBox *msgbox = new QMessageBox(this);
-    msgbox->setText("Are you sure?");
-    msgbox->addButton(QMessageBox::Yes);
-    msgbox->addButton(QMessageBox::No);
-    bool ans = msgbox->exec() == QMessageBox::Yes;
-    delete msgbox;
-    if (ans)
+    if (AreYouSure())
         QDialog::reject();
 }
 

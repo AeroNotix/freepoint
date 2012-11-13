@@ -42,3 +42,13 @@ QDir appendDir(QDir base, std::string path) {
         base_path.append(base.separator());
     return QDir(base_path.append(QString(path.c_str())));
 }
+
+bool AreYouSure() {
+    QMessageBox *msgbox = new QMessageBox();
+    msgbox->setText("Are you sure?");
+    msgbox->addButton(QMessageBox::Yes);
+    msgbox->addButton(QMessageBox::No);
+    bool ans = msgbox->exec() == QMessageBox::Yes;
+    delete msgbox;
+    return ans;
+}
