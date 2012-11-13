@@ -35,9 +35,9 @@
   files and create the login dialog.
 */
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), parent(parent), ui(new Ui::MainWindow),
-      db(nullptr), connections(QList<QVariantMap>()),
-      toolbar(addToolBar("toolbar")), current_connection_index(0)
+    : QMainWindow(parent), parent(parent), ui(new Ui::MainWindow), db(nullptr),
+      connections(QList<QVariantMap>()), toolbar(addToolBar("toolbar")),
+      actionGroupConnections(new QActionGroup(this)),current_connection_index(0)
 {
 
     QObject::connect(this, SIGNAL(NewRowSIG(int, int, QTableWidgetItem*)),
@@ -364,8 +364,11 @@ void MainWindow::ChangeConnection(QAction *action) {
 }
 
 void MainWindow::AddMenuActions() {
-
-    actionGroupConnections = new QActionGroup(this);
+    QList<QAction*> removal_list = actionGroupConnections->actions();
+    for (int x = 0; x < removal_list.size(); ++x) {
+        ui->menuSelect_Table->removeAction(removal_list[x]);
+        delete removal_list[x];
+    }
     connect(actionGroupConnections, SIGNAL(triggered(QAction*)),
             this, SLOT(ChangeConnection(QAction*)));
     for (int x = 0; x < connection_names.size(); ++x) {
