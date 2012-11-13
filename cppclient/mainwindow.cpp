@@ -142,12 +142,16 @@ void MainWindow::openConnectionDialog() {
     CXNSetup *cxn = new CXNSetup(this);
     cxn->exec();
     delete cxn;
+    ParseTableConfig();
+    AddMenuActions();
 }
 
 void MainWindow::openManageDialog() {
     ManageConnectionDialog *mcd = new ManageConnectionDialog(this);
     mcd->exec();
     delete mcd;
+    ParseTableConfig();
+    AddMenuActions();
 }
 
 /*
