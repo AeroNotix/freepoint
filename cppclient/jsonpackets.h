@@ -1,5 +1,4 @@
 /*
-
   jsonpackets.h defines some helper classes which provide simple methods
   of retrieving the commonly creating JSON querystrings by just instant-
   iating a class.
