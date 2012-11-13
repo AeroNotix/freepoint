@@ -44,9 +44,16 @@ public:
     const QString GetPassword(void) const;
     const QString GetTable(void) const;
     const QString GetDatabase(void) const;
+    const QStringList GetHeadings(void) const {
+        return connection_names;
+    }
+    const QVariantMap GetMap(void) const {
+        return connection_map;
+    }
     void InsertRow(QStringList newrowdata);
     void AddNewConnection(QString database, QString table);
 	void CreateNew(QString jsondata);
+    const std::pair<QString, QString> GetDBTableInfo(QString connectionname) const;
 
 public slots:
     void InsertedRow(QNetworkReply *reply);

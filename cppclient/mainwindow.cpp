@@ -666,3 +666,8 @@ const QString MainWindow::GetTable(void) const {
 const QString MainWindow::GetDatabase(void) const {
     return connection_map[connection_names[current_connection_index]].toMap()["database"].toString();
 }
+
+const std::pair<QString, QString> MainWindow::GetDBTableInfo(QString connectionname) const {
+    return std::pair<QString, QString>(connection_map[connectionname].toMap()["database"].toString(),
+                                       connection_map[connectionname].toMap()["table"].toString());
+}
