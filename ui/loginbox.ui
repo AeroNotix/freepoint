@@ -18,9 +18,7 @@
     <normaloff>:/system-lock-screen</normaloff>:/system-lock-screen</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">#frm_login{
-background: white;
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QFrame" name="frame">
    <property name="geometry">
@@ -32,11 +30,7 @@ background: white;
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">#frame {
-border: 3px solid black;
-border-radius: 18px;
-background: silver;
-}</string>
+    <string notr="true"/>
    </property>
    <property name="frameShape">
     <enum>QFrame::StyledPanel</enum>
