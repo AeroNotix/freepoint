@@ -170,15 +170,15 @@ bool WriteJSONServerFile(
     QString qtdbase = ":\"";
     qtdbase.append(base);
 
-    s << "{\n";
-    s << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t";
-    s << quote("SERVERURL") << qtdbase << dq << ",\n\t\t";
-    s << quote("LOGINURL") << qtdbase << login << le;
-    s << quote("PARAMURL") << qtdbase << param << le;
-    s << quote("UPDATEURL") << qtdbase << update << le;
-    s << quote("INSERTURL") << qtdbase << insert << le;
-    s << quote("DELETEURL") << qtdbase << del << le;
-    s << quote("CREATEURL") << qtdbase << create << "/" << dq << "\n\t}\n}\n";
+    s << "{\n"
+      << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t"
+      << quote("SERVERURL") << qtdbase << dq << ",\n\t\t"
+      << quote("LOGINURL") << qtdbase << login << le
+      << quote("PARAMURL") << qtdbase << param << le
+      << quote("UPDATEURL") << qtdbase << update << le
+      << quote("INSERTURL") << qtdbase << insert << le
+      << quote("DELETEURL") << qtdbase << del << le
+      << quote("CREATEURL") << qtdbase << create << "/" << dq << "\n\t}\n}\n";
     s.flush();
     return true;
 }
