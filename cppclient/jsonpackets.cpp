@@ -153,6 +153,9 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     return true;
 }
 
+/*
+  Writes the server JSON config file back to disk
+*/
 bool WriteJSONServerFile(
     QString base, QString login,
     QString param, QString update,
