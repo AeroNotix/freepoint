@@ -100,6 +100,8 @@ private:
     void GenericHandleResponse(QNetworkReply *reply);
 
     QWidget *parent;
+    // The UI does not inherit from QObject and thus cannot be inside
+    // a QPointer.
     std::unique_ptr<Ui::MainWindow> ui;
     QPointer<Database> db;
     QList<QVariantMap> connections;
