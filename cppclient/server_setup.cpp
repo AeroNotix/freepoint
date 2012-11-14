@@ -17,5 +17,5 @@ void ServerSetup::accept() {
 }
 
 void ServerSetup::reject() {
-    exit(-1);
+    QDialog::reject();
 }
