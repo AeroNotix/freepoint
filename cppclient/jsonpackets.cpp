@@ -17,6 +17,11 @@
 
 static const char* dq = "\"";
 
+/*
+  Quotes a QString as well as a T to:
+
+  "key" : "T"
+*/
 template <typename T>
 QString quote(QString key, T value) {
     QString ss;
@@ -25,6 +30,8 @@ QString quote(QString key, T value) {
     return *s.string();
 }
 
+// Total template specification because int wants to be trate a little
+// differently.
 template <>
 QString quote(QString key, int value) {
     QString ss;
@@ -33,6 +40,7 @@ QString quote(QString key, int value) {
     return *s.string();
 }
 
+// Quotes a single T in double quotes.
 template <typename T>
 QString quote(T toQuote) {
     QString ss;
@@ -41,6 +49,9 @@ QString quote(T toQuote) {
     return *s.string();
 }
 
+/*
+  Reads a JSON file and returns the parsed version of it as a QVariantMap
+*/
 QVariantMap ReadJSONFromFile(QString filename) {
     QFile file(filename);
     if (!file.exists()) {
@@ -73,6 +84,12 @@ QVariantMap ReadJSONFromFile(QString filename) {
     return results;
 }
 
+/*
+  Writes a JSON config file back to disk. Uses a list of connections
+  and the map from which to write back. As well as an additional new pair
+  of QStrings. If either of those are missing it will just write the old
+  data in to the file.
+*/
 bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_map,
                          QString filename, QString database, QString table)
 {
