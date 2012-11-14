@@ -87,10 +87,10 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     // if the connection_names has a size, then it must be a pre-existing
     // config file, pre-existing files should all have version strings.
     if (connection_names.size())
-        s << quote("version", connection_map["version"].toString())
-          << ",\n\t";
+        s << quote("version", connection_map["version"].toString());
     else
         s << quote("version", "0.1");
+    s  << ",\n\t";
 
     // we need x outside the loop, so we declare it here.
     int x;
