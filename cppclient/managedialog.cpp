@@ -14,7 +14,8 @@ void ManageConnectionDialog::accept() {
 }
 
 void ManageConnectionDialog::reject() {
-    QDialog::reject();
+    if (AreYouSure())
+        QDialog::reject();
 }
 
 void ManageConnectionDialog::fillList() {
