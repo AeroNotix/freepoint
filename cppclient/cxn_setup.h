@@ -17,7 +17,13 @@ class CXNSetup :
     Q_OBJECT
 
 public:
-    explicit CXNSetup(MainWindow *parent = 0);
+
+    enum WindowMode {
+        StandAlone,
+        Dialog
+    };
+
+    explicit CXNSetup(CXNSetup::WindowMode mode, MainWindow *parent = 0);
     virtual ~CXNSetup() {
         delete ui;
     }
@@ -28,5 +34,6 @@ public:
 private:
     MainWindow *parent;
     Ui_CXNSetup *ui;
+    CXNSetup::WindowMode mode;
 };
 #endif

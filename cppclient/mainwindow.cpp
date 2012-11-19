@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Parse the config file, if there's a problem with it, re-write
     // it.
     if (!ParseTableConfig()) {
-        CXNSetup *cxn = new CXNSetup(this);
+        CXNSetup *cxn = new CXNSetup(CXNSetup::StandAlone, this);
         cxn->exec();
         ParseTableConfig();
         delete cxn;
@@ -139,7 +139,7 @@ void MainWindow::RefreshTable() {
   is assigned to a menu item and shouldn't be called programatically.
 */
 void MainWindow::openConnectionDialog() {
-    CXNSetup *cxn = new CXNSetup(this);
+    CXNSetup *cxn = new CXNSetup(CXNSetup::Dialog, this);
     cxn->exec();
     delete cxn;
     ParseTableConfig();
