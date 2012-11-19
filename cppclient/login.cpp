@@ -15,6 +15,7 @@
     #include "qjson/parser.h"
 #endif
 #include "settings.h"
+#include "jsonpackets.h"
 
 
 using namespace login;
@@ -43,7 +44,8 @@ void Login::login() {
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(networkRequestFinished(QNetworkReply*)));
 
-    QByteArray data(generateLoginString().c_str());
+    QByteArray data;
+    data.append(generateLoginString());
     QUrl url(Settings::LOGINURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
@@ -58,14 +60,14 @@ void Login::login() {
 
   Output is a char* because will use it for HTTP Post data.
 */
-std::string Login::generateLoginString() {
-
-    std::string dq = "\"";
-    std::stringstream s(std::stringstream::in | std::stringstream::out);
-    s << "{" << dq << "USER" << dq << ":" << dq << storedUser.toStdString()
-      << dq << "," << dq << "PASSWORD" << dq << ":" << dq << storedPass.toStdString()
-      << dq << "}";
-    return s.str();
+QString Login::generateLoginString() {
+    QString ss;
+    QTextStream s(&ss);
+    s << "{"
+      << quote("USER", storedUser) << ","
+      << quote("PASSWORD", storedPass)
+      << "}";
+    return *s.string();
 }
 
 void Login::networkRequestFinished(QNetworkReply *reply) {

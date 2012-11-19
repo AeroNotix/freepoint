@@ -43,7 +43,7 @@ namespace login {
     private:
         void errorCleanup();
         void login();
-        std::string generateLoginString();
+        QString generateLoginString();
         MainWindow *parent;
         Ui_frm_login *ui;
         QString storedUser;
