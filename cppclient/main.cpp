@@ -10,6 +10,7 @@
   #defines.
  */
 #include <stdexcept>
+#include <iostream>
 
 #include <QtGui/QApplication>
 #include <QDir>
