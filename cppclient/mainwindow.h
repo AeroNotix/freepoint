@@ -58,7 +58,7 @@ public:
     void SetPassword(const QString &pass);
     const QString GetPassword(void) const;
     const QString GetTable(void) const;
-    const QString GetDatabase(void) const;
+    const QString GetDatabase(void) const;          // Getters.
     const QStringList GetHeadings(void) const {
         return connection_names;
     }
