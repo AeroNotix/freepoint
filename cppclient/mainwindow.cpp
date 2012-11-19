@@ -201,15 +201,6 @@ void MainWindow::AddNewConnection(QString database, QString table) {
         ShowError("Error writing new config file! Contact Administrator.");
 }
 
-/*
-  Pass-through method to the underlying database to insert a whole new
-  row into the currently active table.
-
-  @param newrowdata a list of strings which will be interpreted as the
-  whole new row to be inserted into the db. The DB's state will hold
-  the right db connection and thus you don't have to worry about making
-  sure that it will go to the right table.
-*/
 void MainWindow::InsertRow(QStringList newrowdata) {
     db->Insert(newrowdata);
 }
