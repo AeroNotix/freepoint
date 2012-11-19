@@ -64,7 +64,7 @@ public:
      * @brief Create creates a JSON string which is compliant with the API to
      * create a new table in the database.
      */
-	void Create(QString jsondata);
+    void Create(QString jsondata);
     /**
      * @brief ChangeTable creates a JSON string which is compliant with the API to
      * update a cell in the database.
