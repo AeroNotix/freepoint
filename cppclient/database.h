@@ -41,22 +41,39 @@ class Database :
 public:
     Database(QWidget *parent, QString user, QString passwd,
              QString using_db, QString table);
-    Database(QWidget *parent) :
-        parent(parent) {
-    };
-    ~Database() {
-        qDebug() << "in db dtor";
-    };
+    ~Database() {};
 
-    void Connect();
     void Close();
     void Update();
+    /**
+     * Insert creates a JSON string which is compliant with the API to
+     * insert a completely new row of data.
+     */
     void Insert(QStringList newrowdata);
+    /**
+     * @brief Query creates a JSON string which is compliant with the API to
+     * retrieve the currently active table.
+     */
     void Query();
+    /**
+     * @brief Delete creates a JSON string which is compliant with the API to
+     * delete either a row or rows of data.
+     */
     void Delete(QList<QString> deleters);
+    /**
+     * @brief Create creates a JSON string which is compliant with the API to
+     * create a new table in the database.
+     */
 	void Create(QString jsondata);
+    /**
+     * @brief ChangeTable creates a JSON string which is compliant with the API to
+     * update a cell in the database.
+     */
     void ChangeTable(QString newdata, QString col, QString id);
-
+    /**
+     * @brief ParseMetadata reads through the rawmeta data and assigns as much as
+     * it can to the key's true base-types.
+     */
     bool ParseMetadata(QMap<QString, QVariant>);
     QMetadata GetMetadata() {
         return metadata;
