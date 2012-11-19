@@ -338,11 +338,7 @@ void MainWindow::UpdatedData(QNetworkReply *reply) {
     bool ok;
     QVariantMap result = parser.parse(json, &ok).toMap();
 
-    if (!ok || json.size() == 0) {
-        RevertCellData();
-        return;
-    }
-    if (!result["Success"].toBool())
+    if (!ok || json.size() == 0 || !result["Success"].toBool())
         RevertCellData();
     else
         ShowMessage("Database updated successfully", 3000);
