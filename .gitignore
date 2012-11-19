@@ -20,3 +20,5 @@ qrc*
 server.json
 config.json
 *log*
+cppclient/html/*
+cppclient/latex/*
