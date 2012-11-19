@@ -26,10 +26,6 @@ void CreateNewDatabase::accept() {
     QDialog::accept();
 }
 
-/*
-  CreateTable creates the JSON string from the user-created rows and fires
-  off a request to the database.
-*/
 void CreateNewDatabase::CreateTable() {
 
     if (!doPreChecks())

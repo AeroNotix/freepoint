@@ -68,14 +68,6 @@ std::string Login::generateLoginString() {
     return s.str();
 }
 
-/*
-  SLOT:-
-
-  This method should not be called directly.
-
-  This method is asynchronously called via the QNetworkAccessManager
-  class.
-*/
 void Login::networkRequestFinished(QNetworkReply *reply) {
 
     networkRequestPending = false;
@@ -100,12 +92,6 @@ void Login::networkRequestFinished(QNetworkReply *reply) {
     errorCleanup();
 }
 
-/*
-  SLOT:-
-
-  We attach a signal to this slot so we can asynchronously cleanup members
-  that won't be used because the NetworkRequests fail.
-*/
 void Login::handleNetworkError(QNetworkReply::NetworkError) {
     errorCleanup();
 }
@@ -133,7 +119,7 @@ void Login::reject(void) {
 }
 
 /*
-  Simple method where we can put any and all cleanup into
+  Simple method where we can put any and all cleanup into.
 */
 void Login::errorCleanup() {
     storedUser = QString("");
