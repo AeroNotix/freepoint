@@ -595,11 +595,8 @@ void MainWindow::ShowMessage(const QString &text, int t) {
   Pops open an error dialog with a message and on the StatusBar.
 */
 void MainWindow::ShowError(const QString &text) {
-    QMessageBox *msgBox = new QMessageBox;
-    msgBox->setText(text);
-    msgBox->exec();
+    MessageBox(text);
     ShowMessage(text, 1000);
-    delete msgBox;
 }
 
 void MainWindow::Login() {
