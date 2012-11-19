@@ -22,10 +22,6 @@ CreateNewDatabase::CreateNewDatabase(MainWindow *p)
     ui->lbl_rows_missing->hide();
 }
 
-/*
-  Simply accepts the dialog without creating a database or prompting
-  the user to see if they are sure about quitting.
-*/
 void CreateNewDatabase::accept() {
     QDialog::accept();
 }
@@ -70,28 +66,15 @@ void CreateNewDatabase::CreateTable() {
     QDialog::accept();
 }
 
-/*
-  reject just closes the dialog without using the suppled data
-*/
 void CreateNewDatabase::reject() {
     if (AreYouSure())
         QDialog::reject();
 }
 
-/*
-  changeFieldDescriptions is fired when the fieldButtonGroup is changed
-  we N = (~N-1) because the field ID numbers are negative indexes starting
-  from -2 for some bloody reason. Dafuq?
-*/
 void CreateNewDatabase::changeFieldDescriptions(int i) {
     ui->stackedWidget->setCurrentIndex(~i-1);
 }
 
-/*
-  acceptFieldAdd is fired on a StackedWidget page. It will determine
-  which page is currently active and create a row entry from the widgets
-  on that page.
-*/
 void CreateNewDatabase::acceptFieldAdd() {
     QString s = GetCurrentRowname();
     if (s.size() == 0)
@@ -359,13 +342,6 @@ QString CreateNewDatabase::genericAddData() {
       << quote("NULL") << ":" << toStrBool(nu) << ",";
 
     return *s.string();
-}
-
-void CreateNewDatabase::ShowRowAttributes() {
-    QListWidgetItem* curr = ui->list_db_rows->currentItem();
-    if (!curr)
-        return;
-    qDebug() << curr << " : " << curr->text();
 }
 
 void CreateNewDatabase::DeleteSelectedRow() {

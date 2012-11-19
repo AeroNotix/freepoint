@@ -33,14 +33,36 @@ public:
         for (int x = 0; x < list_items.size(); ++x)
             delete list_items[x];
     }
+    /*
+     * @brief Simply accepts the dialog without creating a database or prompting
+     * the user to see if they are sure about quitting.
+     */
     virtual void accept(void);
+    /*
+     * @brief Simply rejectss the dialog without creating a database it will
+     * prompt the user to confirm before closing.
+     */
     virtual void reject(void);
 
 public slots:
+    /*
+     * @brief changeFieldDescriptions is fired when the fieldButtonGroup is changed
+     * we N = (~N-1) because the field ID numbers are negative indexes starting
+     * from -2 for some bloody reason. Dafuq?
+     * @param i this is the index of the fieldtype which was selected.
+     */
     void changeFieldDescriptions(int i);
+    /*
+     * @brief acceptFieldAdd is fired on a StackedWidget page. It will determine
+     * which page is currently active and create a row entry from the widgets
+     * on that page.
+     */
     void acceptFieldAdd();
-    void ShowRowAttributes();
     void DeleteSelectedRow();
+    /*
+     * @brief CreateTable creates the JSON string from the user-created rows and fires
+     * off a request to the database.
+     */
     void CreateTable();
 
 private slots:
