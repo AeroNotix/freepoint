@@ -191,6 +191,9 @@ void MainWindow::InsertRow(int x) {
   AddNewConnection simply opens the connection configuration file and
   adds in a new connection with the database:table entry. This method
   will check for failures and signify an error in that case.
+
+  @param database the QString which signifies the new database name
+  @param table the QString which signifies the new table name
 */
 void MainWindow::AddNewConnection(QString database, QString table) {
     QString fname = appendDir(sgetcwd(), "config.json").path();
@@ -201,6 +204,11 @@ void MainWindow::AddNewConnection(QString database, QString table) {
 /*
   Pass-through method to the underlying database to insert a whole new
   row into the currently active table.
+
+  @param newrowdata a list of strings which will be interpreted as the
+  whole new row to be inserted into the db. The DB's state will hold
+  the right db connection and thus you don't have to worry about making
+  sure that it will go to the right table.
 */
 void MainWindow::InsertRow(QStringList newrowdata) {
     db->Insert(newrowdata);
@@ -442,6 +450,15 @@ void MainWindow::CreateNewTable() {
     delete cnd;
 }
 
+/*
+  CreateNew is called when a new table is to be created. The database
+  creator window will call this method and we just pass it straight through
+  to the database. We do this so we can compartmentalize our code.
+
+  @param jsondata a raw json formatted string signifying the new table
+  to be created. This string _must_ be in conformance with the API.
+  @see settings_server/README.md for details.
+ */
 void MainWindow::CreateNew(QString jsondata) {
     db->Create(jsondata);
 }
@@ -567,6 +584,8 @@ void MainWindow::ClearDelegates() {
 
 /*
   Shows a simple message on the StatusBar for the specified time.
+
+  @text the error message to show.
 */
 void MainWindow::ShowMessage(const QString &text, int t) {
     ui->statusbar->showMessage(text, t);
