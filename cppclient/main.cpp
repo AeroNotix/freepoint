@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     }
     catch (std::exception &e) {
         WriteLog(e.what());
-        MessageBox(QString(e.what()));
+        MessageBox("Unhandled exception: " + QString(e.what()));
         std::cerr << e.what() << std::endl;
         return -1;
     }

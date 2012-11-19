@@ -7,6 +7,7 @@
 #include <string>
 #include <stdexcept>
 
+#include <QDateTime>
 #include <QAction>
 #include <QtGui>
 #include <QIcon>
@@ -93,6 +94,10 @@ void WriteLog(const char *what) {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
         return;
     QTextStream s(&file);
-    s << "Error: " << what << "\n";
+    s << "Log entry on: "
+      << QDateTime::currentDateTime().toString()
+      << " with message: "
+      << what
+      << "\n";
     s.flush();
 }
