@@ -52,3 +52,20 @@ bool AreYouSure() {
     delete msgbox;
     return ans;
 }
+
+void MessageBox(QString message) {
+    QMessageBox *msgbox = new QMessageBox();
+    msgbox->setText(message);
+    msgbox->addButton(QMessageBox::Ok);
+    msgbox->exec();
+    delete msgbox;
+}
+
+void WriteLog(const char *what) {
+    QFile file(appendDir(sgetcwd(), "log.txt").path());
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+        return;
+    QTextStream s(&file);
+    s << "Error: " << what << "\n";
+    s.flush();
+}
