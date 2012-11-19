@@ -14,6 +14,13 @@
 
 #include "mainwindow.h"
 
+/*
+  Create action will instantiate a QAction with the various parameters.
+
+  Remember: This creates a QAction *on the heap* so make sure you delete
+  it if you will be not using it anymore. I recommend using a QActionGroup
+  so you can keep track of where these go.
+*/
 QAction* create_action(MainWindow *obj, QString text, QString tip, QString fname, const char *slot)
 {
     QAction *action = new QAction(text, obj);
@@ -28,6 +35,10 @@ QAction* create_action(MainWindow *obj, QString text, QString tip, QString fname
     return action;
 }
 
+/*
+  Uses the system call getcwd() to find the current working directory
+  and returns it as a QDir.
+*/
 QDir sgetcwd() {
     char cwd[256];
     if (getcwd(cwd, sizeof(cwd)) == NULL)
@@ -35,6 +46,10 @@ QDir sgetcwd() {
     return QDir(QString(cwd));
 }
 
+/*
+  From QDir we append a string to the end, appending system path separators
+  wherever we need.
+*/
 QDir appendDir(QDir base, std::string path) {
     QString base_path = base.path();
     QChar last = base_path[base_path.size() - 1];
@@ -43,6 +58,9 @@ QDir appendDir(QDir base, std::string path) {
     return QDir(base_path.append(QString(path.c_str())));
 }
 
+/*
+  Instantiates a generic Yes/No dialog.
+*/
 bool AreYouSure() {
     QMessageBox *msgbox = new QMessageBox();
     msgbox->setText("Are you sure?");
@@ -53,6 +71,9 @@ bool AreYouSure() {
     return ans;
 }
 
+/*
+  Instantiates a MessageBox with message as it's contents.
+*/
 void MessageBox(QString message) {
     QMessageBox *msgbox = new QMessageBox();
     msgbox->setText(message);
@@ -61,6 +82,12 @@ void MessageBox(QString message) {
     delete msgbox;
 }
 
+/*
+  Writes what to the log file.
+
+  TODO:: Consider making the log file more featureful and/or add the
+  ability to change where logfiles are stored.
+*/
 void WriteLog(const char *what) {
     QFile file(appendDir(sgetcwd(), "log.txt").path());
     if (!file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
