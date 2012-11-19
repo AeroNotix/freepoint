@@ -19,3 +19,4 @@ cppclient/ui_*
 qrc*
 server.json
 config.json
+*log*
