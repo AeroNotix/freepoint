@@ -164,6 +164,7 @@ QString CreateNewDatabase::generateCurrData() {
 
     s << genericAddData();
     s << quote("TYPE", "CURR");
+    s << "}}";
 
     return *s.string();
 }
