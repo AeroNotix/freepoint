@@ -1,5 +1,3 @@
-// TODO: Refactor this module.
-
 #include <vector>
 #include <sstream>
 #include <iostream>
