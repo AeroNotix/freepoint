@@ -23,6 +23,9 @@ QItemDelegate* SelectDelegate(QString choice, QStringList choices, QMainWindow *
     case 3:      // DATE
         return new DateDelegate(parent);
     default:
+        // If we're here then there's either malformed metadata or
+        // no specific widget was set. Either way, let's just return
+        // the default ItemDelegate.
         return new QItemDelegate(parent);
     }
 }
