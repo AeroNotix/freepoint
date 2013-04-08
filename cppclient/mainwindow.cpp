@@ -605,7 +605,7 @@ void MainWindow::PopulateToolbar() {
                       this,
                       "Export as CSV",
                       "Click here to export the current table to CSV file.",
-                      ":/document-save-as",
+                      ":/zip_unmount",
                       SLOT(ExportAsCSV())));
     Actions.append(create_action(
                        this,
