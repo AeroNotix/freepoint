@@ -333,8 +333,8 @@ QString CreateNewDatabase::genericAddData() {
     s << quote(rowname) << ":{"
         // we're using QStrings, so %1, %2 etc refer to positional
         // arguments. They can be filled in with QString::arg(...)
-      << quote("RowNum") << ":" << "%1" << ","
-      << quote("RowData") << ":{"
+      << quote("ROWNUM") << ":" << "%1" << ","
+      << quote("ROWDATA") << ":{"
       << quote("UNIQUE") << ":" << toStrBool(un) << ","
       << quote("NULL") << ":" << toStrBool(nu) << ",";
 
