@@ -10,6 +10,7 @@
   #defines.
  */
 #include <stdexcept>
+#include <iostream>
 
 #include <QtGui/QApplication>
 #include <QDir>
@@ -33,5 +34,14 @@ int main(int argc, char *argv[])
     QResource::registerResource(resource.path());
     MainWindow w;
     w.show();
-    return a.exec();
+
+    try {
+        return a.exec();
+    }
+    catch (std::exception &e) {
+        WriteLog(e.what());
+        MessageBox("Unhandled exception: " + QString(e.what()));
+        std::cerr << e.what() << std::endl;
+        return -1;
+    }
 }

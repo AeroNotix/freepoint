@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>ConnectionsDialog</class>
+ <widget class="QDialog" name="ConnectionsDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>251</height>
+    <width>600</width>
+    <height>348</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,74 +17,128 @@
    <iconset resource="../resources/resource.qrc">
     <normaloff>:/address-book-new</normaloff>:/address-book-new</iconset>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="4">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" rowspan="4">
-    <widget class="QListWidget" name="listWidget"/>
-   </item>
-   <item row="1" column="1" colspan="2">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Database</string>
-     </property>
-     <property name="buddy">
-      <cstring>txt_database</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="3" colspan="2">
-    <widget class="QLineEdit" name="txt_database"/>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="label_3">
-     <property name="text">
-      <string>Table</string>
-     </property>
-     <property name="buddy">
-      <cstring>txt_table</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3" colspan="2">
-    <widget class="QLineEdit" name="txt_table"/>
-   </item>
-   <item row="4" column="2" colspan="2">
-    <widget class="QPushButton" name="btn_deleteRow">
-     <property name="text">
-      <string>Delete Connection</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QPushButton" name="btn_editRow">
-     <property name="text">
-      <string>Save Edit</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="3">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-  </layout>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>-1</x>
+     <y>0</y>
+     <width>600</width>
+     <height>300</height>
+    </rect>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>600</width>
+     <height>0</height>
+    </size>
+   </property>
+   <widget class="QWidget" name="widget_2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>274</width>
+      <height>301</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QListWidget" name="listWidget"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="widget_3" native="true">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>10</y>
+      <width>321</width>
+      <height>291</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="txt_table"/>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="txt_database"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lbl_table">
+       <property name="text">
+        <string>Table</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lbl_dabase">
+       <property name="text">
+        <string>Database</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </widget>
+   <zorder>widget_2</zorder>
+   <zorder>listWidget</zorder>
+   <zorder>widget_3</zorder>
+  </widget>
+  <widget class="QWidget" name="widget_4" native="true">
+   <property name="geometry">
+    <rect>
+     <x>5</x>
+     <y>300</y>
+     <width>591</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <widget class="QPushButton" name="btn_deleteRow">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>9</y>
+      <width>80</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&amp;Delete</string>
+    </property>
+    <property name="icon">
+     <iconset resource="../resources/resource.qrc">
+      <normaloff>:/edit-delete</normaloff>:/edit-delete</iconset>
+    </property>
+   </widget>
+   <widget class="QDialogButtonBox" name="buttonBox">
+    <property name="geometry">
+     <rect>
+      <x>416</x>
+      <y>9</y>
+      <width>166</width>
+      <height>33</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="standardButtons">
+     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    </property>
+   </widget>
+  </widget>
  </widget>
  <resources>
   <include location="../resources/resource.qrc"/>
@@ -93,12 +147,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>ConnectionsDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
-     <y>208</y>
+     <x>586</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -109,12 +163,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>ConnectionsDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>438</x>
-     <y>208</y>
+     <x>586</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -123,57 +177,41 @@
    </hints>
   </connection>
   <connection>
-   <sender>listWidget</sender>
-   <signal>currentRowChanged(int)</signal>
-   <receiver>Dialog</receiver>
-   <slot>populateFields()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>140</x>
-     <y>106</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>568</x>
-     <y>250</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btn_editRow</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>editRow()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>306</x>
-     <y>221</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>902</x>
-     <y>419</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>btn_deleteRow</sender>
    <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>ConnectionsDialog</receiver>
    <slot>deleteRow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>368</x>
-     <y>222</y>
+     <x>395</x>
+     <y>322</y>
     </hint>
     <hint type="destinationlabel">
-     <x>1009</x>
-     <y>445</y>
+     <x>599</x>
+     <y>347</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>listWidget</sender>
+   <signal>itemClicked(QListWidgetItem*)</signal>
+   <receiver>ConnectionsDialog</receiver>
+   <slot>populateFields(QListWidgetItem*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>177</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>789</x>
+     <y>801</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
-  <slot>populateFields()</slot>
   <slot>editRow()</slot>
   <slot>deleteRow()</slot>
+  <slot>populateFields(QListWidgetItem*)</slot>
  </slots>
 </ui>

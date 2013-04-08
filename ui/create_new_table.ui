@@ -31,6 +31,9 @@
   <property name="windowOpacity">
    <double>1.000000000000000</double>
   </property>
+  <property name="toolTip">
+   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Database creation form.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+  </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
@@ -56,6 +59,9 @@
      <height>192</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;View currently added rows, or select one to change/delete it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QGroupBox" name="fieldChoiceBox">
    <property name="geometry">
@@ -65,6 +71,9 @@
      <width>114</width>
      <height>291</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the field type depending on what kind of information you want to store in a row.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="title">
     <string>Field Types</string>
@@ -156,6 +165,9 @@
        <width>361</width>
        <height>531</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make the required changes on how you want this particular row to be stored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="title">
       <string>Field Description - Text</string>
@@ -250,6 +262,9 @@
        <height>531</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make the required changes on how you want this particular row to be stored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="title">
       <string>Field Description - Choice</string>
      </property>
@@ -337,6 +352,9 @@
        <height>531</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make the required changes on how you want this particular row to be stored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="title">
       <string>Field Description - Date</string>
      </property>
@@ -407,6 +425,12 @@
        <height>531</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make the required changes on how you want this particular row to be stored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="whatsThis">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="title">
       <string>Field Description - Time</string>
      </property>
@@ -435,6 +459,12 @@
        <height>531</height>
       </rect>
      </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make the required changes on how you want this particular row to be stored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="whatsThis">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="title">
       <string>Field Description - Group</string>
      </property>
@@ -462,6 +492,9 @@
        <width>361</width>
        <height>531</height>
       </rect>
+     </property>
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Make the required changes on how you want this particular row to be stored.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="title">
       <string>Field Description - Currency</string>
@@ -549,6 +582,9 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose a name for your database.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
   </widget>
   <widget class="QLineEdit" name="txt_table_name">
    <property name="geometry">
@@ -558,6 +594,9 @@
      <width>141</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose a name for your table.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QLabel" name="lbl_table_name">
@@ -574,32 +613,6 @@
    </property>
    <property name="buddy">
     <cstring>txt_table_name</cstring>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>560</x>
-     <y>320</y>
-     <width>83</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Edit Row</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_2">
-   <property name="geometry">
-    <rect>
-     <x>690</x>
-     <y>320</y>
-     <width>83</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Delete Row</string>
    </property>
   </widget>
   <widget class="QLabel" name="lbl_database_missing">
@@ -672,6 +685,64 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;You have not included any table rows.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>310</y>
+     <width>184</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout_2">
+    <property name="fieldGrowthPolicy">
+     <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+    </property>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="btn_editrow">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Edits&lt;/span&gt; the currently selected row.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>&amp;Edit Row</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="btn_deleterow">
+      <property name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Deletes&lt;/span&gt; the currently selected row.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+       <string>&amp;Delete Row</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QPushButton" name="btn_createtable">
+   <property name="geometry">
+    <rect>
+     <x>549</x>
+     <y>540</y>
+     <width>80</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&amp;Create</string>
+   </property>
+   <property name="icon">
+    <iconset resource="../resources/resource.qrc">
+     <normaloff>:/view_bottom</normaloff>:/view_bottom</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>30</width>
+     <height>30</height>
+    </size>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>line_radio</tabstop>
@@ -683,8 +754,6 @@
   <tabstop>txt_database_name</tabstop>
   <tabstop>txt_table_name</tabstop>
   <tabstop>list_db_rows</tabstop>
-  <tabstop>pushButton</tabstop>
-  <tabstop>pushButton_2</tabstop>
   <tabstop>txt_grp_rowname</tabstop>
   <tabstop>txt_grp_unique</tabstop>
   <tabstop>txt_grp_length</tabstop>
@@ -822,14 +891,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton</sender>
+   <sender>btn_editrow</sender>
    <signal>clicked()</signal>
    <receiver>CreateNewDatabase</receiver>
    <slot>ShowRowAttributes()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>594</x>
-     <y>339</y>
+     <x>689</x>
+     <y>343</y>
     </hint>
     <hint type="destinationlabel">
      <x>1083</x>
@@ -838,14 +907,14 @@
    </hints>
   </connection>
   <connection>
-   <sender>pushButton_2</sender>
+   <sender>btn_deleterow</sender>
    <signal>clicked()</signal>
    <receiver>CreateNewDatabase</receiver>
    <slot>DeleteSelectedRow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>729</x>
-     <y>331</y>
+     <x>668</x>
+     <y>340</y>
     </hint>
     <hint type="destinationlabel">
      <x>1016</x>
@@ -885,6 +954,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btn_createtable</sender>
+   <signal>clicked()</signal>
+   <receiver>CreateNewDatabase</receiver>
+   <slot>CreateTable()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>569</x>
+     <y>550</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1059</x>
+     <y>848</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeFieldDescriptions()</slot>
@@ -895,6 +980,7 @@
   <slot>DeleteSelectedRow()</slot>
   <slot>removeDatabaseNotifications()</slot>
   <slot>removeTableNotifications()</slot>
+  <slot>CreateTable()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="fieldButtonGroup"/>

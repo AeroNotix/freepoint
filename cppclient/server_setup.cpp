@@ -8,7 +8,6 @@ ServerSetup::ServerSetup(MainWindow *parent)
 }
 
 void ServerSetup::accept() {
-
     WriteJSONServerFile(ui->txtBaseURL->text(), ui->txtLoginURL->text(),
                         ui->txtQueryURL->text(), ui->txtUpdateURL->text(),
                         ui->txtInsertURL->text(), ui->txtDeleteURL->text(),
@@ -17,5 +16,5 @@ void ServerSetup::accept() {
 }
 
 void ServerSetup::reject() {
-    exit(-1);
+    QDialog::reject();
 }

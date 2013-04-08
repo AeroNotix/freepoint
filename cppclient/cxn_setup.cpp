@@ -1,8 +1,8 @@
 #include "cxn_setup.h"
 
-CXNSetup::CXNSetup(MainWindow *parent)
+CXNSetup::CXNSetup(CXNSetup::WindowMode mode, MainWindow *parent)
     : QDialog(parent),
-      parent(parent), ui(new Ui_CXNSetup)
+      parent(parent), ui(new Ui_CXNSetup), mode(mode)
 {
     ui->setupUi(this);
 }
@@ -14,6 +14,11 @@ void CXNSetup::accept() {
 }
 
 void CXNSetup::reject() {
-    QDialog::reject();
-    exit(-1);
+    switch (mode) {
+    case CXNSetup::StandAlone:
+        QDialog::reject();
+        exit(-1);
+    case CXNSetup::Dialog:
+        QDialog::reject();
+    };
 }

@@ -17,6 +17,11 @@
 
 static const char* dq = "\"";
 
+/*
+  Quotes a QString as well as a T to:
+
+  "key" : "T"
+*/
 template <typename T>
 QString quote(QString key, T value) {
     QString ss;
@@ -25,6 +30,8 @@ QString quote(QString key, T value) {
     return *s.string();
 }
 
+// Total template specification because int wants to be trate a little
+// differently.
 template <>
 QString quote(QString key, int value) {
     QString ss;
@@ -33,6 +40,7 @@ QString quote(QString key, int value) {
     return *s.string();
 }
 
+// Quotes a single T in double quotes.
 template <typename T>
 QString quote(T toQuote) {
     QString ss;
@@ -41,6 +49,9 @@ QString quote(T toQuote) {
     return *s.string();
 }
 
+/*
+  Reads a JSON file and returns the parsed version of it as a QVariantMap
+*/
 QVariantMap ReadJSONFromFile(QString filename) {
     QFile file(filename);
     if (!file.exists()) {
@@ -73,6 +84,12 @@ QVariantMap ReadJSONFromFile(QString filename) {
     return results;
 }
 
+/*
+  Writes a JSON config file back to disk. Uses a list of connections
+  and the map from which to write back. As well as an additional new pair
+  of QStrings. If either of those are missing it will just write the old
+  data in to the file.
+*/
 bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_map,
                          QString filename, QString database, QString table)
 {
@@ -87,10 +104,10 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     // if the connection_names has a size, then it must be a pre-existing
     // config file, pre-existing files should all have version strings.
     if (connection_names.size())
-        s << quote("version", connection_map["version"].toString())
-          << ",\n\t";
+        s << quote("version", connection_map["version"].toString());
     else
         s << quote("version", "0.1");
+    s  << ",\n\t";
 
     // we need x outside the loop, so we declare it here.
     int x;
@@ -105,9 +122,7 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
           << ",\n\t\t";
         s << quote("table", xmap["table"].toString())
           << "\n\t}";
-        // if we're on the last one, don't insert a comma.
-        if (x + 1 != connection_names.size())
-            s << ",\n\t";
+        s << ",\n\t";
     }
 
     // we're simply re-writing the config file if we weren't supplied with
@@ -116,7 +131,6 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     // Otherwise we've got an additional database/table combo to store.
     QString empty = QString("");
     if (database != empty) {
-        s << ",\n\t";
         s << quote(cxnstring(x)) << ": {\n\t\t";
         s << quote("database", database) << ",\n\t\t";
         s << quote("table", table) << "\n\t";
@@ -139,6 +153,9 @@ bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_ma
     return true;
 }
 
+/*
+  Writes the server JSON config file back to disk
+*/
 bool WriteJSONServerFile(
     QString base, QString login,
     QString param, QString update,
@@ -156,15 +173,15 @@ bool WriteJSONServerFile(
     QString qtdbase = ":\"";
     qtdbase.append(base);
 
-    s << "{\n";
-    s << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t";
-    s << quote("SERVERURL") << qtdbase << dq << ",\n\t\t";
-    s << quote("LOGINURL") << qtdbase << login << le;
-    s << quote("PARAMURL") << qtdbase << param << le;
-    s << quote("UPDATEURL") << qtdbase << update << le;
-    s << quote("INSERTURL") << qtdbase << insert << le;
-    s << quote("DELETEURL") << qtdbase << del << le;
-    s << quote("CREATEURL") << qtdbase << create << "/" << dq << "\n\t}\n}\n";
+    s << "{\n"
+      << "\t" << quote("CONNECTION_DETAILS") << ":{\n\t\t"
+      << quote("SERVERURL") << qtdbase << dq << ",\n\t\t"
+      << quote("LOGINURL") << qtdbase << login << le
+      << quote("PARAMURL") << qtdbase << param << le
+      << quote("UPDATEURL") << qtdbase << update << le
+      << quote("INSERTURL") << qtdbase << insert << le
+      << quote("DELETEURL") << qtdbase << del << le
+      << quote("CREATEURL") << qtdbase << create << "/" << dq << "\n\t}\n}\n";
     s.flush();
     return true;
 }

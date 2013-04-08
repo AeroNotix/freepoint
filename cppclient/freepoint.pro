@@ -8,6 +8,7 @@ TARGET = freepoint
 TEMPLATE = app
 
 SOURCES += \
+         managedialog.cpp \
          createnewdatabase.cpp \
          database.cpp \
 	     threading.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
          main.cpp
 
 HEADERS  += \
+         managedialog.h \
          createnewdatabase.h \
          database.h \
 	     threading.h \

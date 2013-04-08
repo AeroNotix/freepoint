@@ -26,6 +26,7 @@
 #include "add_new_row.h"
 #include "cxn_setup.h"
 #include "createnewdatabase.h"
+#include "managedialog.h"
 
 /*
   Class ctor.
@@ -34,9 +35,9 @@
   files and create the login dialog.
 */
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), parent(parent), ui(new Ui::MainWindow),
-      db(nullptr), connections(QList<QVariantMap>()),
-      toolbar(addToolBar("toolbar")), current_connection_index(0)
+    : QMainWindow(parent), parent(parent), ui(new Ui::MainWindow), db(nullptr),
+      connections(QList<QVariantMap>()), toolbar(addToolBar("toolbar")),
+      actionGroupConnections(new QActionGroup(this)),current_connection_index(0)
 {
 
     QObject::connect(this, SIGNAL(NewRowSIG(int, int, QTableWidgetItem*)),
@@ -56,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Parse the config file, if there's a problem with it, re-write
     // it.
     if (!ParseTableConfig()) {
-        CXNSetup *cxn = new CXNSetup(this);
+        CXNSetup *cxn = new CXNSetup(CXNSetup::StandAlone, this);
         cxn->exec();
         ParseTableConfig();
         delete cxn;
@@ -138,13 +139,19 @@ void MainWindow::RefreshTable() {
   is assigned to a menu item and shouldn't be called programatically.
 */
 void MainWindow::openConnectionDialog() {
-    CXNSetup *cxn = new CXNSetup(this);
+    CXNSetup *cxn = new CXNSetup(CXNSetup::Dialog, this);
     cxn->exec();
     delete cxn;
+    ParseTableConfig();
+    AddMenuActions();
 }
 
 void MainWindow::openManageDialog() {
-    throw std::runtime_error("Not implemented! openManageDialog");
+    ManageConnectionDialog *mcd = new ManageConnectionDialog(this);
+    mcd->exec();
+    delete mcd;
+    ParseTableConfig();
+    AddMenuActions();
 }
 
 /*
@@ -184,6 +191,9 @@ void MainWindow::InsertRow(int x) {
   AddNewConnection simply opens the connection configuration file and
   adds in a new connection with the database:table entry. This method
   will check for failures and signify an error in that case.
+
+  @param database the QString which signifies the new database name
+  @param table the QString which signifies the new table name
 */
 void MainWindow::AddNewConnection(QString database, QString table) {
     QString fname = appendDir(sgetcwd(), "config.json").path();
@@ -191,10 +201,6 @@ void MainWindow::AddNewConnection(QString database, QString table) {
         ShowError("Error writing new config file! Contact Administrator.");
 }
 
-/*
-  Pass-through method to the underlying database to insert a whole new
-  row into the currently active table.
-*/
 void MainWindow::InsertRow(QStringList newrowdata) {
     db->Insert(newrowdata);
 }
@@ -331,11 +337,7 @@ void MainWindow::UpdatedData(QNetworkReply *reply) {
     bool ok;
     QVariantMap result = parser.parse(json, &ok).toMap();
 
-    if (!ok || json.size() == 0) {
-        RevertCellData();
-        return;
-    }
-    if (!result["Success"].toBool())
+    if (!ok || json.size() == 0 || !result["Success"].toBool())
         RevertCellData();
     else
         ShowMessage("Database updated successfully", 3000);
@@ -361,8 +363,11 @@ void MainWindow::ChangeConnection(QAction *action) {
 }
 
 void MainWindow::AddMenuActions() {
-
-    actionGroupConnections = new QActionGroup(this);
+    QList<QAction*> removal_list = actionGroupConnections->actions();
+    for (int x = 0; x < removal_list.size(); ++x) {
+        ui->menuSelect_Table->removeAction(removal_list[x]);
+        delete removal_list[x];
+    }
     connect(actionGroupConnections, SIGNAL(triggered(QAction*)),
             this, SLOT(ChangeConnection(QAction*)));
     for (int x = 0; x < connection_names.size(); ++x) {
@@ -436,6 +441,15 @@ void MainWindow::CreateNewTable() {
     delete cnd;
 }
 
+/*
+  CreateNew is called when a new table is to be created. The database
+  creator window will call this method and we just pass it straight through
+  to the database. We do this so we can compartmentalize our code.
+
+  @param jsondata a raw json formatted string signifying the new table
+  to be created. This string _must_ be in conformance with the API.
+  @see settings_server/README.md for details.
+ */
 void MainWindow::CreateNew(QString jsondata) {
     db->Create(jsondata);
 }
@@ -535,13 +549,12 @@ void MainWindow::NewRow(int x, int y, QTableWidgetItem *newrow) {
   have much better editing widgets for certain columns.
 */
 void MainWindow::SetDelegates(QMetadata metadata) {
-
     for (int x = 0; x < headings.size(); ++x) {
-        QString rowtype = metadata[headings[x]].toMap()["ROWDATA"].toMap()["TYPE"].toString();
+        QString rowtype = metadata[headings[x]].toMap()["RowData"].toMap()["TYPE"].toString();
         QStringList choices;
         if (rowtype == QString("BOOL") ||
             rowtype == QString("CHOICE")) {
-            choices = metadata[headings[x]].toMap()["ROWDATA"].toMap()["CHOICES"].toStringList();
+            choices = metadata[headings[x]].toMap()["RowData"].toMap()["CHOICES"].toStringList();
         }
         QItemDelegate *newdelegate = SelectDelegate(rowtype, choices, this);
         delegates.append(newdelegate);
@@ -561,6 +574,8 @@ void MainWindow::ClearDelegates() {
 
 /*
   Shows a simple message on the StatusBar for the specified time.
+
+  @text the error message to show.
 */
 void MainWindow::ShowMessage(const QString &text, int t) {
     ui->statusbar->showMessage(text, t);
@@ -570,11 +585,8 @@ void MainWindow::ShowMessage(const QString &text, int t) {
   Pops open an error dialog with a message and on the StatusBar.
 */
 void MainWindow::ShowError(const QString &text) {
-    QMessageBox *msgBox = new QMessageBox;
-    msgBox->setText(text);
-    msgBox->exec();
+    MessageBox(text);
     ShowMessage(text, 1000);
-    delete msgBox;
 }
 
 void MainWindow::Login() {
@@ -662,4 +674,9 @@ const QString MainWindow::GetTable(void) const {
 
 const QString MainWindow::GetDatabase(void) const {
     return connection_map[connection_names[current_connection_index]].toMap()["database"].toString();
+}
+
+const std::pair<QString, QString> MainWindow::GetDBTableInfo(QString connectionname) const {
+    return std::pair<QString, QString>(connection_map[connectionname].toMap()["database"].toString(),
+                                       connection_map[connectionname].toMap()["table"].toString());
 }

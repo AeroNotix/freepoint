@@ -20,3 +20,6 @@ server.json
 config.json
 settings_server/settings_server
 settings_server/execute-sql.go
+*log*
+cppclient/html/*
+cppclient/latex/*

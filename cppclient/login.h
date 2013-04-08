@@ -28,13 +28,22 @@ namespace login {
         virtual void reject(void);
 
     public slots:
+        /**
+         * @brief This method should not be called directly.
+         * This method is asynchronously called via the QNetworkAccessManager
+         * class.
+         */
         void networkRequestFinished(QNetworkReply*);
+        /**
+         * @brief We attach a signal to this slot so we can asynchronously
+         * cleanup members that won't be used because the NetworkRequests fail.
+         */
         void handleNetworkError(QNetworkReply::NetworkError);
 
     private:
         void errorCleanup();
         void login();
-        std::string generateLoginString();
+        QString generateLoginString();
         MainWindow *parent;
         Ui_frm_login *ui;
         QString storedUser;

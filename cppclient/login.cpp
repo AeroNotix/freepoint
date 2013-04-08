@@ -15,6 +15,7 @@
     #include "qjson/parser.h"
 #endif
 #include "settings.h"
+#include "jsonpackets.h"
 
 
 using namespace login;
@@ -43,7 +44,8 @@ void Login::login() {
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(networkRequestFinished(QNetworkReply*)));
 
-    QByteArray data(generateLoginString().c_str());
+    QByteArray data;
+    data.append(generateLoginString());
     QUrl url(Settings::LOGINURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
@@ -58,24 +60,16 @@ void Login::login() {
 
   Output is a char* because will use it for HTTP Post data.
 */
-std::string Login::generateLoginString() {
-
-    std::string dq = "\"";
-    std::stringstream s(std::stringstream::in | std::stringstream::out);
-    s << "{" << dq << "USER" << dq << ":" << dq << storedUser.toStdString()
-      << dq << "," << dq << "PASSWORD" << dq << ":" << dq << storedPass.toStdString()
-      << dq << "}";
-    return s.str();
+QString Login::generateLoginString() {
+    QString ss;
+    QTextStream s(&ss);
+    s << "{"
+      << quote("USER", storedUser) << ","
+      << quote("PASSWORD", storedPass)
+      << "}";
+    return *s.string();
 }
 
-/*
-  SLOT:-
-
-  This method should not be called directly.
-
-  This method is asynchronously called via the QNetworkAccessManager
-  class.
-*/
 void Login::networkRequestFinished(QNetworkReply *reply) {
 
     networkRequestPending = false;
@@ -100,12 +94,6 @@ void Login::networkRequestFinished(QNetworkReply *reply) {
     errorCleanup();
 }
 
-/*
-  SLOT:-
-
-  We attach a signal to this slot so we can asynchronously cleanup members
-  that won't be used because the NetworkRequests fail.
-*/
 void Login::handleNetworkError(QNetworkReply::NetworkError) {
     errorCleanup();
 }
@@ -133,7 +121,7 @@ void Login::reject(void) {
 }
 
 /*
-  Simple method where we can put any and all cleanup into
+  Simple method where we can put any and all cleanup into.
 */
 void Login::errorCleanup() {
     storedUser = QString("");
