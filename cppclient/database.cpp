@@ -25,7 +25,7 @@ void Database::Close() {
 }
 
 void Database::Insert(QStringList newrowdata) {
-    currentNam->disconnect();
+    disconnect();
     QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(InsertedRow(QNetworkReply*)));
 
@@ -41,7 +41,7 @@ void Database::Insert(QStringList newrowdata) {
 }
 
 void Database::Query() {
-    currentNam->disconnect();
+    disconnect();
     QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(InsertData(QNetworkReply*)));
     GetQuery gq = GetQuery(UsingDB, TableName);
@@ -56,7 +56,7 @@ void Database::Query() {
 }
 
 void Database::Delete(QList<QString> deleters) {
-    currentNam->disconnect();
+    disconnect();
     QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(DeletedData(QNetworkReply*)));
 
@@ -72,7 +72,7 @@ void Database::Delete(QList<QString> deleters) {
 }
 
 void Database::Create(QString jsondata) {
-    currentNam->disconnect();
+    disconnect();
     QByteArray data;
     data.append(jsondata);
     QUrl url(Settings::CREATEURL);
@@ -84,7 +84,7 @@ void Database::Create(QString jsondata) {
 }
 
 void Database::ChangeTable(QString newdata, QString col, QString id) {
-    currentNam->disconnect();
+    disconnect();
     QObject::connect(currentNam.get(), SIGNAL(finished(QNetworkReply*)),
                      parent, SLOT(UpdatedData(QNetworkReply*)));
     UpdateQuery uq = UpdateQuery(UsingDB, TableName, newdata, col, id);
@@ -110,6 +110,11 @@ bool Database::ParseMetadata(QMap<QString, QVariant> rawmeta) {
 
     metadata = newmetadata;
     return true;
+}
+
+void Database::disconnect() {
+	if (currentNam)
+		currentNam->disconnect();
 }
 
 /*

@@ -79,6 +79,8 @@ public:
         return metadata;
     };
 
+	void disconnect();
+
     void SetUsername(const QString &Username) {
         User = Username;
     }
