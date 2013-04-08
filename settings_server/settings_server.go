@@ -183,7 +183,6 @@ func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 // or multiple return types which need to be parsed out
 // or error checks on them and this seems cleaner.
 func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
-
 	// We retrieve the JSON string and encode it
 	// into the proper JSON request struct.
 	json_dec := json.NewDecoder(req.Body)
@@ -197,6 +196,7 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 
 	row, err := ss.GetUser(userdata.Username)
 	if err != nil {
+		log.Println(err)
 		return false, err
 	}
 	// Create a User instance from the SQL Results.
@@ -207,8 +207,10 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 	// if we've got here, we either are logged in or not.
 	success := *userdata == req_user
 	if !success {
+		log.Println(ss.LoginError)
 		return success, ss.LoginError
 	}
+	log.Printf("%s logged in.\n", req_user.Username)
 	return success, nil
 }
 

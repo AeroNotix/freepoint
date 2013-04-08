@@ -1,8 +1,10 @@
 package settingsserver
 
 import (
+	"connection_details"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 )
 
@@ -10,6 +12,7 @@ import (
 // server interface
 type AppServer struct {
 	Routes     []RoutingEntry
+	Logfile    *log.Logger
 	dbWriter   chan AsyncUpdate
 	dbCreator  chan AsyncCreate
 	dbInserter chan AsyncInsert
@@ -29,12 +32,17 @@ type AppServer struct {
 // recieved. We then kick off three goroutines which monitor a *specific*
 // channel for certain job types in order to process them synchronously.
 func NewAppServer(routes []RoutingEntry) AppServer {
+	f, err := os.Create(connection_details.Logfile)
+	if err != nil {
+		panic(err)
+	}
 	app := AppServer{
 		Routes:     routes,
 		dbWriter:   make(chan AsyncUpdate, 10),
 		dbCreator:  make(chan AsyncCreate, 10),
 		dbInserter: make(chan AsyncInsert, 10),
 		dbDeleter:  make(chan AsyncDelete, 10),
+		Logfile:    log.New(f, "", log.Lshortfile|log.LstdFlags),
 	}
 
 	go AsyncUpdater(app.dbWriter)
@@ -43,6 +51,10 @@ func NewAppServer(routes []RoutingEntry) AppServer {
 	go AsyncDeleter(app.dbDeleter)
 
 	return app
+}
+
+func (self AppServer) log(input ...interface{}) {
+	self.Logfile.Println(input...)
 }
 
 // This is the main 'event loop' for the web server. All requests are
@@ -73,20 +85,41 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 //
 // Each are methods of the AppServer and return an error.
 func (self *AppServer) WriteEntry(job AsyncUpdate) error {
+	self.log("Writing...")
 	self.dbWriter <- job
-	return <-job.ReturnPath
+	err := <-job.ReturnPath
+	if err != nil {
+		self.log(err)
+	}
+	return err
 }
 func (self *AppServer) CreateEntry(job AsyncCreate) error {
+	self.log("Creating...")
 	self.dbCreator <- job
-	return <-job.ReturnPath
+	err := <-job.ReturnPath
+	if err != nil {
+		self.log(err)
+	}
+	return err
 }
 func (self *AppServer) InsertEntry(job AsyncInsert) error {
+	self.log("Inserting...")
 	self.dbInserter <- job
-	return <-job.ReturnPath
+	err := <-job.ReturnPath
+	if err != nil {
+		self.log(err)
+	}
+	return err
 }
 func (self *AppServer) DeleteEntries(job AsyncDelete) error {
+	self.log("Deleting...")
 	self.dbDeleter <- job
-	return <-job.ReturnPath
+	err := <-job.ReturnPath
+	if err != nil {
+		self.log(err)
+	}
+	return err
+
 }
 
 // This type defines what signatures of functions can be used
