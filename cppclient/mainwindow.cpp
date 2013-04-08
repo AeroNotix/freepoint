@@ -559,11 +559,11 @@ void MainWindow::NewRow(int x, int y, QTableWidgetItem *newrow) {
 */
 void MainWindow::SetDelegates(QMetadata metadata) {
     for (int x = 0; x < headings.size(); ++x) {
-        QString rowtype = metadata[headings[x]].toMap()["RowData"].toMap()["TYPE"].toString();
+        QString rowtype = metadata[headings[x]].toMap()["ROWDATA"].toMap()["TYPE"].toString();
         QStringList choices;
         if (rowtype == QString("BOOL") ||
             rowtype == QString("CHOICE")) {
-            choices = metadata[headings[x]].toMap()["RowData"].toMap()["CHOICES"].toStringList();
+            choices = metadata[headings[x]].toMap()["ROWDATA"].toMap()["CHOICES"].toStringList();
         }
         QItemDelegate *newdelegate = SelectDelegate(rowtype, choices, this);
         delegates.append(newdelegate);
