@@ -59,12 +59,19 @@ MainWindow::MainWindow(QWidget *parent)
     if (!ParseTableConfig()) {
         CXNSetup *cxn = new CXNSetup(CXNSetup::StandAlone, this);
         cxn->exec();
-        ParseTableConfig();
         delete cxn;
     }
-    // If we're here it means we have a config, so set the table and
-    // populate it.
-    SetCurrentTable();
+
+    /*
+	  If we're here it means we have a config, so check if it fails. If
+	  it fails it means that the config file is bamjaxed somehow, so
+	  attempt to create a new database.
+	*/
+	if (!ParseTableConfig()) {
+		qDebug() << "Creating new table";
+		CreateNewTable();
+	}
+	SetCurrentTable();
     PopulateToolbar();
     AddMenuActions();
 }
@@ -97,8 +104,11 @@ bool MainWindow::ParseTableConfig() {
     catch (JSONOpenError jerror) {
         return false;
     }
-
     connection_names = connection_map["connections"].toStringList();
+	if (connection_names.size() < 1) {
+		qDebug() << "Configuration file is in error.";
+		return false;
+	}
     return true;
 }
 
