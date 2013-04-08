@@ -1,6 +1,6 @@
-// Package groups together useful functions when dealing with databases
-// it also defines the Asynchronous types and the job queues which deal with
-// them.
+// Package groups together useful functions when dealing with
+// databases it also defines the Asynchronous types and the job queues
+// which deal with them.
 
 package settingsserver
 
@@ -16,8 +16,9 @@ import (
 	"strings"
 )
 
-// This struct will be used to create jobs which can be push into async worker queues
-// to asynchronously process database writes and have them write to disk sequentially.
+// This struct will be used to create jobs which can be push into
+// async worker queues to asynchronously process database writes and
+// have them write to disk sequentially.
 type AsyncUpdate struct {
 	Database   string `json:"DATABASE"`
 	Table      string `json:"TABLE"`
@@ -51,10 +52,9 @@ type AsyncDelete struct {
 	ReturnPath chan error
 }
 
-// Using the Request form values we create a job and return it.
-// We do it like this so that the error channel doesn't have to
-// be create by the user and they just pass the request form to
-// this.
+// Using the Request form values we create a job and return it.  We do
+// it like this so that the error channel doesn't have to be create by
+// the user and they just pass the request form to this.
 func NewAsyncJob(req *http.Request) (AsyncUpdate, error) {
 
 	json_dec := json.NewDecoder(req.Body)
@@ -70,9 +70,9 @@ func NewAsyncJob(req *http.Request) (AsyncUpdate, error) {
 
 // NewAsyncCreate returns a basic representation of what an
 // AsyncCreate instance might look like. We have a NewCreate()
-// function as to not enforce the user to see implementation
-// details about how the asynchronous nature of the update/create
-// is accomplished
+// function as to not enforce the user to see implementation details
+// about how the asynchronous nature of the update/create is
+// accomplished
 func NewAsyncCreate(req *http.Request) (out AsyncCreate, e error) {
 
 	createRequest := new(CreateRequest)
@@ -106,8 +106,8 @@ func NewAsyncCreate(req *http.Request) (out AsyncCreate, e error) {
 }
 
 // NewAsyncInsert allows users of the dbutils lib to recieve an
-// AsyncInsert instance with the correct data without having to
-// be totally aware of the implementation details.
+// AsyncInsert instance with the correct data without having to be
+// totally aware of the implementation details.
 func NewAsyncInsert(req *http.Request) (insert AsyncInsert, err error) {
 
 	js := json.NewDecoder(req.Body)
@@ -143,8 +143,9 @@ func NewAsyncDelete(req *http.Request) (del AsyncDelete, err error) {
 	return del, err
 }
 
-// Function which takes a row of the incoming json data from a create request
-// and tries to extract a CREATE TABLE row instruction out of it.
+// Function which takes a row of the incoming json data from a create
+// request and tries to extract a CREATE TABLE row instruction out of
+// it.
 //
 // This function takes a map of strings->interfaces and returns a formatted
 // SQL string.
@@ -173,8 +174,8 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 	panic("Unreachable")
 }
 
-// Function which takes a database name and connects to that database using the details
-// defined in the connection module.
+// Function which takes a database name and connects to that database
+// using the details defined in the connection module.
 func CreateConnection(dbname string) (mysql.Conn, error) {
 	db := mysql.New(
 		"tcp",
@@ -191,9 +192,8 @@ func CreateConnection(dbname string) (mysql.Conn, error) {
 	return db, nil
 }
 
-// Given a user string we grab the user from
-// the database, if the user exists we throw
-// back a single row, if not an error
+// Given a user string we grab the user from the database, if the user
+// exists we throw back a single row, if not an error
 func GetUser(user string) (mysql.Row, error) {
 
 	db, err := CreateConnection(connection_details.SettingsDatabase)
@@ -221,8 +221,8 @@ func GetUser(user string) (mysql.Row, error) {
 	return row, nil
 }
 
-// GetMetadata connects to our database which returns a Metadata instance.
-// Metadata is an instance which holds JSON data.
+// GetMetadata connects to our database which returns a Metadata
+// instance.  Metadata is an instance which holds JSON data.
 func GetMetadata(dbreq *DatabaseRequest) (Metadata, error) {
 	db, err := CreateConnection(connection_details.SettingsDatabase)
 	if err != nil {
@@ -257,10 +257,10 @@ func GetMetadata(dbreq *DatabaseRequest) (Metadata, error) {
 	return metadata, nil
 }
 
-// GetRows takes a database and a table as a string and returns
-// a slice of mysql.Rows. This is literally a select * on any
-// given table which will handle errors and give us a simpler API
-// to work with.
+// GetRows takes a database and a table as a string and returns a
+// slice of mysql.Rows. This is literally a select * on any given
+// table which will handle errors and give us a simpler API to work
+// with.
 func GetRows(dbreq *DatabaseRequest) ([]mysql.Row, error) {
 	db, err := CreateConnection(dbreq.Database)
 	if err != nil {
@@ -277,8 +277,8 @@ func GetRows(dbreq *DatabaseRequest) ([]mysql.Row, error) {
 }
 
 // GetHeadings is a function which returns a []string which contains
-// the headings names and an error indicating the status of the function
-// call.
+// the headings names and an error indicating the status of the
+// function call.
 func GetHeadings(dbreq *DatabaseRequest) ([]string, error) {
 	db, err := CreateConnection(dbreq.Database)
 	defer db.Close()
@@ -302,9 +302,10 @@ func GetHeadings(dbreq *DatabaseRequest) ([]string, error) {
 	return headers, nil
 }
 
-// AsyncUpdater monitors a channel of type AsyncUpdate and blocks until it receives
-// on it. Once it has received a job, it will process by calling ChangeData on the
-// job and sending it's return value down the ReturnPath associated with the job.
+// AsyncUpdater monitors a channel of type AsyncUpdate and blocks
+// until it receives on it. Once it has received a job, it will
+// process by calling ChangeData on the job and sending it's return
+// value down the ReturnPath associated with the job.
 func AsyncUpdater(jobqueue chan AsyncUpdate) {
 	for {
 		job := <-jobqueue
@@ -312,9 +313,10 @@ func AsyncUpdater(jobqueue chan AsyncUpdate) {
 	}
 }
 
-// AsyncCreator monitors a channel of type AsyncCreate and blocks until it receives
-// on it. Once it has received a job, it will process by calling CreateTable on the
-// job and sending it's return value down the ReturnPath associated with the job.
+// AsyncCreator monitors a channel of type AsyncCreate and blocks
+// until it receives on it. Once it has received a job, it will
+// process by calling CreateTable on the job and sending it's return
+// value down the ReturnPath associated with the job.
 func AsyncCreator(jobqueue chan AsyncCreate) {
 	for {
 		job := <-jobqueue
@@ -322,9 +324,10 @@ func AsyncCreator(jobqueue chan AsyncCreate) {
 	}
 }
 
-// AsyncInserter monitors a channel of type AsyncCreate and blocks until it receives
-// on it. Once it has received a job, it will process by calling InsertRow on the
-// job and sending it's return value down the ReturnPath associated with the job.
+// AsyncInserter monitors a channel of type AsyncCreate and blocks
+// until it receives on it. Once it has received a job, it will
+// process by calling InsertRow on the job and sending it's return
+// value down the ReturnPath associated with the job.
 func AsyncInserter(jobqueue chan AsyncInsert) {
 	for {
 		job := <-jobqueue
@@ -332,9 +335,10 @@ func AsyncInserter(jobqueue chan AsyncInsert) {
 	}
 }
 
-// AsyncInserter monitors a channel of type AsyncDelete and blocks until it receives
-// on it. Once it has received a job, it will process by calling DeleteRows on the
-// job and sending it's return value down the ReturnPath associated with the job.
+// AsyncInserter monitors a channel of type AsyncDelete and blocks
+// until it receives on it. Once it has received a job, it will
+// process by calling DeleteRows on the job and sending it's return
+// value down the ReturnPath associated with the job.
 func AsyncDeleter(jobqueue chan AsyncDelete) {
 	for {
 		job := <-jobqueue
@@ -342,10 +346,11 @@ func AsyncDeleter(jobqueue chan AsyncDelete) {
 	}
 }
 
-// ChangeData is a function which connects to the database and makes an update to a
-// table column using the data inside the AsyncUpdate instance. This shouldn't be
-// called directly because we have an asynchronous queue which is looking for jobs
-// such as this in it's channel.
+// ChangeData is a function which connects to the database and makes
+// an update to a table column using the data inside the AsyncUpdate
+// instance. This shouldn't be called directly because we have an
+// asynchronous queue which is looking for jobs such as this in it's
+// channel.
 func ChangeData(job AsyncUpdate) error {
 	db, err := CreateConnection(job.Database)
 	if err != nil {
