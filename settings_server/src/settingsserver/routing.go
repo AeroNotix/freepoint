@@ -71,7 +71,7 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 			log.Println("Request:", route.Name)
 			err := route.Handler(self, w, req)
 			if err != nil {
-				log.Println(err)
+				self.log(err)
 			}
 			return
 		}
