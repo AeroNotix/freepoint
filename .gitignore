@@ -10,7 +10,6 @@
 *.dll
 *.out
 freepoint
-settings_server
 moc_*
 *.pro.user
 *.o
@@ -19,3 +18,5 @@ cppclient/ui_*
 qrc*
 server.json
 config.json
+settings_server/settings_server
+settings_server/execute-sql.go
