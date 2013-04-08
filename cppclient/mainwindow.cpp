@@ -673,6 +673,9 @@ const QString MainWindow::GetTable(void) const {
 }
 
 const QString MainWindow::GetDatabase(void) const {
+	qDebug() << connection_map[connection_names[current_connection_index]];
+	qDebug() << connection_map[connection_names[current_connection_index]].toMap();
+	qDebug() << connection_map[connection_names[current_connection_index]].toMap()["database"];
     return connection_map[connection_names[current_connection_index]].toMap()["database"].toString();
 }
 
