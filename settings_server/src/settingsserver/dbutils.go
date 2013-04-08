@@ -95,8 +95,6 @@ func NewAsyncCreate(req *http.Request) (out AsyncCreate, e error) {
 		sqlstr += ",\n"
 	}
 	sqlstr += "PRIMARY KEY (id)\n);"
-
-	fmt.Println(sqlstr)
 	out = AsyncCreate{
 		createRequest.Database,
 		createRequest.Table,
