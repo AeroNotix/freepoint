@@ -442,8 +442,7 @@ void MainWindow::WriteCSV(QString csvfilename) {
 
 /*
   Creates an instance of the CreateNewDatabase dialog and shows it.
-  This method is assigned to a toolbar button and should not be called
-  programatically.
+  This method is assigned to a toolbar button.
 */
 void MainWindow::CreateNewTable() {
     CreateNewDatabase *cnd = new CreateNewDatabase(this);
