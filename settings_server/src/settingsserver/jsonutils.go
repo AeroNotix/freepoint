@@ -52,6 +52,8 @@ type HeadingData map[string]interface{}
 // Our JSON will be a map of maps to interface types.
 type Metadata map[string]HeadingData
 
+type RawMetadata string
+
 // A JSON message in our case will be a [][]string field
 // which corresponds to the rows in a database call and
 // we also need to get the metadata for that call so

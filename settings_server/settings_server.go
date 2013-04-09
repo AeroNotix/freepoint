@@ -15,6 +15,23 @@ import (
 	"time"
 )
 
+func updateMetadata(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
+	job, err := ss.NewAsyncMetadataUpdate(req)
+	if err != nil {
+		ss.SendJSON(w, false)
+		return err
+	}
+	log.Println("here")
+	err = self.UpdateEntry(job)
+	if err != nil {
+		ss.SendJSON(w, false)
+		return err
+	}
+	ss.SendJSON(w, true)
+	log.Println("here")
+	return nil
+}
+
 // This is a handler which checks the POST for the data required to make
 // a change to the database.
 //
@@ -256,6 +273,11 @@ func main() {
 				regexp.MustCompile("^/delete/$"),
 				deleteRows,
 				"Deleting data",
+			),
+			ss.NewRoute(
+				regexp.MustCompile("^/meta/$"),
+				updateMetadata,
+				"Updating metadata",
 			),
 		},
 	)

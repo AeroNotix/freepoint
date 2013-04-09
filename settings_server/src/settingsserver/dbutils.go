@@ -52,6 +52,11 @@ type AsyncDelete struct {
 	ReturnPath chan error
 }
 
+type AsyncMetadata struct {
+	Meta       RawMetadata `json:"METADATA"`
+	ReturnPath chan error
+}
+
 // Using the Request form values we create a job and return it.  We do
 // it like this so that the error channel doesn't have to be create by
 // the user and they just pass the request form to this.
@@ -141,6 +146,16 @@ func NewAsyncDelete(req *http.Request) (del AsyncDelete, err error) {
 		make(chan error),
 	}
 	return del, err
+}
+
+func NewAsyncMetadataUpdate(req *http.Request) (mdu AsyncMetadata, err error) {
+	js := json.NewDecoder(req.Body)
+	mdu = AsyncMetadata{}
+	err = js.Decode(&mdu)
+	if err != nil {
+		log.Println(err)
+	}
+	return mdu, err
 }
 
 // Function which takes a row of the incoming json data from a create
@@ -346,6 +361,13 @@ func AsyncDeleter(jobqueue chan AsyncDelete) {
 	}
 }
 
+func AsyncMetadataUpdate(jobqueue chan AsyncMetadata) {
+	for {
+		job := <-jobqueue
+		job.ReturnPath <- UpdateMetadata(job)
+	}
+}
+
 // ChangeData is a function which connects to the database and makes
 // an update to a table column using the data inside the AsyncUpdate
 // instance. This shouldn't be called directly because we have an
@@ -369,6 +391,10 @@ func ChangeData(job AsyncUpdate) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func UpdateMetadata(job AsyncMetadata) error {
 	return nil
 }
 

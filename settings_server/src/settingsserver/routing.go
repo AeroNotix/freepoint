@@ -17,6 +17,7 @@ type AppServer struct {
 	dbCreator  chan AsyncCreate
 	dbInserter chan AsyncInsert
 	dbDeleter  chan AsyncDelete
+	dbMetadata chan AsyncMetadata
 }
 
 // NewAppServer allows us to take the steps required for running the
@@ -44,6 +45,7 @@ func NewAppServer(routes []RoutingEntry) AppServer {
 		dbCreator:  make(chan AsyncCreate, 10),
 		dbInserter: make(chan AsyncInsert, 10),
 		dbDeleter:  make(chan AsyncDelete, 10),
+		dbMetadata: make(chan AsyncMetadata, 10),
 		Logfile:    log.New(f, "", log.Lshortfile|log.LstdFlags),
 	}
 
@@ -51,6 +53,7 @@ func NewAppServer(routes []RoutingEntry) AppServer {
 	go AsyncCreator(app.dbCreator)
 	go AsyncInserter(app.dbInserter)
 	go AsyncDeleter(app.dbDeleter)
+	go AsyncMetadataUpdate(app.dbMetadata)
 
 	return app
 }
@@ -121,7 +124,16 @@ func (self *AppServer) DeleteEntries(job AsyncDelete) error {
 		self.log(err)
 	}
 	return err
-
+}
+func (self *AppServer) UpdateEntry(job AsyncMetadata) error {
+	self.log("Updating metadata...")
+	self.dbMetadata <- job
+	err := <-job.ReturnPath
+	if err != nil {
+		self.log(err)
+	}
+	self.log("Updated metadata...")
+	return err
 }
 
 // This type defines what signatures of functions can be used as
