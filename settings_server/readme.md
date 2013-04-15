@@ -11,23 +11,23 @@ JSON string.
 
 A typical JSON request for logging in will look like this:
 
-.. code-block:: javascript
-
+```javascript
     json = {
         "USERNAME": <username>,
         "PASSWORD": <password>
     }
+```
 
 Password hashing will be employed server-side so you may send it clear text. This is subject
 to change and this document should be consulted if you cannot log in.
 
 A typical return for a successful request looks like:
 
-.. code-block:: javascript
-
+```javascript
     json = {
         "Success": true
     }
+```
 
 Eventually the authentication will move to providing you with a cookie and/or a session ID
 so that real authentication and session management can take place. This will work for now
@@ -39,16 +39,16 @@ Viewing a table
 Viewing a table is as simple as ensuring that you are authenticated using the above method
 and then sending a request to `domain:port/getdb/` with the below JSON:
 
-.. code-block:: javascript
-
+```javascript
     json = {
         "DATABASE": <database>,
         "TABLE": <table>
     }
+```
 
 You will then receive a response such as:
 
-.. code-block:: javascript
+```javascript
 
     {
     'Rows': [
@@ -88,6 +88,7 @@ You will then receive a response such as:
             }
     }
     }
+```
 
 The data fully supports unicode so setting data to Unicode-code points will cause
 no problems.
@@ -149,7 +150,7 @@ should be NULL. This is because each table has an ID column which we want to aut
 
 A typical insert request looks like this:
 
-.. code-block:: javascript
+```javascript
 
     json = {
         "DATABASE": <database>,
@@ -167,7 +168,7 @@ guessing which piece of data failed to validate in the group of data they sent.
 
 A typical edit request will look like this:
 
-.. code-block:: javascript
+```javascript
 
     json = {
         "DATABASE": <database>,
@@ -176,10 +177,11 @@ A typical edit request will look like this:
         "DATA": <new-data>,
         "ID": <row-id>
     }
+```
 
 To which a typical response will be:
 
-.. code-block:: javascript
+```javascript
 
     json = {
         "Success": true
@@ -195,7 +197,7 @@ in the metadata table as what will get served when the relevant tables get acces
 
 Each table should be described with at least:
 
-.. code-block:: javascript
+```javascript
 
     json = {
         "DATABASE": <database>,
@@ -203,6 +205,7 @@ Each table should be described with at least:
         "HEADINGS": <headings map>,
         "PAYLOAD": <string encoded headings map>,
     }
+```
 
 This is the message which the server will receive which contains the needed fields to create a new
 table.
@@ -232,7 +235,7 @@ Type: Map/Associative Array
 This represents the metadata associated with the new table and makes up the meat of this request. This
 call will contain at least:
 
-.. code-block:: javascript
+```javascript
 
    HEADINGS = {
        "RowA" : {
@@ -243,6 +246,7 @@ call will contain at least:
               "UNIQUE": <is unique, bool>
           }
        }
+```
 
 The above is what all request will have since it is the most basic data required to make a column. What
 makes the UNIQUE and NULL interesting is that they have validators both server-side (database level)
@@ -251,8 +255,7 @@ explanation of this.
 
 Specific datatypes will have their own extra data associations and are required to insert them as so:
 
-.. code-block:: javascript
-
+```javascript
     json = {
         "DIRECTIVE": <type>
     }
@@ -262,6 +265,7 @@ Specific datatypes will have their own extra data associations and are required 
     {
         "CHOICES": ["Choice1", "Choice2", "Choice3"]
     }
+```
 
 Herein lies an interesting property. Consider that we know that a column is a choice type, based on
 the metadata that we received saying as much. We can build in validation rules which are enforced at
