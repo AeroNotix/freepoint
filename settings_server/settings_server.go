@@ -6,8 +6,11 @@
 package main
 
 import (
+	"crypto/sha512"
 	"encoding/json"
 	"flag"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"regexp"
@@ -210,7 +213,9 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 		log.Println(err)
 		return false, err
 	}
-
+	h := sha512.New()
+	io.WriteString(h, userdata.Password)
+	userdata.Password = fmt.Sprintf("%x", h.Sum(nil))
 	row, err := ss.GetUser(userdata.Username)
 	if err != nil {
 		log.Println(err)
