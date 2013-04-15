@@ -88,7 +88,7 @@ You will then receive a response such as:
                   }
             }
     }
-    }
+}
 ```
 
 The data fully supports unicode so setting data to Unicode-code points will
@@ -166,7 +166,7 @@ A typical insert request looks like this:
         "TABLE": <table>,
         "DATA": [NULL, array, of, strings]
     }
-
+```
 
 Editing tabledata
 -----------------
@@ -196,6 +196,7 @@ To which a typical response will be:
     json = {
         "Success": true
     }
+```
 
 Creating a table
 ----------------
