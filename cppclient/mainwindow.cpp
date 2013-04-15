@@ -558,6 +558,7 @@ void MainWindow::NewRow(int x, int y, QTableWidgetItem *newrow) {
   have much better editing widgets for certain columns.
 */
 void MainWindow::SetDelegates(QMetadata metadata) {
+    ClearDelegates();
     for (int x = 0; x < headings.size(); ++x) {
         QString rowtype = metadata[headings[x]].toMap()["ROWDATA"].toMap()["TYPE"].toString();
         QStringList choices;
