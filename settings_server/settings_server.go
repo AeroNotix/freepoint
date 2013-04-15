@@ -31,7 +31,6 @@ func updateMetadata(self *ss.AppServer, w http.ResponseWriter, req *http.Request
 		return err
 	}
 	ss.SendJSON(w, true)
-	log.Println("here")
 	return nil
 }
 
