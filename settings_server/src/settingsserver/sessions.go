@@ -101,15 +101,8 @@ func (m *MySQLSession) Save() error {
 		return err
 	}
 	defer db.Close()
-	b := bytes.NewBufferString("")
-	for key, value := range m.Values {
-		b.WriteString(
-			fmt.Sprintf(
-				"%s:=%s;",
-				key, value,
-			),
-		)
-	}
+	b := EncodeValues(m.Values)
+	m.RawValues = b.Bytes()
 	stmt, err := db.Prepare("UPDATE sessions SET sessionvalue=(?) WHERE sessionkey=(?)")
 	if err != nil {
 		return err
@@ -119,6 +112,19 @@ func (m *MySQLSession) Save() error {
 		return err
 	}
 	return nil
+}
+
+func EncodeValues(m map[string]string) *bytes.Buffer {
+	b := bytes.NewBufferString("")
+	for key, value := range m {
+		b.WriteString(
+			fmt.Sprintf(
+				"%s:=%s;",
+				key, value,
+			),
+		)
+	}
+	return b
 }
 
 func ParseValues(raw []byte) (map[string]string, error) {
