@@ -9,6 +9,7 @@
 #include <QMainWindow>
 #include <QKeyEvent>
 #include <QToolBar>
+#include <QNetworkCookie>
 
 #include "database.h"
 
@@ -56,9 +57,11 @@ public:
      * @param pass the QString to set the password to.
      */
     void SetPassword(const QString &pass);
+	void SetCookies(QList<QNetworkCookie>);
     const QString GetPassword(void) const;
     const QString GetTable(void) const;
     const QString GetDatabase(void) const;          // Getters.
+	const QList<QNetworkCookie> GetCookies(void) const;
     const QStringList GetHeadings(void) const {
         return connection_names;
     }
@@ -171,6 +174,7 @@ private:
     QList<QItemDelegate*> delegates;
     QStringList connection_names;
     QVariantMap connection_map;
+	QList<QNetworkCookie> cookies;
 
 signals:
     /**

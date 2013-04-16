@@ -15,6 +15,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QTextStream>
+#include <QNetworkCookie>
 
 #include "login.h"
 #include "mainwindow.h"
@@ -37,7 +38,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), parent(parent), ui(new Ui::MainWindow), db(nullptr),
       connections(QList<QVariantMap>()), toolbar(addToolBar("toolbar")),
-      actionGroupConnections(new QActionGroup(this)),current_connection_index(0)
+      actionGroupConnections(new QActionGroup(this)), current_connection_index(0)
 {
 
     QObject::connect(this, SIGNAL(NewRowSIG(int, int, QTableWidgetItem*)),
@@ -672,6 +673,10 @@ void MainWindow::SetPassword(const QString &text) {
     password = text;
 }
 
+void MainWindow::SetCookies(QList<QNetworkCookie> ckies) {
+	cookies = ckies;
+}
+
 const QString MainWindow::GetPassword(void) const {
     return password;
 }
@@ -687,4 +692,8 @@ const QString MainWindow::GetDatabase(void) const {
 const std::pair<QString, QString> MainWindow::GetDBTableInfo(QString connectionname) const {
     return std::pair<QString, QString>(connection_map[connectionname].toMap()["database"].toString(),
                                        connection_map[connectionname].toMap()["table"].toString());
+}
+
+const QList<QNetworkCookie> MainWindow::GetCookies(void) const {
+	return cookies;
 }

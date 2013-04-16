@@ -21,6 +21,17 @@
 
 using namespace login;
 
+
+class CookieJar : public QNetworkCookieJar {
+public:
+	QList<QNetworkCookie> getAllCookies() {
+		return allCookies();
+	}
+	bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl & url ) {
+		return QNetworkCookieJar::setCookiesFromUrl(cookieList, url);
+	}
+}
+
 Login::Login(MainWindow *parent)
     : QDialog(parent), parent(parent),
       ui(new Ui_frm_login), networkRequestPending(false),
@@ -42,6 +53,7 @@ void Login::login() {
     networkRequestPending = true;
 
     currentNam = new QNetworkAccessManager(this);
+	currentNam->setCookieJar(new CookieJar(this));
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(networkRequestFinished(QNetworkReply*)));
 
@@ -72,6 +84,11 @@ QString Login::generateLoginString() {
 }
 
 void Login::networkRequestFinished(QNetworkReply *reply) {
+	parent->SetCookies(currentNam->cookieJar()->cookiesForUrl(QUrl(Settings::SERVERURL)));
+	qDebug() << reply->header(QNetworkRequest::SetCookieHeader);
+	qDebug() << reply->rawHeaderPairs();
+	qDebug() << reply->header(QNetworkRequest::SetCookieHeader).value<QList<QNetworkCookie> >();
+	qDebug() << currentNam->cookieJar()->cookiesForUrl(QUrl("/"));
 	qDebug() << currentNam->cookieJar()->cookiesForUrl(QUrl(Settings::LOGINURL));
     networkRequestPending = false;
     QString text = reply->readAll();
