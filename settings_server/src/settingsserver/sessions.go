@@ -21,9 +21,9 @@ func randomBytes(howmuch int) []byte {
 
 type Session interface {
 	Encode() []byte
-	Add(key string, values []string)
+	Add(key string, values string)
 	Remove(key string)
-	Delete()
+	Delete() error
 	Save() error
 }
 
@@ -104,6 +104,8 @@ func (m *MySQLSession) Save() error {
 	b := EncodeValues(m.Values)
 	m.RawValues = b.Bytes()
 	stmt, err := db.Prepare("UPDATE sessions SET sessionvalue=(?) WHERE sessionkey=(?)")
+func (m *MySQLSession) Delete() error {
+	db, err := CreateConnection("db_freepoint")
 	if err != nil {
 		return err
 	}
@@ -112,6 +114,8 @@ func (m *MySQLSession) Save() error {
 		return err
 	}
 	return nil
+func (m *MySQLSession) Encode() []byte {
+	return EncodeValues(m.Values).Bytes()
 }
 
 func EncodeValues(m map[string]string) *bytes.Buffer {
