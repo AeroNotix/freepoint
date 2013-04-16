@@ -68,7 +68,6 @@ MainWindow::MainWindow(QWidget *parent)
 	  attempt to create a new database.
 	*/
 	if (!ParseTableConfig()) {
-		qDebug() << "Creating new table";
 		CreateNewTable();
 	}
 	SetCurrentTable();
@@ -106,7 +105,6 @@ bool MainWindow::ParseTableConfig() {
     }
     connection_names = connection_map["connections"].toStringList();
 	if (connection_names.size() < 1) {
-		qDebug() << "Configuration file is in error.";
 		return false;
 	}
     return true;
@@ -683,9 +681,6 @@ const QString MainWindow::GetTable(void) const {
 }
 
 const QString MainWindow::GetDatabase(void) const {
-	qDebug() << connection_map[connection_names[current_connection_index]];
-	qDebug() << connection_map[connection_names[current_connection_index]].toMap();
-	qDebug() << connection_map[connection_names[current_connection_index]].toMap()["database"];
     return connection_map[connection_names[current_connection_index]].toMap()["database"].toString();
 }
 
