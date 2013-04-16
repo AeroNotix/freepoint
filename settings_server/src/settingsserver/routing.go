@@ -11,13 +11,14 @@ import (
 // Struct so that we may assign ServeHTTP to something to satisfy the
 // server interface
 type AppServer struct {
-	Routes     []RoutingEntry
-	Logfile    *log.Logger
-	dbWriter   chan AsyncUpdate
-	dbCreator  chan AsyncCreate
-	dbInserter chan AsyncInsert
-	dbDeleter  chan AsyncDelete
-	dbMetadata chan AsyncMetadata
+	Routes        []RoutingEntry
+	Logfile       *log.Logger
+	Authenticator func(http.ResponseWriter, *http.Request) bool
+	dbWriter      chan AsyncUpdate
+	dbCreator     chan AsyncCreate
+	dbInserter    chan AsyncInsert
+	dbDeleter     chan AsyncDelete
+	dbMetadata    chan AsyncMetadata
 }
 
 // NewAppServer allows us to take the steps required for running the
@@ -71,6 +72,12 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	for _, route := range self.Routes {
 		matches := route.URL.FindAllStringSubmatch(request, 1)
 		if len(matches) > 0 {
+			if route.LoginRequired && self.Authenticator != nil {
+				if passed := self.Authenticator(w, req); !passed {
+					log.Println("Authentication failure.")
+					http.NotFound(w, req)
+				}
+			}
 			log.Println("Request:", route.Name)
 			err := route.Handler(self, w, req)
 			if err != nil {
@@ -150,17 +157,19 @@ type RouterHandler func(self *AppServer, w http.ResponseWriter, req *http.Reques
 // in this package.  Name simply allows us to have a 'pretty' version
 // of the function name.
 type RoutingEntry struct {
-	URL     *regexp.Regexp
-	Handler RouterHandler
-	Name    string
+	URL           *regexp.Regexp
+	Handler       RouterHandler
+	Name          string
+	LoginRequired bool
 }
 
 // NewRoute returns a RoutingEntry instance.
-func NewRoute(r *regexp.Regexp, h RouterHandler, name string) RoutingEntry {
+func NewRoute(r *regexp.Regexp, h RouterHandler, name string, requires_login bool) RoutingEntry {
 	route := RoutingEntry{
-		URL:     r,
-		Handler: h,
-		Name:    name,
+		URL:           r,
+		Handler:       h,
+		Name:          name,
+		LoginRequired: requires_login,
 	}
 	return route
 }

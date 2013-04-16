@@ -190,6 +190,16 @@ func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 		ss.SendJSONError(w, err)
 		return err
 	}
+	session, err := ss.CreateMySQLSession()
+	if err != nil {
+		fmt.Println("Error creating cookie: " + err.Error())
+	} else {
+		http.SetCookie(w, &http.Cookie{
+			Name:   "session",
+			Value:  string(session.Key),
+			Domain: req.Host,
+		})
+	}
 	ss.SendJSON(w, true)
 	return nil
 }
@@ -251,40 +261,50 @@ func main() {
 				regexp.MustCompile("^/getdb/$"),
 				databaseParameters,
 				"Parameters",
+				true,
 			),
 			ss.NewRoute(
 				regexp.MustCompile("^/login/$"),
 				userLogin,
 				"Login",
+				false,
 			),
 			ss.NewRoute(
 				regexp.MustCompile("^/update/$"),
 				changeTable,
 				"Change Table Data",
+				true,
 			),
 			ss.NewRoute(
 				regexp.MustCompile("^/create/$"),
 				createTable,
 				"Create table",
+				true,
 			),
 			ss.NewRoute(
 				regexp.MustCompile("^/insert/$"),
 				insertData,
 				"Inserting data",
+				true,
 			),
 			ss.NewRoute(
 				regexp.MustCompile("^/delete/$"),
 				deleteRows,
 				"Deleting data",
+				true,
 			),
 			ss.NewRoute(
 				regexp.MustCompile("^/meta/$"),
 				updateMetadata,
 				"Updating metadata",
+				true,
 			),
 		},
 	)
-
+	Settings.Authenticator = func(w http.ResponseWriter, req *http.Request) bool {
+		fmt.Println(req.Cookies())
+		return true
+	}
 	s := http.Server{
 		Addr:        addr,
 		Handler:     &Settings,
