@@ -87,10 +87,12 @@ func OpenMySQLSession(key []byte) (*MySQLSession, error) {
 
 func (m *MySQLSession) Add(key string, value string) {
 	m.Values[key] = value
+	m.Save()
 }
 
 func (m *MySQLSession) Remove(key string) {
 	delete(m.Values, key)
+	m.Save()
 }
 
 func (m *MySQLSession) Save() error {
