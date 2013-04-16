@@ -33,13 +33,14 @@ typedef QMap<QString, QVariant> QMetadata;
   The idea behind this is that we could, and should be able to substi-
   tute another conforming class for this one.
 */
+class MainWindow;
 class Database :
     public QObject {
 
     Q_OBJECT
 
 public:
-    Database(QWidget *parent, QString user, QString passwd,
+    Database(MainWindow *parent, QString user, QString passwd,
              QString using_db, QString table);
     ~Database() {};
 
@@ -104,7 +105,7 @@ public slots:
     void handleNetworkError(QNetworkReply::NetworkError);
 
 private:
-    QWidget *parent;
+	MainWindow *parent;
     QString User;
     QString Password;
     QString UsingDB;

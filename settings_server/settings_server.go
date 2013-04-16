@@ -198,6 +198,7 @@ func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 			Name:   "session",
 			Value:  string(session.Key),
 			Domain: req.Host,
+			Path:   "/",
 		})
 	}
 	ss.SendJSON(w, true)

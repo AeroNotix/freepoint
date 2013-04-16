@@ -7,6 +7,7 @@
 #include <QtCore/QString>
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkRequest>
+#include <QNetworkCookie>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkProxy>
@@ -14,11 +15,17 @@
 #include "database.h"
 #include "settings.h"
 #include "jsonpackets.h"
+#include "mainwindow.h"
+
 
 Database::Database
-(QWidget *parent, QString user, QString passwd, QString using_db, QString table)
+(MainWindow *parent, QString user, QString passwd, QString using_db, QString table)
     : QObject(), parent(parent), User(user), Password(passwd), UsingDB(using_db),
-    TableName(table), currentNam(new QNetworkAccessManager(this)) {};
+	  TableName(table), currentNam(new QNetworkAccessManager(this))
+{
+	currentNam->setCookieJar(new QNetworkCookieJar(this));
+	currentNam->cookieJar()->setCookiesFromUrl(parent->GetCookies(), QUrl(Settings::SERVERURL));
+};
 
 void Database::Close() {
     return;
@@ -33,8 +40,8 @@ void Database::Insert(QStringList newrowdata) {
     QByteArray data;
     data.append(iq.QueryString());
     QUrl url(Settings::INSERTURL);
-    QNetworkRequest req(url);
-    req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+	QNetworkRequest req(url);
+	req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
@@ -48,7 +55,7 @@ void Database::Query() {
     QByteArray data;
     data.append(gq.QueryString());
     QUrl url(Settings::PARAMURL);
-    QNetworkRequest req(url);
+	QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
