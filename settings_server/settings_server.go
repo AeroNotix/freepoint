@@ -24,7 +24,6 @@ func updateMetadata(self *ss.AppServer, w http.ResponseWriter, req *http.Request
 		ss.SendJSON(w, false)
 		return err
 	}
-	log.Println("here")
 	err = self.UpdateEntry(job)
 	if err != nil {
 		ss.SendJSON(w, false)
