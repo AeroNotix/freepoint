@@ -6,6 +6,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkProxy>
+#include <QNetworkCookie>
 
 #include "login.h"
 #include "ui_loginbox.h"
@@ -71,7 +72,7 @@ QString Login::generateLoginString() {
 }
 
 void Login::networkRequestFinished(QNetworkReply *reply) {
-
+	qDebug() << currentNam->cookieJar()->cookiesForUrl(QUrl(Settings::LOGINURL));
     networkRequestPending = false;
     QString text = reply->readAll();
     QByteArray json(text.toStdString().c_str());
