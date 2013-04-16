@@ -101,7 +101,6 @@ void Database::ChangeTable(QString newdata, QString col, QString id) {
 bool Database::ParseMetadata(QMap<QString, QVariant> rawmeta) {
     QMap<QString, QVariant> rawmetadata = rawmeta["Metadata"].toMap();
     QMap<QString, QVariant> headings = rawmetadata["HEADINGS"].toMap();
-	qDebug() << headings;
     QMetadata newmetadata;
     QList<QString> headerlist = headings.keys();
     for (int x = 0; x < headerlist.size(); ++x) {
