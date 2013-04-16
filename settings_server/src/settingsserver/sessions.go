@@ -104,6 +104,13 @@ func (m *MySQLSession) Save() error {
 	b := EncodeValues(m.Values)
 	m.RawValues = b.Bytes()
 	stmt, err := db.Prepare("UPDATE sessions SET sessionvalue=(?) WHERE sessionkey=(?)")
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Run(b.String(), m.Key)
+	return err
+}
+
 func (m *MySQLSession) Delete() error {
 	db, err := CreateConnection("db_freepoint")
 	if err != nil {
@@ -113,7 +120,10 @@ func (m *MySQLSession) Delete() error {
 	if err != nil {
 		return err
 	}
-	return nil
+	_, err = stmt.Run(m.Key)
+	return err
+}
+
 func (m *MySQLSession) Encode() []byte {
 	return EncodeValues(m.Values).Bytes()
 }
