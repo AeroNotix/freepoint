@@ -116,7 +116,8 @@ func (m *MySQLSession) Delete() error {
 	if err != nil {
 		return err
 	}
-	_, err = stmt.Run(b.String(), m.Key)
+	defer db.Close()
+	stmt, err := db.Prepare("DELETE FROM sessions WHERE sessionkey=(?)")
 	if err != nil {
 		return err
 	}
