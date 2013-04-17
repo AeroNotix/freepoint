@@ -2,6 +2,7 @@ package settingsserver
 
 import (
 	"connection_details"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -74,8 +75,11 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		if len(matches) > 0 {
 			if route.LoginRequired && self.Authenticator != nil {
 				if passed := self.Authenticator(w, req); !passed {
-					log.Println("Authentication failure.")
-					http.NotFound(w, req)
+					self.log("Authentication failure.")
+					w.Header().Set("Content-Type", "application/json")
+					w.WriteHeader(http.StatusForbidden)
+					io.WriteString(w, `{"error":"Session key failure."}`)
+					return
 				}
 			}
 			log.Println("Request:", route.Name)

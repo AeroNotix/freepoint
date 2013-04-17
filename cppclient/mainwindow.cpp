@@ -230,7 +230,11 @@ void MainWindow::InsertData(QNetworkReply *reply) {
         networkRequestPending = false;
         return;
     }
-
+    if (result.contains("error")) {
+        ShowError(result["error"].toString());
+        networkRequestPending = false;
+        return;
+    }
     QList<QVariant> rawrows_initial = result["Rows"].toList();
     headings = result["Headings"].toStringList();
     ui->tableWidget->setColumnCount(headings.size());
