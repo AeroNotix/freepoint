@@ -64,9 +64,9 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     /*
-	  If we're here it means we have a config, so check if it fails. If
-	  it fails it means that the config file is bamjaxed somehow, so
-	  attempt to create a new database.
+	  If we're here it means we have a config, so check if it
+	  fails. If it fails it means that the config file is bamjaxed
+	  somehow, so attempt to create a new database.
 	*/
 	if (!ParseTableConfig()) {
 		CreateNewTable();
@@ -165,10 +165,10 @@ void MainWindow::openManageDialog() {
 
 /*
   When a cell is entered, the User is able to change the data in that
-  cell to whatever they like (within the confines of the widget), however
-  it's a possibility that the data that they enter will not end up in
-  the database so we need to be able to revert the cell to it's previous
-  contents. This is what we are doing here.
+  cell to whatever they like (within the confines of the widget),
+  however it's a possibility that the data that they enter will not
+  end up in the database so we need to be able to revert the cell to
+  it's previous contents. This is what we are doing here.
 */
 void MainWindow::storeCell(int x, int y) {
     QTableWidgetItem* cell = ui->tableWidget->item(x, y);
@@ -180,8 +180,9 @@ void MainWindow::storeCell(int x, int y) {
 }
 
 /*
-  Creates an instance of the AddNewRow dialog and shows it. This dialog
-  is assigned to a menu item and shouldn't be called programatically.
+  Creates an instance of the AddNewRow dialog and shows it. This
+  dialog is assigned to a menu item and shouldn't be called
+  programatically.
 */
 void MainWindow::InsertRow() {
     AddNewRow *add = new AddNewRow(headings, delegates, this);
@@ -455,8 +456,9 @@ void MainWindow::CreateNewTable() {
 
 /*
   CreateNew is called when a new table is to be created. The database
-  creator window will call this method and we just pass it straight through
-  to the database. We do this so we can compartmentalize our code.
+  creator window will call this method and we just pass it straight
+  through to the database. We do this so we can compartmentalize our
+  code.
 
   @param jsondata a raw json formatted string signifying the new table
   to be created. This string _must_ be in conformance with the API.
@@ -556,9 +558,9 @@ void MainWindow::NewRow(int x, int y, QTableWidgetItem *newrow) {
 }
 
 /*
-  When a new table is parsed for it's metadata, we need to tell the table
-  to use certain delegates for certain columns because this way we can
-  have much better editing widgets for certain columns.
+  When a new table is parsed for it's metadata, we need to tell the
+  table to use certain delegates for certain columns because this way
+  we can have much better editing widgets for certain columns.
 */
 void MainWindow::SetDelegates(QMetadata metadata) {
     ClearDelegates();
