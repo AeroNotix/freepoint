@@ -197,10 +197,11 @@ func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 		fmt.Println("Error creating cookie: " + err.Error())
 	} else {
 		http.SetCookie(w, &http.Cookie{
-			Name:   "session",
-			Value:  string(session.Key),
-			Domain: req.Host,
-			Path:   "/",
+			Name:    "session",
+			Value:   string(session.Key),
+			Domain:  req.Host,
+			Path:    "/",
+			Expires: time.Now().Add(24 * time.Hour),
 		})
 	}
 	ss.SendJSON(w, true)
