@@ -301,8 +301,7 @@ func main() {
 		},
 	)
 	Settings.Authenticator = func(w http.ResponseWriter, req *http.Request) bool {
-		fmt.Println(req.Cookies())
-		return true
+		return ss.ValidateSession(req.Cookies())
 	}
 	s := http.Server{
 		Addr:        addr,

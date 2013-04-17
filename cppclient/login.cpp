@@ -1,6 +1,9 @@
 #include <iostream>
 #include <sstream>
 
+#include <QList>
+#include <QPair>
+#include <QByteArray>
 #include <QtCore/QUrl>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkAccessManager>
@@ -21,15 +24,17 @@
 
 using namespace login;
 
-
-class CookieJar : public QNetworkCookieJar {
-public:
-	QList<QNetworkCookie> getAllCookies() {
-		return allCookies();
-	}
-	bool setCookiesFromUrl(const QList<QNetworkCookie> & cookieList, const QUrl & url ) {
-		return QNetworkCookieJar::setCookiesFromUrl(cookieList, url);
-	}
+QList<QNetworkCookie> SessionCookies(QByteArray rawheader) {
+    QList<QNetworkCookie> cookies;
+    QList<QByteArray> elements = rawheader.split(';');
+    QList<QByteArray> subsplit;
+    for (int x = 0; x < elements.size(); ++x) {
+        subsplit = elements[x].split('=');
+        if (subsplit[0] == "session") {
+            cookies.append(QNetworkCookie(subsplit[0], subsplit[1]));
+        }
+    }
+    return cookies;
 }
 
 Login::Login(MainWindow *parent)
@@ -53,7 +58,7 @@ void Login::login() {
     networkRequestPending = true;
 
     currentNam = new QNetworkAccessManager(this);
-	currentNam->setCookieJar(new CookieJar(this));
+	currentNam->setCookieJar(new QNetworkCookieJar(this));
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(networkRequestFinished(QNetworkReply*)));
 
@@ -84,12 +89,7 @@ QString Login::generateLoginString() {
 }
 
 void Login::networkRequestFinished(QNetworkReply *reply) {
-	parent->SetCookies(currentNam->cookieJar()->cookiesForUrl(QUrl(Settings::SERVERURL)));
-	qDebug() << reply->header(QNetworkRequest::SetCookieHeader);
-	qDebug() << reply->rawHeaderPairs();
-	qDebug() << reply->header(QNetworkRequest::SetCookieHeader).value<QList<QNetworkCookie> >();
-	qDebug() << currentNam->cookieJar()->cookiesForUrl(QUrl("/"));
-	qDebug() << currentNam->cookieJar()->cookiesForUrl(QUrl(Settings::LOGINURL));
+	parent->SetCookies(SessionCookies(reply->rawHeader("Set-Cookie")));
     networkRequestPending = false;
     QString text = reply->readAll();
     QByteArray json(text.toStdString().c_str());
