@@ -12,10 +12,17 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	ss "settingsserver"
 	"time"
 )
+
+var logfile *log.Logger
+
+func init() {
+	logfile = log.New(os.Stderr, "", log.Ldate|log.Llongfile)
+}
 
 func updateMetadata(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 	job, err := ss.NewAsyncMetadataUpdate(req)
@@ -128,7 +135,7 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 	err := json_dec.Decode(&dbreq)
 	if err != nil {
 		ss.SendJSON(w, false)
-		log.Println(err)
+		logfile.Println(err)
 		return err
 	}
 
@@ -155,7 +162,7 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 	}
 	headings, err := ss.GetHeadings(dbreq)
 	if err != nil {
-		log.Println(err)
+		logfile.Println(err)
 		return err
 	}
 	// Add the column names to the jsonMap
@@ -217,7 +224,7 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 	err := json_dec.Decode(&userdata)
 	if err != nil {
 		ss.SendJSON(w, false)
-		log.Println(err)
+		logfile.Println(err)
 		return false, err
 	}
 	h := sha512.New()
@@ -225,7 +232,7 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 	userdata.Password = fmt.Sprintf("%x", h.Sum(nil))
 	row, err := ss.GetUser(userdata.Username)
 	if err != nil {
-		log.Println(err)
+		logfile.Println(err)
 		return false, err
 	}
 	// Create a User instance from the SQL Results.
@@ -310,6 +317,6 @@ func main() {
 	}
 	err := s.ListenAndServe()
 	if err != nil {
-		log.Println(err)
+		logfile.Println(err)
 	}
 }
