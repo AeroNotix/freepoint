@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	mrand "math/rand"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -61,7 +62,6 @@ func OpenMySQLSession(key []byte) (*MySQLSession, error) {
 	}
 	defer db.Close()
 	stmt, err := db.Prepare("SELECT sessionvalue FROM sessions WHERE sessionkey=(?)")
-	fmt.Println(string(key))
 	if err != nil {
 		return nil, err
 	}
@@ -83,6 +83,15 @@ func OpenMySQLSession(key []byte) (*MySQLSession, error) {
 		Values:    m,
 	}
 	return session, nil
+}
+
+func ValidateSession(cookies []*http.Cookie) bool {
+	for _, cookie := range cookies {
+		if session, err := OpenMySQLSession([]byte(cookie.Value)); err == nil && string(session.Key) == cookie.Value {
+			return true
+		}
+	}
+	return false
 }
 
 func (m *MySQLSession) Add(key string, value string) {
@@ -154,6 +163,5 @@ func ParseValues(raw []byte) (map[string]string, error) {
 			m[split[0]] = split[1]
 		}
 	}
-	fmt.Println(m)
 	return m, nil
 }
