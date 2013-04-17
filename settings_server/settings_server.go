@@ -18,11 +18,7 @@ import (
 	"time"
 )
 
-var logfile *log.Logger
-
-func init() {
-	logfile = log.New(os.Stderr, "", log.Ldate|log.Llongfile)
-}
+var logfile *log.Logger = log.New(os.Stderr, "", log.Ldate|log.Llongfile)
 
 func updateMetadata(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 	job, err := ss.NewAsyncMetadataUpdate(req)
