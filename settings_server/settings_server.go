@@ -1,7 +1,6 @@
-/*
- This file works as the server-side implementation for a mysql database layer
- which marshals access rights, metadata, selects and rewrites.
-*/
+/* This file works as the server-side implementation for a mysql
+database layer which marshals access rights, metadata, selects and
+rewrites.  */
 
 package main
 
@@ -33,8 +32,8 @@ func updateMetadata(self *ss.AppServer, w http.ResponseWriter, req *http.Request
 	return nil
 }
 
-// This is a handler which checks the POST for the data required to make
-// a change to the database.
+// This is a handler which checks the POST for the data required to
+// make a change to the database.
 //
 // This function will have one of two possible side effects which are
 // writing a JSON response to the caller.
@@ -56,9 +55,9 @@ func changeTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 	return nil
 }
 
-// createTable serves as the back-end for creating new tables. The request holds the
-// form data which is needed to create an SQL String which is then executed and the
-// error status returned to the client.
+// createTable serves as the back-end for creating new tables. The
+// request holds the form data which is needed to create an SQL String
+// which is then executed and the error status returned to the client.
 func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
 	job, err := ss.NewAsyncCreate(req)
@@ -77,8 +76,9 @@ func createTable(self *ss.AppServer, w http.ResponseWriter, req *http.Request) e
 	return nil
 }
 
-// InsertData server as the back-end for handling data insertion into existing tables.
-// The request holds all the relevent data encoded into rows.
+// InsertData server as the back-end for handling data insertion into
+// existing tables.  The request holds all the relevent data encoded
+// into rows.
 func insertData(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 
 	job, err := ss.NewAsyncInsert(req)
@@ -181,10 +181,9 @@ func databaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 }
 
 // This is a URL attached to ^login/?$ because then we can
-// programmatically log in the user and also check if the
-// user is login-able. Eventually userLogin will create a
-// session row in the database and send the sessionid key
-// back to the requester.
+// programmatically log in the user and also check if the user is
+// login-able. Eventually userLogin will create a session row in the
+// database and send the sessionid key back to the requester.
 func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
 	if ok, err := Login(w, req); !ok {
 		ss.SendJSONError(w, err)
@@ -205,15 +204,14 @@ func userLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 	return nil
 }
 
-// Checks if the user is a valid user.
-// If the user is not, then we will tell the user ourselves
-// and return false. We return the error message ourself
-// because other with we would have a string return type
-// or multiple return types which need to be parsed out
-// or error checks on them and this seems cleaner.
+// Checks if the user is a valid user.  If the user is not, then we
+// will tell the user ourselves and return false. We return the error
+// message ourself because other with we would have a string return
+// type or multiple return types which need to be parsed out or error
+// checks on them and this seems cleaner.
 func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
-	// We retrieve the JSON string and encode it
-	// into the proper JSON request struct.
+	// We retrieve the JSON string and encode it into the proper JSON
+	// request struct.
 	json_dec := json.NewDecoder(req.Body)
 	userdata := new(ss.User)
 	err := json_dec.Decode(&userdata)
