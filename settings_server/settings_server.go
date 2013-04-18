@@ -45,7 +45,7 @@ func main() {
 			),
 			bk.NewRoute(
 				regexp.MustCompile("^/user/$"),
-				fe.CreateUser,
+				fe.DirectToTemplate("user.html"),
 				"CreateUser",
 				false,
 			),
