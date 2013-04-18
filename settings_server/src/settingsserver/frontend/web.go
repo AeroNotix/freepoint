@@ -27,7 +27,7 @@ func DirectToTemplate(templatename string) bk.RouterHandler {
 		panic(fmt.Sprintf("Template does not exist: %s", filename))
 	}
 	return func(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
-		return tmpl.Must(filename).Execute(w, nil)
+		return tmpl.Execute(w, templatename, nil)
 	}
 }
 
