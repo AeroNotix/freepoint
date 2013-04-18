@@ -3,7 +3,7 @@
 // also defines several message types which aid in the marshaling and
 // unmarshaling of JSON []byte sent over the wire.
 
-package settingsserver
+package backend
 
 import (
 	"encoding/json"

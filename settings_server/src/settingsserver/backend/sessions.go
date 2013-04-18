@@ -1,4 +1,4 @@
-package settingsserver
+package backend
 
 import (
 	"bytes"
