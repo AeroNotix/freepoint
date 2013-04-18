@@ -62,6 +62,12 @@ func main() {
 				false,
 			),
 			bk.NewRoute(
+				regexp.MustCompile("^/loginfail/$"),
+				fe.DirectToTemplate("loginfail.html"),
+				"Login",
+				false,
+			),
+			bk.NewRoute(
 				regexp.MustCompile("^/update/$"),
 				fe.ChangeTable,
 				"Change Table Data",

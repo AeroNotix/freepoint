@@ -23,6 +23,14 @@ func Must(filename string) *template.Template {
 
 func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	return Must(filepath.Join(connection_details.TemplateDirectory, "index.html")).Execute(w, nil)
+func DirectToTemplate(templatename string) bk.RouterHandler {
+	filename := filepath.Join(connection_details.TemplateDirectory, templatename)
+	if !exists(filename) {
+		panic(fmt.Sprintf("Template does not exist: %s", filename))
+	}
+	return func(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
+		return tmpl.Must(filename).Execute(w, nil)
+	}
 }
 
 func CreateUser(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
@@ -47,4 +55,11 @@ func StaticFiles(self *bk.AppServer, w http.ResponseWriter, req *http.Request) e
 	w.Header().Set("Content-Type", ctype)
 	io.WriteString(w, string(b))
 	return nil
+}
+
+func exists(filename string) bool {
+	if _, err := os.Stat(filename); err == nil {
+		return true
+	}
+	return false
 }
