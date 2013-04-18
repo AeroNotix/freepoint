@@ -1,8 +1,15 @@
 <html>
+  <link href="{{.STATIC_URL}}stylesheet.css" rel="stylesheet" type="text/css" />
   <body>
     <form action="/login/" method="POST">
-      <input type="text" name="username" />
-      <input type="password" name="password" />
+      <fieldset>
+        <legend>Login</legend>
+        <label for="username">Email/Username:</label>
+        <input id="username" type="text" name="username" /><br />
+        <label for="password">Password:</label>
+        <input id="password" type="password" name="password" />
+        <input type="submit" value="submit" />
+      </fieldset>
     </form>
   </body>
 </html>

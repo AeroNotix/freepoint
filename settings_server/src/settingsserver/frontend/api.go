@@ -182,10 +182,41 @@ func DatabaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 // login-able. Eventually userLogin will create a session row in the
 // database and send the sessionid key back to the requester.
 func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
-	if ok, err := Login(w, req); !ok {
-		ss.SendJSONError(w, err)
+	errorhandler := func(w http.ResponseWriter, req *http.Request) {}
+	successhandler := func(w http.ResponseWriter, req *http.Request) {}
+	userdata := new(ss.User)
+	switch req.Header.Get("Content-type") {
+	case "application/x-www-form-urlencoded":
+		userdata.Password = req.FormValue("password")
+		userdata.Username = req.FormValue("username")
+		errorhandler = func(w http.ResponseWriter, req *http.Request) {
+			http.Redirect(w, req, "/loginfail/", http.StatusSeeOther)
+		}
+		successhandler = func(w http.ResponseWriter, req *http.Request) {
+			http.Redirect(w, req, "/user/", http.StatusSeeOther)
+		}
+	case "application/json":
+		// We retrieve the JSON string and encode it into the proper JSON
+		// request struct.
+		json_dec := json.NewDecoder(req.Body)
+		err := json_dec.Decode(&userdata)
+		if err != nil {
+			logfile.Println(err)
+			return err
+		}
+		errorhandler = func(w http.ResponseWriter, req *http.Request) {
+			ss.SendJSONError(w, err)
+		}
+		successhandler = func(w http.ResponseWriter, req *http.Request) {
+			ss.SendJSON(w, true)
+		}
+	}
+
+	if ok, err := Login(userdata); !ok {
+		errorhandler(w, req)
 		return err
 	}
+
 	session, err := ss.CreateMySQLSession()
 	if err != nil {
 		fmt.Println("Error creating cookie: " + err.Error())
@@ -198,7 +229,7 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 			Expires: time.Now().Add(24 * time.Hour),
 		})
 	}
-	ss.SendJSON(w, true)
+	successhandler(w, req)
 	return nil
 }
 
@@ -207,16 +238,7 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 // message ourself because other with we would have a string return
 // type or multiple return types which need to be parsed out or error
 // checks on them and this seems cleaner.
-func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
-	// We retrieve the JSON string and encode it into the proper JSON
-	// request struct.
-	json_dec := json.NewDecoder(req.Body)
-	userdata := new(ss.User)
-	err := json_dec.Decode(&userdata)
-	if err != nil {
-		logfile.Println(err)
-		return false, err
-	}
+func Login(userdata *ss.User) (bool, error) {
 	h := sha512.New()
 	io.WriteString(h, userdata.Username)
 	io.WriteString(h, userdata.Password)
