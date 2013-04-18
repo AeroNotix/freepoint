@@ -245,7 +245,7 @@ func Login(userdata *ss.User) (bool, error) {
 	userdata.Password = fmt.Sprintf("%x", h.Sum(nil))
 	row, err := ss.GetUser(userdata.Username)
 	if err != nil {
-		logfile.Println(err)
+		log.Println(err)
 		return false, err
 	}
 	// Create a User instance from the SQL Results.
