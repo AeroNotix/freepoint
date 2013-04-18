@@ -225,6 +225,7 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 		return false, err
 	}
 	h := sha512.New()
+	io.WriteString(h, userdata.Username)
 	io.WriteString(h, userdata.Password)
 	userdata.Password = fmt.Sprintf("%x", h.Sum(nil))
 	row, err := ss.GetUser(userdata.Username)
