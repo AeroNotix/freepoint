@@ -1,6 +1,7 @@
 package frontend
 
 import (
+<<<<<<< HEAD
 	"connection_details"
 	"fmt"
 	"html/template"
@@ -23,6 +24,17 @@ func Must(filename string) *template.Template {
 
 func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	return Must(filepath.Join(connection_details.TemplateDirectory, "index.html")).Execute(w, nil)
+=======
+	"fmt"
+	"io"
+	"net/http"
+	bk "settingsserver/backend"
+)
+
+func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
+	io.WriteString(w, "Hello")
+	return nil
+>>>>>>> 3a916710f2a4ec1190fc0036c7be7bcbdfa2902a
 }
 
 func CreateUser(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
@@ -30,6 +42,7 @@ func CreateUser(self *bk.AppServer, w http.ResponseWriter, req *http.Request) er
 	io.WriteString(w, "done!")
 	return nil
 }
+<<<<<<< HEAD
 
 func StaticFiles(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	reqstr := req.URL.Path[len(connection_details.StaticURL):]
@@ -48,3 +61,5 @@ func StaticFiles(self *bk.AppServer, w http.ResponseWriter, req *http.Request) e
 	io.WriteString(w, string(b))
 	return nil
 }
+=======
+>>>>>>> 3a916710f2a4ec1190fc0036c7be7bcbdfa2902a

@@ -5,7 +5,6 @@ rewrites.  */
 package main
 
 import (
-	"connection_details"
 	"flag"
 	"log"
 	"net/http"

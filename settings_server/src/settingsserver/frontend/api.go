@@ -182,6 +182,7 @@ func DatabaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 // login-able. Eventually userLogin will create a session row in the
 // database and send the sessionid key back to the requester.
 func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
+<<<<<<< HEAD
 	errorhandler := func(w http.ResponseWriter, req *http.Request) {}
 	successhandler := func(w http.ResponseWriter, req *http.Request) {}
 	userdata := new(ss.User)
@@ -217,6 +218,12 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 		return err
 	}
 
+=======
+	if ok, err := Login(w, req); !ok {
+		ss.SendJSONError(w, err)
+		return err
+	}
+>>>>>>> 3a916710f2a4ec1190fc0036c7be7bcbdfa2902a
 	session, err := ss.CreateMySQLSession()
 	if err != nil {
 		fmt.Println("Error creating cookie: " + err.Error())
@@ -229,7 +236,11 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 			Expires: time.Now().Add(24 * time.Hour),
 		})
 	}
+<<<<<<< HEAD
 	successhandler(w, req)
+=======
+	ss.SendJSON(w, true)
+>>>>>>> 3a916710f2a4ec1190fc0036c7be7bcbdfa2902a
 	return nil
 }
 
@@ -238,7 +249,20 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 // message ourself because other with we would have a string return
 // type or multiple return types which need to be parsed out or error
 // checks on them and this seems cleaner.
+<<<<<<< HEAD
 func Login(userdata *ss.User) (bool, error) {
+=======
+func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
+	// We retrieve the JSON string and encode it into the proper JSON
+	// request struct.
+	json_dec := json.NewDecoder(req.Body)
+	userdata := new(ss.User)
+	err := json_dec.Decode(&userdata)
+	if err != nil {
+		logfile.Println(err)
+		return false, err
+	}
+>>>>>>> 3a916710f2a4ec1190fc0036c7be7bcbdfa2902a
 	h := sha512.New()
 	io.WriteString(h, userdata.Username)
 	io.WriteString(h, userdata.Password)
