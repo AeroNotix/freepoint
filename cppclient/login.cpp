@@ -47,8 +47,8 @@ Login::Login(MainWindow *parent)
 
 /*
   login is the backend function which creates a network request to the
-  server and handles the connection of signals so we can handle the out
-  -come of that request.
+  server and handles the connection of signals so we can handle the
+  out -come of that request.
 */
 void Login::login() {
     // We only have a single request pending at a time.
@@ -73,8 +73,8 @@ void Login::login() {
 }
 
 /*
-  generateLoginString takes a username and a password object and creates
-  the JSON representation of those objects.
+  generateLoginString takes a username and a password object and
+  creates the JSON representation of those objects.
 
   Output is a char* because will use it for HTTP Post data.
 */
