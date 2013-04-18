@@ -3,7 +3,6 @@ package frontend
 import (
 	"connection_details"
 	"fmt"
-	"html/template"
 	"io"
 	"io/ioutil"
 	"mime"
