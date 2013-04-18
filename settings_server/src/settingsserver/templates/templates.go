@@ -2,6 +2,7 @@ package templates
 
 import (
 	"html/template"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -23,6 +24,8 @@ func ParseFiles(filenames []string) []*template.Template {
 	for _, filename := range filenames {
 		if template, err := New(filename); err == nil {
 			out = append(out, template)
+		} else {
+			log.Println(err)
 		}
 	}
 	return out

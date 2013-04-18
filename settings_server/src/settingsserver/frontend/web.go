@@ -15,6 +15,7 @@ import (
 
 func init() {
 	tmpl.ParseDirectory(connection_details.TemplateDirectory, true)
+	tmpl.ParseDirectory(connection_details.TemplateDirectory, true)
 }
 
 func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
