@@ -16,6 +16,7 @@ import (
 func init() {
 	tmpl.ParseDirectory(connection_details.TemplateDirectory, true)
 }
+
 func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	return tmpl.Must(
 		filepath.Join(connection_details.TemplateDirectory, "index.html"),
