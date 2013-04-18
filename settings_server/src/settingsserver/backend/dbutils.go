@@ -2,7 +2,7 @@
 // databases it also defines the Asynchronous types and the job queues
 // which deal with them.
 
-package settingsserver
+package backend
 
 import (
 	"connection_details"
