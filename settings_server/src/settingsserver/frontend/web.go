@@ -11,18 +11,18 @@ import (
 	"os"
 	"path/filepath"
 	bk "settingsserver/backend"
+	tmpl "settingsserver/templates"
 )
 
-func Must(filename string) *template.Template {
-	file, err := template.ParseFiles(filename)
-	if err != nil {
-		panic(err)
-	}
-	return file
+func init() {
+	tmpl.ParseDirectory(connection_details.TemplateDirectory, true)
+}
+func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
+	return tmpl.Must(
+		filepath.Join(connection_details.TemplateDirectory, "index.html"),
+	).Execute(w, map[string]string{"STATIC_URL": connection_details.StaticURL})
 }
 
-func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
-	return Must(filepath.Join(connection_details.TemplateDirectory, "index.html")).Execute(w, nil)
 func DirectToTemplate(templatename string) bk.RouterHandler {
 	filename := filepath.Join(connection_details.TemplateDirectory, templatename)
 	if !exists(filename) {
