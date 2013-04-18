@@ -41,11 +41,11 @@ func CreateMySQLSession() (*MySQLSession, error) {
 		return nil, err
 	}
 	defer db.Close()
-	stmt, err := db.Prepare("INSERT INTO sessions VALUES (?, ?)")
+	stmt, err := db.Prepare("INSERT INTO sessions VALUES (?, ?, ?)")
 	if err != nil {
 		return nil, err
 	}
-	_, err = stmt.Run(randombytes, "")
+	_, err = stmt.Run(randombytes, "", time.Now().Add(24*time.Hour).Format("2006-01-02"))
 	if err != nil {
 		return nil, err
 	}
