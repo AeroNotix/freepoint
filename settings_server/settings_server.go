@@ -220,7 +220,6 @@ func Login(w http.ResponseWriter, req *http.Request) (bool, error) {
 	userdata := new(ss.User)
 	err := json_dec.Decode(&userdata)
 	if err != nil {
-		ss.SendJSON(w, false)
 		logfile.Println(err)
 		return false, err
 	}
