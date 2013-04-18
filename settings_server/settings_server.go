@@ -5,6 +5,7 @@ rewrites.  */
 package main
 
 import (
+	"connection_details"
 	"flag"
 	"log"
 	"net/http"
@@ -30,6 +31,18 @@ func main() {
 		// us to hold routes and subsequently iterate through
 		// them to find which we are currently serving.
 		[]bk.RoutingEntry{
+			bk.NewRoute(
+				regexp.MustCompile("^/$"),
+				fe.Index,
+				"Index",
+				false,
+			),
+			bk.NewRoute(
+				regexp.MustCompile("^"+connection_details.StaticURL),
+				fe.StaticFiles,
+				"Static Files",
+				false,
+			),
 			bk.NewRoute(
 				regexp.MustCompile("^/user/$"),
 				fe.CreateUser,
