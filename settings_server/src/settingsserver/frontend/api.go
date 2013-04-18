@@ -221,6 +221,7 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 	if err != nil {
 		fmt.Println("Error creating cookie: " + err.Error())
 	} else {
+		session.Add("user", userdata.Username)
 		http.SetCookie(w, &http.Cookie{
 			Name:    "session",
 			Value:   string(session.Key),
