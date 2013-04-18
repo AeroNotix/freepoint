@@ -1,7 +1,10 @@
 package templates
 
 import (
+	"connection_details"
 	"html/template"
+	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -13,6 +16,29 @@ func Must(filename string) *template.Template {
 		panic(err)
 	}
 	return file
+}
+
+func include(which string) (template.HTML, error) {
+	f, err := os.Open(filepath.Join(connection_details.TemplateDirectory, which))
+	if err != nil {
+		return template.HTML(""), err
+	}
+	b, err := ioutil.ReadAll(f)
+	if err != nil {
+		return template.HTML(""), err
+	}
+	return template.HTML(string(b)), nil
+}
+
+func Execute(w io.Writer, filename string, data interface{}) error {
+	t, err := template.New(filename).Funcs(template.FuncMap{
+		"include": include,
+	}).ParseFiles(filepath.Join(connection_details.TemplateDirectory, filename))
+	if err != nil {
+		return err
+	}
+	t.Execute(w, data)
+	return nil
 }
 
 func ParseDirectory(directory string, recursive bool) []*template.Template {

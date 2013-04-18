@@ -14,14 +14,11 @@ import (
 )
 
 func init() {
-	tmpl.ParseDirectory(connection_details.TemplateDirectory, true)
-	tmpl.ParseDirectory(connection_details.TemplateDirectory, true)
+	tmpl.ParseDirectory(connection_details.TemplateDirectory+"includes/", true)
 }
 
 func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
-	return tmpl.Must(
-		filepath.Join(connection_details.TemplateDirectory, "index.html"),
-	).Execute(w, map[string]string{"STATIC_URL": connection_details.StaticURL})
+	return tmpl.Execute(w, "index.html", map[string]string{"STATIC_URL": connection_details.StaticURL})
 }
 
 func DirectToTemplate(templatename string) bk.RouterHandler {
