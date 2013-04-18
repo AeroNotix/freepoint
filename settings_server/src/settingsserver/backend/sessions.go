@@ -87,7 +87,8 @@ func OpenMySQLSession(key []byte) (*MySQLSession, error) {
 
 func ValidateSession(cookies []*http.Cookie) bool {
 	for _, cookie := range cookies {
-		if session, err := OpenMySQLSession([]byte(cookie.Value)); err == nil && string(session.Key) == cookie.Value {
+		if session, err := OpenMySQLSession([]byte(cookie.Value)); err == nil &&
+			string(session.Key) == cookie.Value {
 			return true
 		}
 	}
