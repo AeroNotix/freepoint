@@ -64,7 +64,7 @@ func main() {
 			bk.NewRoute(
 				regexp.MustCompile("^/loginfail/$"),
 				fe.DirectToTemplate("loginfail.html"),
-				"Login",
+				"Failed login",
 				false,
 			),
 			bk.NewRoute(
