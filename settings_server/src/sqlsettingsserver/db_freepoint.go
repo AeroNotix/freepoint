@@ -23,16 +23,19 @@ var (
 				 UNIQUE KEY userid (userid)
 				 )
 				 `
+
+	SessionsTable = `CREATE TABLE sessions (
+                     sessionkey text,
+                     sessionvalue text,
+                     expiry datetime DEFAULT NULL
+                     )`
 )
 
 func init() {
-	err := settingsserver.ExecuteCreate(MetadataTable)
-	if err != nil {
-		log.Println(err)
-	}
-
-	err = settingsserver.ExecuteCreate(UserTable)
-	if err != nil {
-		log.Println(err)
+	for _, SQLStr := range []string{MetadataTable, UserTable, SessionsTable} {
+		err = settingsserver.ExecuteCreate(SQLStr)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
