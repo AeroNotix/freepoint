@@ -13,10 +13,6 @@ import (
 	tmpl "settingsserver/templates"
 )
 
-func init() {
-	tmpl.ParseDirectory(connection_details.TemplateDirectory+"includes/", true)
-}
-
 func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	return tmpl.Execute(w, "index.html", map[string]string{"STATIC_URL": connection_details.StaticURL})
 }
