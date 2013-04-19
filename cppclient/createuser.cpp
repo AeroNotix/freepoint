@@ -27,8 +27,10 @@ QString CreateUser::generateCreateUserString() {
     s << "{"
       << quote("EMAIL", ui->txt_email->text())
       << ","
-      << quote("PASSWORD", ui->txt_password->text())
-      << "}";
+      << (ui->chk_generate->checkState() == Qt::Unchecked ?
+		quote("PASSWORD", ui->txt_password->text()) :
+		  "\"GENERATE\":true");
+	s << "}";
 
     return *s.string();
 }
