@@ -75,10 +75,7 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		if len(matches) > 0 {
 			if route.LoginRequired && self.Authenticator != nil {
 				if passed := self.Authenticator(w, req); !passed {
-					self.log("Authentication failure.")
-					w.Header().Set("Content-Type", "application/json")
-					w.WriteHeader(http.StatusForbidden)
-					io.WriteString(w, `{"error":"Session key failure."}`)
+					self.authenticationfailure(w, req)
 					return
 				}
 			}
@@ -91,6 +88,23 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 	}
 	http.NotFound(w, req)
+}
+
+func (self *AppServer) authenticationfailure(w http.ResponseWriter, req *http.Request) {
+	self.log("Authentication failure.")
+	switch req.Header.Get("Content-type") {
+	case "application/x-www-form-urlencoded":
+		w.WriteHeader(http.StatusForbidden)
+		return
+	case "application/json":
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusForbidden)
+		io.WriteString(w, `{"error":"Authentication error."}`)
+		return
+	default:
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
 }
 
 // The next three functions {Write|Create|Insert}Entry are utility
