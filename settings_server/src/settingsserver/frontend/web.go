@@ -17,6 +17,10 @@ func Index(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	return tmpl.Execute(w, "index.html", map[string]string{"STATIC_URL": connection_details.StaticURL})
 }
 
+// DirectToTemplate is for use when you have a template which just needs to
+// be sent directly to the client without any specific logic taking place.
+//
+// Use-cases are things like error pages, small fragments etc.
 func DirectToTemplate(templatename string) bk.RouterHandler {
 	filename := filepath.Join(connection_details.TemplateDirectory, templatename)
 	if !exists(filename) {
@@ -27,12 +31,17 @@ func DirectToTemplate(templatename string) bk.RouterHandler {
 	}
 }
 
+// Not implemented properly at the moment.
 func CreateUser(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	fmt.Println(bk.CreateUser("aero", "something"))
 	io.WriteString(w, "done!")
 	return nil
 }
 
+// Handles static files for the webserver. This will use Go's mimetype
+// recognition to smartly choose what the content type of a file is.
+//
+// Does not implement caching but is planned.
 func StaticFiles(self *bk.AppServer, w http.ResponseWriter, req *http.Request) error {
 	reqstr := req.URL.Path[len(connection_details.StaticURL):]
 	ctype := mime.TypeByExtension(filepath.Ext(reqstr))
