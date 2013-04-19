@@ -119,6 +119,7 @@ private slots:
     void UpdatedData(QNetworkReply *reply);
     void openConnectionDialog();
     void openManageDialog();
+    void openCreateUserDialog();
     void storeCell(int x, int y);
     void RefreshTable();
     void InsertRow();

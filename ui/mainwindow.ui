@@ -59,6 +59,7 @@
     </widget>
     <addaction name="menuSelect_Table"/>
     <addaction name="actionManageConnections"/>
+    <addaction name="actionCreate_User"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -87,6 +88,11 @@
   <action name="actionManageConnections">
    <property name="text">
     <string>&amp;Manage Connections</string>
+   </property>
+  </action>
+  <action name="actionCreate_User">
+   <property name="text">
+    <string>Create User</string>
    </property>
   </action>
  </widget>
@@ -190,6 +196,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionCreate_User</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openCreateUserDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>150</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>893</x>
+     <y>670</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>changeTable()</slot>
@@ -199,5 +221,6 @@
   <slot>changeTable(int,int)</slot>
   <slot>storeCell(int,int)</slot>
   <slot>testSegv()</slot>
+  <slot>openCreateUserDialog()</slot>
  </slots>
 </ui>

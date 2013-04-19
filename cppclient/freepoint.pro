@@ -21,7 +21,8 @@ SOURCES += \
          mainwindow.cpp \
          login.cpp \
          server_setup.cpp \
-         main.cpp
+         main.cpp \
+         createuser.cpp
 
 HEADERS  += \
          managedialog.h \
@@ -37,6 +38,7 @@ HEADERS  += \
          mainwindow.h \
          server_setup.h \
          settings.h \
+         createuser.h
 
 unix:RESOURCES += "../resources/resource.qrc"
 unix:INCLUDEPATH += "/usr/include/"
@@ -49,7 +51,8 @@ unix {
     ../ui/loginbox.ui \
     ../ui/mainwindow.ui \
     ../ui/cxn_setup.ui \
-    ../ui/server_setup.ui
+    ../ui/server_setup.ui \
+    ../ui/create_user.ui
 }
 
 win32:RESOURCES += "..\resources\resource.qrc"
@@ -64,5 +67,6 @@ win32 {
     ..\ui\loginbox.ui \
     ..\ui\mainwindow.ui \
     ..\ui\cxn_setup.ui \
-    ..\ui\server_setup.ui
+    ..\ui\server_setup.ui \
+    ..\ui\create_user.ui
 }

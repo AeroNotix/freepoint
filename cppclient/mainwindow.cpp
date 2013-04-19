@@ -18,6 +18,7 @@
 #include <QNetworkCookie>
 
 #include "login.h"
+#include "createuser.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "database.h"
@@ -161,6 +162,12 @@ void MainWindow::openManageDialog() {
     delete mcd;
     ParseTableConfig();
     AddMenuActions();
+}
+
+void MainWindow::openCreateUserDialog() {
+    CreateUser *cru = new CreateUser(this);
+    cru->exec();
+    delete cru;
 }
 
 /*
