@@ -97,6 +97,12 @@ func main() {
 				"Updating metadata",
 				true,
 			),
+			bk.NewRoute(
+				regexp.MustCompile("^/createnewuser/$"),
+				fe.CreateNewUser,
+				"Create new user",
+				true,
+			),
 		},
 	)
 	Settings.Authenticator = func(w http.ResponseWriter, req *http.Request) bool {
