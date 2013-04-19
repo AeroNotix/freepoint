@@ -263,3 +263,7 @@ func Login(userdata *ss.User) (bool, error) {
 	log.Printf("%s logged in.\n", req_user.Username)
 	return success, nil
 }
+
+func CreateNewUser(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
+	return nil
+}

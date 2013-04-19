@@ -4,6 +4,7 @@ import (
 	"crypto/sha512"
 	"fmt"
 	"io"
+	"net/http"
 )
 
 func CreateUser(email, password string) error {
@@ -18,4 +19,14 @@ func CreateUser(email, password string) error {
 	}
 	_, err = stmt.Run(email, hashedpassword)
 	return err
+}
+
+func CanCreateUsers(cookies []*http.Cookie) bool {
+	for _, cookie := range cookies {
+		if session, err := OpenMySQLSession([]byte(cookie.Value)); err == nil &&
+			session.CanCreateUsers() {
+			return true
+		}
+	}
+	return false
 }

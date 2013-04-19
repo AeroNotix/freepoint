@@ -95,6 +95,10 @@ func ValidateSession(cookies []*http.Cookie) bool {
 	return false
 }
 
+func (m *MySQLSession) CanCreateUsers() bool {
+	return true
+}
+
 func (m *MySQLSession) Add(key string, value string) {
 	m.Values[key] = value
 	m.Save()

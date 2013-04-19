@@ -106,7 +106,14 @@ func main() {
 		},
 	)
 	Settings.Authenticator = func(w http.ResponseWriter, req *http.Request) bool {
-		return bk.ValidateSession(req.Cookies())
+		if !bk.ValidateSession(req.Cookies()) {
+			return false
+		}
+		switch req.URL.String() {
+		case "/createnewuser/":
+			return bk.CanCreateUsers(req.Cookies())
+		}
+		return true
 	}
 	s := http.Server{
 		Addr:        addr,
