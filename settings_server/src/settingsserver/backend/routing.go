@@ -92,10 +92,7 @@ func (self *AppServer) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (self *AppServer) authenticationfailure(w http.ResponseWriter, req *http.Request) {
 	self.log("Authentication failure.")
-	switch req.Header.Get("Content-type") {
-	case "application/x-www-form-urlencoded":
-		w.WriteHeader(http.StatusForbidden)
-		return
+	switch req.Header.Get("Accept") {
 	case "application/json":
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
