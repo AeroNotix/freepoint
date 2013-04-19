@@ -5,6 +5,7 @@
 #elif defined __unix__
     #include "qjson/parser.h"
 #endif
+
 #include "settings.h"
 #include "jsonpackets.h"
 
@@ -17,11 +18,19 @@ CreateUser::CreateUser(MainWindow *parent)
 }
 
 void CreateUser::Create() {
-    
+    qDebug() << generateCreateUserString();
 }
 
 QString CreateUser::generateCreateUserString() {
-    return QString("");
+    QString ss;
+    QTextStream s(&ss);
+    s << "{"
+      << quote("EMAIL", ui->txt_email->text())
+      << ","
+      << quote("PASSWORD", ui->txt_password->text())
+      << "}";
+
+    return *s.string();
 }
 
 void CreateUser::networkRequestFinished(QNetworkReply *reply) {
@@ -32,17 +41,17 @@ void CreateUser::handleNetworkError(QNetworkReply::NetworkError) {
 }
 
 void CreateUser::accept(void) {
-    if (ui->txt_password->text().size() < 6 ||
-        ui->txt_password->text().size() < 6) {
-        parent->ShowError("Password is too small.");
+    if (ui->chk_generate->checkState() == Qt::Unchecked) {
+        if (ui->txt_password->text().size() < 6 ||
+            ui->txt_password->text().size() < 6) {
+            parent->ShowError("Password is too small.");
+        }
+        if (ui->txt_password->text() != ui->txt_password2->text()) {
+            parent->ShowError("Passwords do not match.");
+            return;
+        }
     }
-    if (ui->txt_password->text() != ui->txt_password2->text()) {
-        parent->ShowError("Passwords do not match.");
-        return;
-    }
-    qDebug() << ui->txt_email->text();
-    qDebug() << ui->txt_password->text();
-    CreateUser();
+    Create();
 }
 
 void CreateUser::reject(void) {
