@@ -182,14 +182,14 @@ func DatabaseParameters(self *ss.AppServer, w http.ResponseWriter, req *http.Req
 // login-able. Eventually userLogin will create a session row in the
 // database and send the sessionid key back to the requester.
 func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
-	errorhandler := func(w http.ResponseWriter, req *http.Request) {}
+	errorhandler := func(w http.ResponseWriter, req *http.Request, err error) {}
 	successhandler := func(w http.ResponseWriter, req *http.Request) {}
 	userdata := new(ss.User)
 	switch req.Header.Get("Content-type") {
 	case "application/x-www-form-urlencoded":
 		userdata.Password = req.FormValue("password")
 		userdata.Username = req.FormValue("username")
-		errorhandler = func(w http.ResponseWriter, req *http.Request) {
+		errorhandler = func(w http.ResponseWriter, req *http.Request, err error) {
 			http.Redirect(w, req, "/loginfail/", http.StatusSeeOther)
 		}
 		successhandler = func(w http.ResponseWriter, req *http.Request) {
@@ -204,7 +204,7 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 			logfile.Println(err)
 			return err
 		}
-		errorhandler = func(w http.ResponseWriter, req *http.Request) {
+		errorhandler = func(w http.ResponseWriter, req *http.Request, err error) {
 			ss.SendJSONError(w, err)
 		}
 		successhandler = func(w http.ResponseWriter, req *http.Request) {
@@ -213,7 +213,7 @@ func UserLogin(self *ss.AppServer, w http.ResponseWriter, req *http.Request) err
 	}
 
 	if ok, err := Login(userdata); !ok {
-		errorhandler(w, req)
+		errorhandler(w, req, err)
 		return err
 	}
 
