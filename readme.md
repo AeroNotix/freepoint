@@ -31,6 +31,5 @@ Client-side
 TODO:
 -----
 
-* Implement better authentication
 * Figure out how to create Sphinx docs with Qt
 * Make the database creator more featureful
