@@ -1,3 +1,4 @@
+#include "mainwindow.h"
 #include "cxn_setup.h"
 
 CXNSetup::CXNSetup(CXNSetup::WindowMode mode, MainWindow *parent)

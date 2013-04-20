@@ -18,9 +18,10 @@
 #elif defined __unix__
     #include "qjson/parser.h"
 #endif
+
 #include "settings.h"
 #include "jsonpackets.h"
-
+#include "mainwindow.h"
 
 using namespace login;
 

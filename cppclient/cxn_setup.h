@@ -9,13 +9,13 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkAccessManager>
 
-#include "mainwindow.h"
 #include "ui_cxn_setup.h"
 
 
 /**
  * @brief Creates a dialog window to add new connections.
  */
+class MainWindow;
 class CXNSetup :
     public QDialog {
 

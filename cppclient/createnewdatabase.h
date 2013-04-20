@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include <QtGui>
 #include <QtNetwork/QNetworkReply>
@@ -10,8 +11,7 @@
 #include <QMap>
 
 #include "ui_create_new_table.h"
-#include "mainwindow.h"
-
+class MainWindow;
 class CreateNewDatabase :
     public QDialog {
 

@@ -8,10 +8,9 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkAccessManager>
 
-#include "mainwindow.h"
 #include "ui_create_user.h"
 
-
+class MainWindow;
 class CreateUser :
 public QDialog {
 

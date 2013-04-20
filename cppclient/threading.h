@@ -4,8 +4,8 @@
 #include <QRunnable>
 #include <QObject>
 #include <QThread>
-#include "mainwindow.h"
 
+class MainWindow;
 class RowDeleter : public QThread
 {
     Q_OBJECT

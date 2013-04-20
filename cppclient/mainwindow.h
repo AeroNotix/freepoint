@@ -15,7 +15,6 @@
 
 // forward decl
 class QItemDelegate;
-
 namespace Ui {
   class MainWindow;
 }

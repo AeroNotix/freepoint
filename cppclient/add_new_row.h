@@ -6,8 +6,10 @@
 
 #include <QtGui>
 
-#include "mainwindow.h"
 #include "ui_add_new_row.h"
+
+class MainWindow;
+class QNetworkAccessManager;
 
 class AddNewRow :
     public QDialog {

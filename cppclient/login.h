@@ -8,10 +8,9 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkAccessManager>
 
-#include "mainwindow.h"
 #include "ui_loginbox.h"
 
-
+class MainWindow;
 namespace login {
     class Login :
         public QDialog {

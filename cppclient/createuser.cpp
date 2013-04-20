@@ -8,6 +8,7 @@
 
 #include "settings.h"
 #include "jsonpackets.h"
+#include "mainwindow.h"
 
 CreateUser::CreateUser(MainWindow *parent)
     : QDialog(parent), parent(parent),

@@ -1,3 +1,4 @@
+#include "mainwindow.h"
 #include "add_new_row.h"
 
 AddNewRow::AddNewRow(QStringList headers, QList<QItemDelegate*> delegates, MainWindow *parent)
