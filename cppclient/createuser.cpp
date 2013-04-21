@@ -74,6 +74,7 @@ void CreateUser::accept(void) {
         if (ui->txt_password->text().size() < 6 ||
             ui->txt_password->text().size() < 6) {
             parent->ShowError("Password is too small.");
+			return;
         }
         if (ui->txt_password->text() != ui->txt_password2->text()) {
             parent->ShowError("Passwords do not match.");
