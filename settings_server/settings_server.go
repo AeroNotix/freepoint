@@ -98,7 +98,7 @@ func main() {
 				true,
 			),
 			bk.NewRoute(
-				regexp.MustCompile("^/createnewuser/$"),
+				regexp.MustCompile("^/createuser/$"),
 				fe.CreateNewUser,
 				"Create new user",
 				true,
@@ -110,7 +110,7 @@ func main() {
 			return false
 		}
 		switch req.URL.String() {
-		case "/createnewuser/":
+		case "/createuser/":
 			return bk.CanCreateUsers(req.Cookies())
 		}
 		return true

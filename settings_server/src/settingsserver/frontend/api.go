@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	ss "settingsserver/backend"
+	"settingsserver/utils"
 	"time"
 )
 
@@ -264,6 +266,38 @@ func Login(userdata *ss.User) (bool, error) {
 	return success, nil
 }
 
+// Handles the http request for creating a new user
+//
+// The Accept/Content-type header should be set appropriately for which
+// kind of respone is being sent.
 func CreateNewUser(self *ss.AppServer, w http.ResponseWriter, req *http.Request) error {
-	return nil
+	switch req.Header.Get("Content-type") {
+	case "application/json":
+		type CreateUserRequest struct {
+			Email    string `json:"EMAIL"`
+			Password string `json:"PASSWORD"`
+			Generate bool   `json:"GENERATE"`
+		}
+		b, err := ioutil.ReadAll(req.Body)
+		defer req.Body.Close()
+		if err != nil {
+			return err
+		}
+		cur := &CreateUserRequest{}
+		err = json.Unmarshal(b, cur)
+		if err != nil {
+			return err
+		}
+		if cur.Generate {
+			cur.Password = ss.GenerateNewPassword()
+		}
+		err = ss.CreateUser(cur.Email, cur.Password)
+		if err != nil {
+			io.WriteString(w, fmt.Sprintf(`{"error": "%s"}`, utils.EscapeQuotes(err.Error())))
+		} else {
+			io.WriteString(w, `{"success": true}`)
+		}
+		return err
+	}
+	panic("unreachable")
 }

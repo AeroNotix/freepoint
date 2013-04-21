@@ -30,3 +30,7 @@ func CanCreateUsers(cookies []*http.Cookie) bool {
 	}
 	return false
 }
+
+func GenerateNewPassword() string {
+	return string(randomBytes(10))
+}

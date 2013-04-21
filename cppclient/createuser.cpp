@@ -9,17 +9,29 @@
 #include "settings.h"
 #include "jsonpackets.h"
 #include "mainwindow.h"
+#include "requests.h"
 
 CreateUser::CreateUser(MainWindow *parent)
     : QDialog(parent), parent(parent),
       ui(new Ui_CreateUser), networkRequestPending(false),
-      currentNam(nullptr)
+      currentNam(new QNetworkAccessManager(this))
 {
     ui->setupUi(this);
+	currentNam->setCookieJar(new QNetworkCookieJar(this));
+	currentNam->cookieJar()->setCookiesFromUrl(parent->GetCookies(), QUrl(Settings::SERVERURL));
 }
 
 void CreateUser::Create() {
-    qDebug() << generateCreateUserString();
+	QUrl url(Settings::USERURL);
+	QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(networkRequestFinished(QNetworkReply*)));
+	QByteArray data;
+	data.append(generateCreateUserString());
+	QNetworkRequest req(url);
+	SetHeaders(req);
+	QNetworkReply *reply = currentNam->post(req, data);
+	QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
+                     this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
 }
 
 QString CreateUser::generateCreateUserString() {
@@ -37,10 +49,24 @@ QString CreateUser::generateCreateUserString() {
 }
 
 void CreateUser::networkRequestFinished(QNetworkReply *reply) {
-    qDebug() << reply;
+	QString body = reply->readAll();
+	qDebug() << body;
+	QByteArray json(body.toStdString().c_str());
+	QJson::Parser parser;
+	bool ok;
+	QVariantMap result = parser.parse(json, &ok).toMap();
+	if (!ok || json.size() == 0) {
+		parent->ShowError("Malformed data received from the server. Contact Administrator.");
+	}
+	if (result.contains("error")) {
+		parent->ShowError(result["error"].toString());
+		return;
+	}
+	QDialog::accept();
 }
 
-void CreateUser::handleNetworkError(QNetworkReply::NetworkError) {
+void CreateUser::handleNetworkError(QNetworkReply::NetworkError e) {
+	qDebug() << e;
 }
 
 void CreateUser::accept(void) {

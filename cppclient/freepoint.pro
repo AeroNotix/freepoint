@@ -22,7 +22,8 @@ SOURCES += \
          login.cpp \
          server_setup.cpp \
          main.cpp \
-         createuser.cpp
+         createuser.cpp \
+         requests.cpp
 
 HEADERS  += \
          managedialog.h \
@@ -38,7 +39,8 @@ HEADERS  += \
          mainwindow.h \
          server_setup.h \
          settings.h \
-         createuser.h
+         createuser.h \
+         requests.h
 
 unix:RESOURCES += "../resources/resource.qrc"
 unix:INCLUDEPATH += "/usr/include/"

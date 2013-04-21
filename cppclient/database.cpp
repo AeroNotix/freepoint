@@ -16,12 +16,7 @@
 #include "settings.h"
 #include "jsonpackets.h"
 #include "mainwindow.h"
-
-
-void SetHeaders(QNetworkRequest & req) {
-    req.setRawHeader("Accept", "application/json");
-	req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
-}
+#include "requests.h"
 
 Database::Database
 (MainWindow *parent, QString user, QString passwd, QString using_db, QString table)
