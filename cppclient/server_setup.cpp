@@ -11,7 +11,8 @@ void ServerSetup::accept() {
     WriteJSONServerFile(ui->txtBaseURL->text(), ui->txtLoginURL->text(),
                         ui->txtQueryURL->text(), ui->txtUpdateURL->text(),
                         ui->txtInsertURL->text(), ui->txtDeleteURL->text(),
-                        ui->txtCreateURL->text(), appendDir(sgetcwd(), "server.json").path());
+                        ui->txtCreateURL->text(), ui->txtUserURL->text(),
+						appendDir(sgetcwd(), "server.json").path());
     QDialog::accept();
 }
 

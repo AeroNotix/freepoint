@@ -14,6 +14,7 @@ public:
     static QString INSERTURL;
     static QString DELETEURL;
     static QString CREATEURL;
+	static QString USERURL;
 };
 
 bool InitializeSettings(QDir filename);

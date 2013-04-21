@@ -17,6 +17,7 @@ QString Settings::UPDATEURL;
 QString Settings::INSERTURL;
 QString Settings::DELETEURL;
 QString Settings::CREATEURL;
+QString Settings::USERURL;
 
 
 Settings::Settings(QString filename) {
@@ -31,6 +32,7 @@ Settings::Settings(QString filename) {
     INSERTURL = settings["INSERTURL"].toString();
     DELETEURL = settings["DELETEURL"].toString();
     CREATEURL = settings["CREATEURL"].toString();
+	USERURL = settings["USERURL"].toString();
 }
 
 bool InitializeSettings(QDir filename) {

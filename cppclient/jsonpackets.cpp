@@ -160,7 +160,8 @@ bool WriteJSONServerFile(
     QString base, QString login,
     QString param, QString update,
     QString insert, QString del,
-    QString create, QString filename)
+    QString create, QString user,
+	QString filename)
 {
 
     QFile file(filename);
@@ -181,6 +182,7 @@ bool WriteJSONServerFile(
       << quote("UPDATEURL") << qtdbase << update << le
       << quote("INSERTURL") << qtdbase << insert << le
       << quote("DELETEURL") << qtdbase << del << le
+	  << quote("USERURL") << qtdbase << user << le
       << quote("CREATEURL") << qtdbase << create << "/" << dq << "\n\t}\n}\n";
     s.flush();
     return true;

@@ -196,7 +196,8 @@ QVariantMap ReadJSONFromFile(QString filename);
 bool WriteJSONConfigFile(QStringList connection_names, QVariantMap connection_map,
                          QString filename, QString database = 0, QString table = 0);
 bool WriteJSONServerFile(QString base, QString login, QString param, QString update,
-                         QString insert, QString del, QString create, QString filename);
+                         QString insert, QString del, QString create, QString user,
+						 QString filename);
 
 QString cxnstring(int num);
 
