@@ -45,6 +45,9 @@ void Database::Insert(QStringList newrowdata) {
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+    QObject::connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
+                     reply, SLOT(ignoreSslErrors()));
+
 }
 
 void Database::Query() {
@@ -60,6 +63,9 @@ void Database::Query() {
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+    QObject::connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
+                     reply, SLOT(ignoreSslErrors()));
+
 }
 
 void Database::Delete(QList<QString> deleters) {
@@ -76,6 +82,9 @@ void Database::Delete(QList<QString> deleters) {
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+    QObject::connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
+                     reply, SLOT(ignoreSslErrors()));
+
 }
 
 void Database::Create(QString jsondata) {
@@ -88,6 +97,9 @@ void Database::Create(QString jsondata) {
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+    QObject::connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
+                     reply, SLOT(ignoreSslErrors()));
+
 }
 
 void Database::ChangeTable(QString newdata, QString col, QString id) {
@@ -103,6 +115,9 @@ void Database::ChangeTable(QString newdata, QString col, QString id) {
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+    QObject::connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
+                     reply, SLOT(ignoreSslErrors()));
+
 }
 
 bool Database::ParseMetadata(QMap<QString, QVariant> rawmeta) {

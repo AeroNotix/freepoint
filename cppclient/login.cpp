@@ -10,6 +10,7 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkProxy>
 #include <QNetworkCookie>
+#include <QSslConfiguration>
 
 #include "login.h"
 #include "ui_loginbox.h"
@@ -61,16 +62,23 @@ void Login::login() {
     currentNam = new QNetworkAccessManager(this);
 	currentNam->setCookieJar(new QNetworkCookieJar(this));
     QObject::connect(currentNam, SIGNAL(finished(QNetworkReply*)),
-                     this, SLOT(networkRequestFinished(QNetworkReply*)));
+                         this, SLOT(networkRequestFinished(QNetworkReply*)));
 
     QByteArray data;
     data.append(generateLoginString());
     QUrl url(Settings::LOGINURL);
     QNetworkRequest req(url);
     req.setHeader(QNetworkRequest::ContentTypeHeader,"application/json");
+    QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+    config.setProtocol(QSsl::AnyProtocol);
+
+    req.setSslConfiguration(config);
     QNetworkReply *reply = currentNam->post(req, data);
     QObject::connect(reply, SIGNAL(error(QNetworkReply::NetworkError)),
                      this, SLOT(handleNetworkError(QNetworkReply::NetworkError)));
+    QObject::connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
+                     reply, SLOT(ignoreSslErrors()));
+
 }
 
 /*
@@ -113,7 +121,7 @@ void Login::networkRequestFinished(QNetworkReply *reply) {
     errorCleanup();
 }
 
-void Login::handleNetworkError(QNetworkReply::NetworkError) {
+void Login::handleNetworkError(QNetworkReply::NetworkError err) {
     errorCleanup();
 }
 
