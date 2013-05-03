@@ -186,7 +186,6 @@ func genSQLCreateString(rowdata Row, rowname string) string {
 	default:
 		panic("Unknown field type: " + rowtype)
 	}
-	panic("Unreachable")
 }
 
 // Function which takes a database name and connects to that database
