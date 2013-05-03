@@ -38,7 +38,6 @@ namespace login {
          * cleanup members that won't be used because the NetworkRequests fail.
          */
         void handleNetworkError(QNetworkReply::NetworkError);
-
     private:
         void errorCleanup();
         void login();
