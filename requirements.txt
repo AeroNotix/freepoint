@@ -1,4 +1,0 @@
-mymysql  https://github.com/ziutek/mymysql
-stressql https://github.com/AeroNotix/stressql
-PyQt     http://www.riverbankcomputing.co.uk/software/pyqt/download
-Python27 http://www.python.org/download/releases/2.7.3/
