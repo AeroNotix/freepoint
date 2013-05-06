@@ -1,6 +1,15 @@
 #include "mainwindow.h"
 #include "add_new_row.h"
 
+/**
+   Constructor.
+
+   @param[headers A QStringList of headers which will populate the
+                  table's column labels.
+   @param[delegates Delegates is a list of QItemDelegate* which will be
+                    used as the editing widgets for the dialog.
+   @param[parent Our parent which invoked this dialog.
+ */
 AddNewRow::AddNewRow(QStringList headers, QList<QItemDelegate*> delegates, MainWindow *parent)
     : QDialog(parent), parent(parent), ui(new Ui_AddNewRow),
       currentNam(nullptr)
@@ -15,6 +24,12 @@ AddNewRow::AddNewRow(QStringList headers, QList<QItemDelegate*> delegates, MainW
         ui->tableWidget->setItem(0, x, new QTableWidgetItem(""));
 }
 
+/**
+   Accepts the dialog
+
+   When the user is done editing they should press this to submit
+   their changes to the database.
+*/
 void AddNewRow::accept() {
     int colcount = ui->tableWidget->columnCount();
     QStringList newrowdata;
