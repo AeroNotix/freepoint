@@ -2,7 +2,7 @@ C++
 ===
 
 Prerequisites
--------------
+=============
 
 Download the freepoint source and untar/unzip to your workspace.
 
